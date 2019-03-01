@@ -1,5 +1,5 @@
 # pyKombat
-[CES-22]_[COMP21]_Game developed in python with pygame. 
+[CES-22]_[COMP21]_Game in development in python with pygame. 
 
 Group: Adriano Soares/ Matheus Vidal/ Pedro Alves
 
@@ -73,6 +73,6 @@ Cronograma:
 
 --------------------------------end week 7---------------------------------------------------
 
-[] Folga
+Folga
 
 --------------------------------end week 8---------------------------------------------------
