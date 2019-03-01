@@ -6,7 +6,7 @@ Group: Adriano Soares/ Matheus Vidal/ Pedro Alves
 Sprites: https://www.spriters-resource.com/snes/mortalkombat2/
 
 
-Cronograma:
+Schedule:
 
 [] Entender   Colisões com bonecos grandes em pygame( retângulo, masks)
 
