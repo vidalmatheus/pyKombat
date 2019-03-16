@@ -1,0 +1,31 @@
+usar o pydoc:
+	 Escreva com o terminal aberto na devida pasta do codigo NomeExemplo.py:
+		"python -m pydoc -w NomeExemplo"
+
+modo de uso:
+	o pydoc ir· documentar e escrever dos os comentarios logo abaixo da 
+	definiÁ„o das classe, metodos e variaiveis
+ex:
+	"comentario 1"
+	
+ex2:
+	"""
+	comentario 2
+	comentario 3
+	comentario 4
+	comentario 5
+	"""
+ex3:
+    "n„o funciona"
+    def metodo(self,VariavelQueSer·Citada):
+        "funciona"
+ex3:
+    "n„o funciona"
+    def metodo(self,variavelQueSer·Citada):
+        """
+	funciona
+	da
+	mesma
+	forma
+	"""
+        
