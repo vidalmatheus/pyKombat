@@ -75,4 +75,3 @@ class image:
         """retorna a altura da imagem"""
         return self.Image.get_height()
 
-

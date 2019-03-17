@@ -6,7 +6,7 @@ import delegates
 É a classe que será responsavel, pelas alterações que deverão ser constante pelo game,
 como o tamanho da tela,funcionalidade do pygame,como inicializar o jogo,pegar o tempo entre os frames
 """
-class gameStatusManager:
+class gameStateManager:
     def __init__(self,width = 800, height = 500,fps = 24,icon = None,gameName = "pyKombat"):
         self.width = width
         self.height = height

@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="02238d57-7113-42b7-80b1-b14fe311e3e6" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/gameStatus" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/gameStatus.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/imageManager.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/gameState.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gameStatus.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/imageManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/imageManager.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -33,22 +33,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/gameStatus">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="5" column="26" lean-forward="true" selection-end-line="125" />
-              <folding>
-                <element signature="e#0#16#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/gameStatus.py">
+        <entry file="file://$PROJECT_DIR$/src/gameState.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2125">
+            <state relative-caret-position="427">
               <caret line="125" lean-forward="true" selection-start-line="125" selection-end-line="125" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
@@ -60,8 +48,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/imageManager.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1258">
-              <caret line="74" column="40" selection-start-line="74" selection-start-column="40" selection-end-line="74" selection-end-column="40" />
+            <state relative-caret-position="384">
+              <caret line="77" lean-forward="true" selection-start-line="77" selection-end-line="77" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -87,13 +75,14 @@
         <option value="$PROJECT_DIR$/src/delegates.py" />
         <option value="$PROJECT_DIR$/src/directory.py" />
         <option value="$PROJECT_DIR$/src/gameEngine.py" />
-        <option value="$PROJECT_DIR$/src/imageManager.py" />
         <option value="$PROJECT_DIR$/src/gameStatus" />
         <option value="$PROJECT_DIR$/src/gameStatus.py" />
+        <option value="$PROJECT_DIR$/src/gameState.py" />
+        <option value="$PROJECT_DIR$/src/imageManager.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="581" />
     <option name="y" value="45" />
     <option name="width" value="1344" />
@@ -138,7 +127,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.gameStatus">
+  <component name="RunManager" selected="Python.imageManager">
     <configuration name="delegates" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pyKombat" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -181,6 +170,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="gameStatus (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="pyKombat" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/gameStatus.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="gameStatus" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pyKombat" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -202,8 +212,31 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="imageManager" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="pyKombat" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/imageManager.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.imageManager" />
+        <item itemvalue="Python.gameStatus (1)" />
         <item itemvalue="Python.gameStatus" />
         <item itemvalue="Python.directory" />
         <item itemvalue="Python.delegates" />
@@ -227,6 +260,25 @@
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19431593" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49966952" visible="true" weight="0.24362606" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50033045" side_tool="true" weight="0.3045326" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+    <layout-to-restore>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24983476" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -244,7 +296,7 @@
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout>
+    </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/menu.py">
@@ -253,11 +305,28 @@
     <entry file="file://$PROJECT_DIR$/src/gameEngine.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/gameState.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/delegates.html">
       <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/gameStatus">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" column="26" lean-forward="true" selection-end-line="125" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/gameStatus.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="121" column="22" lean-forward="true" selection-start-line="121" selection-start-column="22" selection-end-line="121" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/directory.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -275,27 +344,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/imageManager.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1258">
-          <caret line="74" column="40" selection-start-line="74" selection-start-column="40" selection-end-line="74" selection-end-column="40" />
+        <state relative-caret-position="384">
+          <caret line="77" lean-forward="true" selection-start-line="77" selection-end-line="77" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/gameStatus">
+    <entry file="file://$PROJECT_DIR$/src/gameState.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="26" lean-forward="true" selection-end-line="125" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/gameStatus.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2125">
+        <state relative-caret-position="427">
           <caret line="125" lean-forward="true" selection-start-line="125" selection-end-line="125" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
