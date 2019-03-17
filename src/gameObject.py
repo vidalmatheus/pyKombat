@@ -43,6 +43,9 @@ class GameObject:
                 child.getTransform().position = child.getTransform().position - \
                                                 vector2(0.0,2.0*child.getTransform().position.y())
                 child.yInvertion()
+
+    def draw(self):
+        return
     def __add__(self, obj):
         """operação de adciona a lista de children"""
         obj.parent = self

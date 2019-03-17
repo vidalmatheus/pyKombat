@@ -10,11 +10,15 @@ class gameStateManager:
     def __init__(self,width = 800, height = 500,fps = 24,icon = None,gameName = "pyKombat"):
         self.width = width
         self.height = height
+        self.displayWidth = width
+        self.displayHeight = height
         self.gameExit = False
         self.frame = 0
         self.fps = fps
         self.gameName = gameName
         self.icon = icon
+        self.scale = 1.0
+        self.ppm = 70 #pixel por metros
         os.environ['SDL_VIDEO_CENTERED'] = '1'
         self.display = pygame.display.set_mode((self.width,self.height),HWSURFACE|DOUBLEBUF)
         self.clock = pygame.time.Clock()
@@ -28,7 +32,46 @@ class gameStateManager:
         pygame.display.set_caption(self.gameName)
         self.event = self.getEvent()
 
+    def getDisplayWidth(self):
+        """Retorna o comprimento do 'display'"""
+        return self.diplayWidth
 
+    def getDisplayHeight(self):
+        """Retorna a altura do 'display'"""
+        return self.diplayHeight
+
+    def setDisplaySize(self,value = (800,500)):
+        """altera o tamanho do display,onde 'value =(int = 800,int=500)' """
+        self.displayWidth = value[0]
+        self.scale = value[0]/self.width
+        self.displayHeight = value[1]
+        self.display = pygame.display.set_mode(value,HWSURFACE|DOUBLEBUF)
+
+    def setScale(self, value=1.0):
+        """
+        Põe o valor da escala, onde o '1.0' é o o tamanho original,se value menor que ou igual à'0.0'
+        a scale não é alterada
+        """
+        if value <= 0.0:
+            return
+        self.scale = value
+
+    def getScale(self):
+        """Retorna o valor da escala"""
+        return self.scale
+
+    def setPpm(self,value = 1.0):
+        """
+        Põe o valor da ppm(pixel por metro), onde o '0.0' é o o tamanho original,se value menor que ou igual à'0.0'
+        a scale não é alterada
+        """
+        if value <= 0.0:
+            return
+        self.ppm = value
+
+    def getPpm(self):
+        """Retorna o valor da ppm, o padrão é 70"""
+        return self.ppm
     def setMusicVolume(self, value):
         """
         define o valor do volume do som,varia entre inteiro de 0-10
@@ -121,5 +164,4 @@ class gameStateManager:
     def quit(self):
         "fecha o jogo"
         pygame.quit()
-
 
