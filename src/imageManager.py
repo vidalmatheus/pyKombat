@@ -10,6 +10,8 @@ class imageManager:
 
     def scaleImage(image, scale = 1.0):
         "retorna uma imagem que crresponde a 'image',escalonada"
+        if scale == 1.0:
+            return
         ScaledImage = pygame.transform.smoothscale(image,(int(scale*image.get_width()),
                                                           int(scale*image.get_height())))
         return ScaledImage
@@ -35,11 +37,21 @@ class image:
         self.local = local #local onde a imagem se encontra na pasta do jogo
         """retangulo que determina a regigão que o display irá redesenhar,será  
                                    usada para imagens que n são redesenhadas todos os frames"""
+
+        self.scale = 1.0
         self.blitRect = []
         if not local == "":
             self.Image = pygame.image.load(local).convert_alpha()
             self.Rect = self.Image.get_rect()
-
+    def getScale(self):
+        """retorna o valor da 'scale' da imagem"""
+        return self.scale
+    def reScale(self,scale = 1.0):
+        """ré-escala o tamanho da imagem"""
+        if scale == 1.0 and self.scale == 1.0:
+            return
+        self.Image = imageManager.scaleImage(self.Image, scale/self.scale)
+        self.scale = scale
 
     def drawImage(self,pos = (0.0,0.0), game = None):
         """irá retornar o rect do desenho anterios e o novo"""

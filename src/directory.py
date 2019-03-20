@@ -31,3 +31,9 @@ class directory:
     def getRelativePath(self):
         """retorna o string do diretorio relativo"""
         return self.diretorio
+
+    def getCsv(self,nomeCsv):
+        """retorna a matriz do csv"""
+
+    def getFile(self):
+        """pega o file"""

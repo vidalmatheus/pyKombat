@@ -42,6 +42,11 @@ class gameStateManager:
 
     def setDisplaySize(self,value = (800,500)):
         """altera o tamanho do display,onde 'value =(int = 800,int=500)' """
+        scale = value[0]/self.width
+        if int(scale*self.displayHeight) > value[1]
+            print("não proporçã do almento do comprimento da tela não pode ser maior que da altura")
+            print("logo a tela,não será alterada")
+            return
         self.displayWidth = value[0]
         self.scale = value[0]/self.width
         self.displayHeight = value[1]
