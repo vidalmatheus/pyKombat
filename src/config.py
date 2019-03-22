@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import pygame
 from pygame.locals import *
 from game import SpriteSheetLoader
