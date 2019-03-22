@@ -4,6 +4,7 @@ from pygame.locals import *
 import config
 import game
 import engine
+import fightScene
 
 
 class Menu:
@@ -92,7 +93,8 @@ class ScenarioMenu(Menu):
                     if event.key == 13:  # 13 == ENTER
                         # coloca áudio "in"
                         # Entra no cenário escolhido
-                        game
+                        fight = fightScene.Scenario(game,scenario)
+                        fight.setScenario(scenario)
                     elif scenario == 1:
                         if event.key == pygame.K_DOWN:
                             scenario = 4
