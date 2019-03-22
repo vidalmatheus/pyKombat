@@ -44,3 +44,31 @@ class Delegate:
                 return i
             i = i + 1
         return -1
+
+    """adciona delegate ao outro ou outra função ao delegate apenas com '+' """
+    def __add__(self, *args):
+        dele = Delegate()
+        for function in self.func:
+            dele.add(function)
+        if isinstance(args, Delegate):
+
+            for function in args.func:
+                dele.add(function)
+            return dele
+        else:
+            dele.add(args)
+            return dele
+
+    """remove delegate ao outro ou outra função ao delegate apenas com '-' """
+    def __sub__(self, *args):
+        dele = Delegate()
+        for function in self.func:
+            dele.add(function)
+        if isinstance(args, Delegate):
+
+            for function in args.func:
+                dele.remove(function)
+            return dele
+        else:
+            dele.remove(args)
+            return dele

@@ -8,7 +8,7 @@ class directory:
     def __init__(self,localDir = ""):
         "inicia classe ,onde 'main' será o diretorio da pasta de jogo"
         self.main = str(Path(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
-        self.diretorio = localDir;
+        self.diretorio = localDir
 
 
     def getIn(self, dir = ""):
@@ -21,7 +21,6 @@ class directory:
         else:
             "caso o diretorio não exista, o programador re"
             sys.exit("diretorio '" + self.getPath() + "\\" + dir + "' na existe")
-
 
     def getPath(self):
         """retorna o string do diretorio completo,não o relativo à pasta do jogo"""
@@ -37,3 +36,21 @@ class directory:
 
     def getFile(self):
         """pega o file"""
+
+    """adciona caminhos ao diretorio apenas com '+' """
+    def __add__(self, strDir = ""):
+        dir = directory()
+        dir.getIn(strDir)
+        return dir
+
+    """garante o retorno do string"""
+    def __str__(self):
+        return self.main + "\\" + self.diretorio
+
+
+"""
+a = directory()
+a = a + "src"
+str = "" + str(a)
+print(a)
+"""
