@@ -1,9 +1,9 @@
 class Delegate:
     """
-Delegate é inspirado no metodo de
-mesmo nome de 'c#',onde pode armazenar um numero indeterminado de funções numa unica variavel,ela será usado para
-simplificar o uso dos codigos que são usados continuamente
-"""
+    Delegate é inspirado no metodo de
+    mesmo nome de 'c#',onde pode armazenar um numero indeterminado de funções numa unica variavel,ela será usado para
+    simplificar o uso dos codigos que são usados continuamente
+    """
     def __init__(self,function = None):
         self.func = []
         "func será a lista que armazenará as funções do Delegate"
