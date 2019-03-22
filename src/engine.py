@@ -317,9 +317,12 @@ class Transform:
 
 class GameObject:
 
-    def __init__(self, name="object", vec=Vector2(0.0, 0.0)):
+    def __init__(self,file,sprite_width, sprite_height, name="object", vec=Vector2(0.0, 0.0)):
         self.name = name
+        self.sprite_list = SpriteSheetLoader(file, sprite_width, sprite_height).getSpriteList()
         self.transform = Transform(vec)
+        self.maxlength = self.getmaxlength()
+        self.tick = 0
         self.children = []
         self.parent = None
         # self.faceRight = True
