@@ -23,7 +23,8 @@ class Game:
         self.scale = 1.0
         self.ppm = 70 #pixel por metros
         os.environ['SDL_VIDEO_CENTERED'] = '1'
-        self.display = pygame.display.set_mode((self.width,self.height),HWSURFACE|DOUBLEBUF)
+        pygame.display.set_mode((self.width,self.height),HWSURFACE|DOUBLEBUF)
+        self.display = pygame.display
         self.clock = pygame.time.Clock()
         self.deltaTime = 0.0
         self.musicVolume = 10
@@ -182,7 +183,7 @@ class Game:
 
     """update o display"""
     def displayUpdate(self,rect = []):
-        self.display.update(rect)
+        self.display.update()
 
     """para redesenhar o display inteiro"""
     def displayFlip(self, rect=[]):
@@ -191,8 +192,9 @@ class Game:
     """inicia o loop infinito do jogo"""
     def start(self):
         while not self.hasQuit:
+            print("Flag05")
             self.gameScene.updateScene()
-
+            print("Flag21")
         self.quit()
 
     def quit(self):
@@ -403,13 +405,16 @@ class GameObject:
         """
         return
 
-    def __Update(self, game=None):#não altere
+    def Update(self, game=None):#não altere
         """
         Update é um metodo abstrata,que o objeto chama todo frame, em que ele estiver ativo,mas
         este não será alterado
         """
+        print("flag08")
         self.update(game)
+        print("flag09")
         self.updateChildren(game)
+        print("flag10")
         return
 
     def updateChildren(self, game=None):#não pode ser alterado
@@ -417,7 +422,7 @@ class GameObject:
         faz o __Update de todos os childrens do objeto
         """
         for obj in self.children:
-            obj.__Update(game)
+            obj.Update(game)
 
     def update(self, game=None):
         """
@@ -432,7 +437,7 @@ class GameObject:
         ela vai ser responsavel de desenhar o objeto na camera na camera.
         """
         self.rect = []
-        return rect
+        return self.rect
 
     def __add__(self, obj):
         """operação de adciona a lista de children"""
@@ -479,7 +484,7 @@ class Animation:
     def update(self):
         """atualiza o frame"""
         self.frame = self.frame - 1
-        if self.frame == 0 and len(self.frameList[0]) == self.i + 1:
+        if self.frame == 0 and len(self.frameList) == self.i + 1:
             self.ended = True
         elif self.frame < 0:
             self.i = self.i + 1
@@ -523,7 +528,7 @@ class Camera(GameObject):
     def __init__(self,name = "camera",vec = Vector2(0.0,0.0),game = Game()):
         super().__init__(name ,vec )
         self.game = game
-        self.renderLayerObject = [[]]
+        self.renderLayerObject = []
         self.frameRects = []
         self.Ui = []
 
@@ -541,12 +546,16 @@ class Camera(GameObject):
         i = 0
         while i <= lastlayer:
             self.renderLayerObject.append([])
+            i = i + 1
+        print("Flag017")
 
     """
     pega a lista de objetos
     """
     def setObjectListbyLayer(self,listObject = []):
+        print("flag14")
         for obj in listObject:
+            print(obj.name)
             self.renderLayerObject[obj.layer].append(obj)
             self.setObjectListbyLayer(obj.children)
 
@@ -564,11 +573,13 @@ class Camera(GameObject):
 
     """renderiza todos os objetos captados pela camera"""
     def render(self, positionInDisplay=(0.0, 0.0),game = None):
-
+        print("flag10")
         for layer in self.renderLayerObject:
+            print("flag11")
             for obj in layer:
+                print("flag12")
                 self.frameRects = self.frameRects + obj.render(self.getPositionInDisplay(obj),self.game)
-
+        print("flag18")
         self.game.displayUpdate(self.frameRects)
         self.frameRects = []
 
@@ -584,6 +595,7 @@ class GameScene:
         self.camera = Camera("camera",Vector2(0.0,0.0),game)
         self.paused = False
         self.numLayers = 0
+        self.game.setGameScene(self)
 
 
     """retorna a lista de objetos"""
@@ -597,16 +609,22 @@ class GameScene:
     """faz alocações importantes para o funcionamento da scene"""
     def startScene(self):
         for obj in self.gameObjectList:
+            print(obj.name)
             obj.start(self.game)
-
+        print("Flag02")
         self.camera.setLayers(self.numLayers)
+        print("Flag03")
         self.camera.setObjectListbyLayer(self.gameObjectList)
+        print("Flag04")
 
     def updateScene(self):
+        print("flag07")
         if not self.paused:
             for obj in self.gameObjectList:
-                obj.__Update(self.game)
+                obj.Update(self.game)
+            print("flag08")
             self.camera.render()
+            print("flag09")
             self.game.waitFrame()
 
     def pauseGame(self):
