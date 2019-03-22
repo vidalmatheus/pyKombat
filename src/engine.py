@@ -499,7 +499,25 @@ class Animation:
         for img in self.frameList:
             img.reScale(scale*img.getScale())
 
-#class animatorController:
+class AnimatorController:
+    def __init__(self):
+        self.animationList = []
+        self.index = 0
+        self.animation = Animation()
+
+    def getAnimation(self):
+        return self.animation
+
+    def setAnimation(self, index = 0):
+        self.index = index
+        self.animation = self.animationList[index]
+        self.animation.start()
+
+    def hasAnimationEnded(self):
+        return self.animationList[self.index].hasEnded()
+
+
+
 """classe GameObject,que será responsavel pela camera do jogo"""
 class Camera(GameObject):
     def __init__(self,name = "camera",vec = Vector2(0.0,0.0),game = Game()):
