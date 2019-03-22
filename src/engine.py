@@ -321,7 +321,7 @@ class Transform:
         return self.position.y()
 
 
-"""classe gameObjeto sera classe super de todas as classe de instancias"""
+"""classe gameObjeto sera classe super de todas as classe de instaancias"""
 
 class GameObject:
 
