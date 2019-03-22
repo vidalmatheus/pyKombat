@@ -339,19 +339,13 @@ class Transform:
 
 class GameObject:
 
-<<<<<<< HEAD
-    def __init__(self,file,sprite_width, sprite_height, name="object", vec=Vector2(0.0, 0.0)):
-        self.name = name
-        self.sprite_list = SpriteSheetLoader(file, sprite_width, sprite_height).getSpriteList()
-=======
     def __init__(self, name="object", vec=Vector2(0.0, 0.0),gameScene = GameScene()):
         self.name = name
         self.gameScene = gameScene
         self.layer = 0
->>>>>>> Pedro
         self.transform = Transform(vec)
-        self.maxlength = self.getmaxlength()
-        self.tick = 0
+        #self.maxlength = self.getmaxlength()
+        #self.tick = 0
         self.children = []
         self.parent = None
         # self.faceRight = True
@@ -602,3 +596,27 @@ class GameScene:
 
     def unPauseGame(self):
         self.paused = False
+
+class Sound:
+    def __init__(self, name = "selection"):
+        self.sound = pygame.mixer.Sound('../res/Sound/'+ name +'.ogg')  
+    def getSound():
+        return self.sound
+    def setSound(self,name):
+        self.sound = pygame.mixer.Sound('../res/Sound/'+ name +'.ogg') 
+    def play(self):
+        self.sound.play()
+
+class Music:
+    def __init__(self, name = "intro"):
+        self.music = pygame.mixer.music.load('../res/Music/'+ name +'.ogg')  
+    def getMusic():
+        return self.music
+    def setMusic(self,name):
+        self.music = pygame.mixer.music.load('../res/Music/'+ name +'.ogg') 
+    def play(self,times = 1):
+        pygame.mixer.music.play(1)
+          
+        
+        
+        

@@ -9,7 +9,11 @@ import engine           # importa engine.py
 if __name__ == "__main__":
     print('loading...')
 
-    game = engine.Game()
+    pygame.init()
+    pygame.mixer.init()   # som
     
+    game = engine.Game()
+    music = engine.Music()
+    music.play()
     menu = menu.MainMenu(game)
 
