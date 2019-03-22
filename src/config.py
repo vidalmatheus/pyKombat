@@ -14,7 +14,7 @@ class  Screen(object):
         return cls.instance
     
     def init(self, video):
-        print("Inicializando tela...")
+        print("Inicializando a tela...")
         self.video = video
         if self.video == 0:
             self.screen = pygame.display.set_mode(engine.setDisplaySize(320, 240), 0, 32)
