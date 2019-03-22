@@ -8,6 +8,8 @@ como o tamanho da tela,funcionalidade do pygame,como inicializar o jogo,pegar o 
 """
 class gameStateManager:
     def __init__(self,width = 800, height = 500,fps = 24,icon = None,gameName = "pyKombat"):
+        pygame.init()  # inicia pygame
+        pygame.mixer.init() # inicia o mixer de áudio
         self.width = width
         self.height = height
         self.displayWidth = width
@@ -43,7 +45,7 @@ class gameStateManager:
     def setDisplaySize(self,value = (800,500)):
         """altera o tamanho do display,onde 'value =(int = 800,int=500)' """
         scale = value[0]/self.width
-        if int(scale*self.displayHeight) > value[1]
+        if (int(scale*self.displayHeight) > value[1]):
             print("não proporçã do almento do comprimento da tela não pode ser maior que da altura")
             print("logo a tela,não será alterada")
             return
