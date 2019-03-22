@@ -9,4 +9,7 @@ import engine           # importa engine.py
 if __name__ == "__main__":
     print('loading...')
 
+    engine.Game()
     
+    menu = menu.MainMenu()
+
