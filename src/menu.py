@@ -163,7 +163,7 @@ class ScenarioMenu(Menu):
                             scenario = 5
                         self.setScenario(scenario)
 
-                    elif scenario == 9:
+                    elif scenario == 9: 
                         if event.key == pygame.K_LEFT:
                             scenario = 8
                         if event.key == pygame.K_UP:

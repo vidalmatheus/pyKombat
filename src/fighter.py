@@ -17,3 +17,5 @@ class Fighter(engine.GameObject):
 
 
 
+
+
