@@ -6,11 +6,12 @@ import engine
 import menu
 
 class GameRectangle:
-    def __init__(self, width, height, position =engine.Vector2(0,0)):
+    def __init__(self, width, height, position = engine.Vector2(0,0)):
             # Falta verificar
         self.width = width
         self.height = height
         self.area = self.width * self.height
+        self.position = position
     
     def value(self):
         return (self.width,self.height)

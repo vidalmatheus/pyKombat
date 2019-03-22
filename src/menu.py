@@ -24,9 +24,8 @@ class MainMenu(Menu):
                 if event.type == QUIT:
                     pygame.quit()
                 if event.type == pygame.KEYDOWN:
-                    # coloca áudio
+                    # carregar áudio   
                     sound = engine.Sound()
-                    sound.play()     
                     if event.key == 13:  # 13 == ENTER
                         # coloca áudio "in"
                         if screen == "start":
@@ -39,14 +38,16 @@ class MainMenu(Menu):
                             OptionMenu()
                     elif screen == "start":
                         if event.key == pygame.K_DOWN or event.key == pygame.K_UP:
+                            sound.play()                              
                             screen = "options"
                             mainmenu = pygame.image.load(
                                 '../res/Background/MainMenu02.png')
                             game.getDisplay().blit(mainmenu, (0, 0))
                             pygame.display.update()
 
-                    elif screen == "options":
+                    elif screen == "options":                          
                         if event.key == pygame.K_DOWN or event.key == pygame.K_UP:
+                            sound.play()
                             screen = "start"                           
                             mainmenu = pygame.image.load(
                                 '../res/Background/MainMenu01.png')
@@ -86,87 +87,112 @@ class ScenarioMenu(Menu):
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
+                # carregar áudio
+                sound = engine.Sound() 
                 if event.type == pygame.KEYDOWN:
-                    # coloca áudio
-                    sound = engine.Sound()
-                    sound.play()                    
                     if event.key == 13:  # 13 == ENTER
-                        # coloca áudio "in"
                         # Entra no cenário escolhido
+                        sound.setSound("start")
+                        sound.play()
                         fight = fightScene.Scenario(game,scenario)
                         fight.setScenario(scenario)
                     elif scenario == 1:
                         if event.key == pygame.K_DOWN:
+                            sound.play()
                             scenario = 4
                         if event.key == pygame.K_RIGHT:
+                            sound.play()                            
                             scenario = 2
+
                         self.setScenario(scenario)
 
                     elif scenario == 2:
                         if event.key == pygame.K_DOWN:
+                            sound.play()
                             scenario = 5
                         if event.key == pygame.K_RIGHT:
+                            sound.play()
                             scenario = 3
                         if event.key == pygame.K_LEFT:
+                            sound.play()
                             scenario = 1
                         self.setScenario(scenario)
 
                     elif scenario == 3:
                         if event.key == pygame.K_DOWN:
+                            sound.play()
                             scenario = 6
                         if event.key == pygame.K_LEFT:
+                            sound.play()
                             scenario = 2
                         self.setScenario(scenario)
 
                     elif scenario == 4:
                         if event.key == pygame.K_DOWN:
+                            sound.play()
                             scenario = 7
                         if event.key == pygame.K_RIGHT:
+                            sound.play()
                             scenario = 5
                         if event.key == pygame.K_UP:
+                            sound.play()
                             scenario = 1
                         self.setScenario(scenario)
 
                     elif scenario == 5:
                         if event.key == pygame.K_DOWN:
+                            sound.play()
                             scenario = 8
                         if event.key == pygame.K_RIGHT:
+                            sound.play()
                             scenario = 6
                         if event.key == pygame.K_LEFT:
+                            sound.play()
                             scenario = 4
                         if event.key == pygame.K_UP:
+                            sound.play()
                             scenario = 2
                         self.setScenario(scenario)
 
                     elif scenario == 6:
                         if event.key == pygame.K_DOWN:
+                            sound.play()
                             scenario = 9
                         if event.key == pygame.K_LEFT:
+                            sound.play()
                             scenario = 5
                         if event.key == pygame.K_UP:
+                            sound.play()
                             scenario = 3
                         self.setScenario(scenario)
 
                     elif scenario == 7:
                         if event.key == pygame.K_RIGHT:
+                            sound.play()
                             scenario = 8
                         if event.key == pygame.K_UP:
+                            sound.play()
                             scenario = 4
                         self.setScenario(scenario)
 
                     elif scenario == 8:
                         if event.key == pygame.K_RIGHT:
+                            sound.play()
                             scenario = 9
                         if event.key == pygame.K_LEFT:
+                            sound.play()
                             scenario = 7
                         if event.key == pygame.K_UP:
+                            sound.play()
                             scenario = 5
                         self.setScenario(scenario)
 
                     elif scenario == 9: 
                         if event.key == pygame.K_LEFT:
+                            sound.play()
                             scenario = 8
                         if event.key == pygame.K_UP:
+                            sound.play()
                             scenario = 6
                         self.setScenario(scenario)
 

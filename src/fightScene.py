@@ -26,12 +26,17 @@ class Scenario:
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
-                if event.type == pygame.KEYDOWN:
+                # carregar áudio "out"
+                sound = engine.Sound("back")  
+                if event.type == pygame.KEYDOWN:  
                     if event.key == K_ESCAPE:
-                        # colocar áudio "out"
-                        sound = engine.Sound("back")
-                        sound.play()     
-                        scene = menu.ScenarioMenu()
+                        
+                        sound.play()
+                        pygame.mixer.music.stop()
+                        music = engine.Music("intro")
+                        music.play()     
+                        menu.ScenarioMenu()
+
 
 class Collision:
     def __init__(self, rect1, rect2):
