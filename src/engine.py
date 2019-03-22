@@ -173,6 +173,14 @@ class Game:
     def getDeltaTime(self):
         return self.deltaTime
 
+    """update o display"""
+    def displayUpdate(self,rect = []):
+        self.display.update(rect)
+
+    """para redesenhar o display inteiro"""
+    def displayFlip(self, rect=[]):
+        self.display.flip()
+
     def quit(self):
         "fecha o jogo"
         pygame.quit()
@@ -376,7 +384,8 @@ class GameObject:
         render é um metodo abstrata,que o objeto chama todo frame, em que ele essta ativo.
         ela vai ser responsavel de desenhar o objeto na camera na camera.
         """
-        return
+        rect = []
+        return rect
 
     def __add__(self, obj):
         """operação de adciona a lista de children"""
@@ -403,6 +412,13 @@ class Animation:
         recebe a lista de wait frames, ela diz quantos frames do jogo tem que se passar,
         para passar a proxima imagem
         """
+        if lista == []:
+            if self.waitFrame == []:
+                n = len(self.frame)
+                i = 0
+                while i < n:
+                    lista.append(1)
+                    i = i + 1
         self.waitFrame = lista
 
     def setFrameList(self,lista = []):
@@ -422,6 +438,9 @@ class Animation:
             self.i = self.i + 1
             self.frame = self.waitFrame[self.i]
 
+    """animation ended?"""
+    def hasEnded(self):
+        return self.ended
 
     def render(self,positionInDisplay = (0.0,0.0), game = None):
         """desenha imagem"""
@@ -438,23 +457,34 @@ class Animation:
 class Camera(GameObject):
     def __init__(self,name = "camera",vec = Vector2(0.0,0.0),game = Game()):
         super().__init__(name ,vec )
-        self.gameState = game
-        self.sceneGameObjectsScene = []
+        self.game = game
+        self.renderLayerObject = []
+        self.frameRects = []
         self.Ui = []
 
-    def getRenderList(self):
+    def getObjectListbyLayer(self):
         """
         retorna o 'delegate' das renders, para que a camera possa desenhar a imagem
         """
-        return self.sceneGameObjectsScene
+        return self.renderLayer
 
     def getPositionInDisplay(self,obj = GameObject()):
         """retorna a posição do objeto no display,retorna '(float,float)' para por no drawImage"""
         pos = obj.positionToWorld()
         camPos = self.positionToWorld()
         rel = pos - camPos
-        scal = self.gameState.getPpm()*self.gameState.getScale()
+        scal = self.game.getPpm()*self.game.getScale()
         print(rel)
         print(scal*rel.x())
         return self.gameState.getWidth()/2 + scal*rel.x(), self.gameState.getHeight()/2 - scal*rel.y()
+
+    """renderiza todos os objetos captados pela camera"""
+    def render(self, positionInDisplay=(0.0, 0.0),game = None):
+        self.frameRects = []
+        for layer in self.renderLayerObject:
+            for obj in layer:
+                self.frameRects = self.frameRects + obj.render(self.getPositionInDisplay(obj),self.game)
+
+        self.game.displayUpdate(self.frameRects)
+
 

@@ -1,7 +1,7 @@
 import os.path,sys
 from pathlib import Path
 
-class directory:
+class Directory:
     """
         Essa é a classe directory,que armazenará o path do deretorio desejado
     """
@@ -39,7 +39,7 @@ class directory:
 
     """adciona caminhos ao diretorio apenas com '+' """
     def __add__(self, strDir = ""):
-        dir = directory()
+        dir = Directory()
         dir.getIn(strDir)
         return dir
 
@@ -48,9 +48,9 @@ class directory:
         return self.main + "\\" + self.diretorio
 
 
-"""
-a = directory()
-a = a + "src"
-str = "" + str(a)
+
+a = Directory()
+a = a + "res\\Background\\"
+#str = "" + str(a)
 print(a)
-"""
+
