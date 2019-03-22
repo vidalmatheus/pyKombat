@@ -3,13 +3,14 @@ from pygame.locals import *
 import numpy as np
 import delegates
 
-"""
+class GameScene:
+
+    """
 É a classe que será responsavel, pelas alterações que deverão ser constante pelo game,
 como o tamanho da tela,funcionalidade do pygame,como inicializar o jogo,pegar o tempo entre os frames
 """
 class Game:
     def __init__(self,width = 800, height = 500,fps = 24,icon = None,gameName = "pyKombat"):
-        pygame.init()
         self.width = width
         self.height = height
         self.displayWidth = width
@@ -27,10 +28,14 @@ class Game:
         self.deltaTime = 0.0
         self.musicVolume = 10
         self.fxVolume = 10
+        self.hasQuit = False
+        self.gameScene = GameScene()
 
         pygame.display.set_caption(self.gameName)
         self.event = self.getEvent()
 
+    def setGameScene(self,scene = GameScene()):
+        self.gameScene = scene
     def getDisplayWidth(self):
         """Retorna o comprimento do 'display'"""
         return self.diplayWidth
@@ -97,7 +102,9 @@ class Game:
         elif value < 0:
             value = 0
         self.fxVolume = value
-
+    """retorna se teve quit"""
+    def getQuit(self):
+        return self.hasQuit
 
     def getScaleTime(self):
         """
@@ -172,6 +179,21 @@ class Game:
     """Retorna o tempo entre os frames"""
     def getDeltaTime(self):
         return self.deltaTime
+
+    """update o display"""
+    def displayUpdate(self,rect = []):
+        self.display.update(rect)
+
+    """para redesenhar o display inteiro"""
+    def displayFlip(self, rect=[]):
+        self.display.flip()
+
+    """inicia o loop infinito do jogo"""
+    def start(self):
+        while not self.hasQuit:
+            self.gameScene.updateScene()
+
+        self.quit()
 
     def quit(self):
         "fecha o jogo"
@@ -313,17 +335,37 @@ class Transform:
         return self.position.y()
 
 
-"""classe gameObjeto sera classe super de todas as classe de instancias"""
+"""classe gameObjeto sera classe super de todas as classe de instaancias"""
 
 class GameObject:
 
-    def __init__(self, name="object", vec=Vector2(0.0, 0.0)):
+<<<<<<< HEAD
+    def __init__(self,file,sprite_width, sprite_height, name="object", vec=Vector2(0.0, 0.0)):
         self.name = name
+        self.sprite_list = SpriteSheetLoader(file, sprite_width, sprite_height).getSpriteList()
+=======
+    def __init__(self, name="object", vec=Vector2(0.0, 0.0),gameScene = GameScene()):
+        self.name = name
+        self.gameScene = gameScene
+        self.layer = 0
+>>>>>>> Pedro
         self.transform = Transform(vec)
+        self.maxlength = self.getmaxlength()
+        self.tick = 0
         self.children = []
         self.parent = None
         # self.faceRight = True
+        self.rect = []
+        self.start()
 
+    def destroy(self):
+        self.parent.children.remove(self)
+        self.parent = None
+        for obj in self.children:
+            obj.destroy()
+        self.gameScene.getObjectList().remove(self)
+        self.gameScene.getCamera().renderLayerObject[self.layer].remove(self)
+        self.gameScene.camera.frameRects = self.gameScene.camera.frameRects + self.rect
     def positionToWorld(self):
         """retorna a posição do objeto em relação ao mundo"""
         if self.parent is None:
@@ -361,7 +403,29 @@ class GameObject:
                                                 Vector2(0.0, 2.0 * child.getTransform().position.y())
                 child.yInvertion()
 
-    def Update(self, game=None):
+    def start(self, game=None):
+        """
+        chama quando for inicializado
+        """
+        return
+
+    def __Update(self, game=None):#não altere
+        """
+        Update é um metodo abstrata,que o objeto chama todo frame, em que ele estiver ativo,mas
+        este não será alterado
+        """
+        self.update(game)
+        self.updateChildren(game)
+        return
+
+    def updateChildren(self, game=None):#não pode ser alterado
+        """
+        faz o __Update de todos os childrens do objeto
+        """
+        for obj in self.children:
+            obj.__Update(game)
+
+    def update(self, game=None):
         """
         Update é um metodo abstrata,que o objeto chama todo frame, em que ele essta ativo
         ela vai ser responsavel de atualizar o objeto durante a gameScene.
@@ -373,7 +437,8 @@ class GameObject:
         render é um metodo abstrata,que o objeto chama todo frame, em que ele essta ativo.
         ela vai ser responsavel de desenhar o objeto na camera na camera.
         """
-        return
+        self.rect = []
+        return rect
 
     def __add__(self, obj):
         """operação de adciona a lista de children"""
@@ -400,6 +465,13 @@ class Animation:
         recebe a lista de wait frames, ela diz quantos frames do jogo tem que se passar,
         para passar a proxima imagem
         """
+        if lista == []:
+            if self.waitFrame == []:
+                n = len(self.frame)
+                i = 0
+                while i < n:
+                    lista.append(1)
+                    i = i + 1
         self.waitFrame = lista
 
     def setFrameList(self,lista = []):
@@ -419,6 +491,9 @@ class Animation:
             self.i = self.i + 1
             self.frame = self.waitFrame[self.i]
 
+    """animation ended?"""
+    def hasEnded(self):
+        return self.ended
 
     def render(self,positionInDisplay = (0.0,0.0), game = None):
         """desenha imagem"""
@@ -435,23 +510,95 @@ class Animation:
 class Camera(GameObject):
     def __init__(self,name = "camera",vec = Vector2(0.0,0.0),game = Game()):
         super().__init__(name ,vec )
-        self.gameState = game
-        self.sceneGameObjectsScene = []
+        self.game = game
+        self.renderLayerObject = [[]]
+        self.frameRects = []
         self.Ui = []
 
-    def getRenderList(self):
+    """retorna a lista de rects"""
+    def getRectList(self):
+        return self.frameRects
+
+    def getObjectListbyLayer(self):
         """
         retorna o 'delegate' das renders, para que a camera possa desenhar a imagem
         """
-        return self.sceneGameObjectsScene
+        return self.renderLayerObject
+
+    def setLayers(self, lastlayer = 0):
+        i = 0
+        while i <= lastlayer:
+            self.renderLayerObject.append([])
+
+    """
+    pega a lista de objetos
+    """
+    def setObjectListbyLayer(self,listObject = []):
+        for obj in listObject:
+            self.renderLayerObject[obj.layer].append(obj)
+            self.setObjectListbyLayer(obj.children)
+
+
 
     def getPositionInDisplay(self,obj = GameObject()):
         """retorna a posição do objeto no display,retorna '(float,float)' para por no drawImage"""
         pos = obj.positionToWorld()
         camPos = self.positionToWorld()
         rel = pos - camPos
-        scal = self.gameState.getPpm()*self.gameState.getScale()
+        scal = self.game.getPpm()*self.game.getScale()
         print(rel)
         print(scal*rel.x())
         return self.gameState.getWidth()/2 + scal*rel.x(), self.gameState.getHeight()/2 - scal*rel.y()
 
+    """renderiza todos os objetos captados pela camera"""
+    def render(self, positionInDisplay=(0.0, 0.0),game = None):
+
+        for layer in self.renderLayerObject:
+            for obj in layer:
+                self.frameRects = self.frameRects + obj.render(self.getPositionInDisplay(obj),self.game)
+
+        self.game.displayUpdate(self.frameRects)
+        self.frameRects = []
+
+
+"""
+Classe que será usada para fazer as gameScenes,ela tem que receber o objeto 'Game'
+"""
+
+class GameScene:
+    def __init__(self,game = Game()):
+        self.game = game
+        self.gameObjectList = []
+        self.camera = Camera("camera",Vector2(0.0,0.0),game)
+        self.paused = False
+        self.numLayers = 0
+
+
+    """retorna a lista de objetos"""
+    def getObjectList(self):
+        return self.gameObjectList
+
+    """retorna a camera"""
+    def getCamera(self):
+        return self.camera
+
+    """faz alocações importantes para o funcionamento da scene"""
+    def startScene(self):
+        for obj in self.gameObjectList:
+            obj.start(self.game)
+
+        self.camera.setLayers(self.numLayers)
+        self.camera.setObjectListbyLayer(self.gameObjectList)
+
+    def updateScene(self):
+        if not self.paused:
+            for obj in self.gameObjectList:
+                obj.__Update(self.game)
+            self.camera.render()
+            self.game.waitFrame()
+
+    def pauseGame(self):
+        self.paused = True
+
+    def unPauseGame(self):
+        self.paused = False

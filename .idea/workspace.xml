@@ -3,8 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="02238d57-7113-42b7-80b1-b14fe311e3e6" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/delegates.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/delegates.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/directory.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/directory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/documentation/Engine.html" beforeDir="false" afterPath="$PROJECT_DIR$/documentation/Engine.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/engine.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/engine.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/teste.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/teste.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,14 +15,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/engine.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="292" column="4" lean-forward="true" selection-start-line="292" selection-start-column="4" selection-end-line="294" selection-end-column="60" />
+            <state relative-caret-position="148">
+              <caret line="353" column="40" selection-start-line="353" selection-start-column="40" selection-end-line="353" selection-end-column="40" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
-                <element signature="e#295#4934#0" />
                 <element signature="e#1269#1341#0" />
                 <element signature="e#1383#1451#0" />
                 <element signature="e#1509#2026#0" />
@@ -48,15 +48,12 @@
                 <element signature="e#8356#8398#0" />
                 <element signature="e#8894#9057#0" />
                 <element signature="e#9108#9192#0" />
+                <element signature="e#9071#9178#0" />
                 <element signature="e#9441#9502#0" />
                 <element signature="e#9671#9695#0" />
                 <element signature="e#9725#9749#0" />
-                <element signature="e#9852#12233#0" />
-                <element signature="e#9919#10060#0" />
                 <element signature="e#10355#10376#0" />
                 <element signature="e#12265#13547#0" />
-                <element signature="e#12293#12454#0" />
-                <element signature="e#12506#12678#0" />
                 <element signature="e#12727#12788#0" />
                 <element signature="e#12819#12873#0" />
                 <element signature="e#12905#13171#0" />
@@ -65,6 +62,11 @@
               </folding>
             </state>
           </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/teste.py">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -84,8 +86,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/directory.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="417">
-              <caret line="53" column="17" lean-forward="true" selection-start-line="53" selection-start-column="17" selection-end-line="53" selection-end-column="17" />
+            <state relative-caret-position="434">
+              <caret line="54" column="8" lean-forward="true" selection-start-line="54" selection-start-column="8" selection-end-line="54" selection-end-column="8" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -93,10 +95,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/delegates.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="182">
+            <state relative-caret-position="833">
               <caret line="49" column="25" lean-forward="true" selection-start-line="49" selection-start-column="25" selection-end-line="49" selection-end-column="25" />
             </state>
           </provider>
@@ -115,6 +117,11 @@
         <option value="Python Script" />
       </list>
     </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>GameScene</find>
+    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -138,6 +145,8 @@
         <option value="$PROJECT_DIR$/src/fighter.py" />
         <option value="$PROJECT_DIR$/src/delegates.py" />
         <option value="$PROJECT_DIR$/src/directory.py" />
+        <option value="$PROJECT_DIR$/src/teste.py" />
+        <option value="$PROJECT_DIR$/src/engine.py" />
       </list>
     </option>
   </component>
@@ -186,7 +195,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.directory">
+  <component name="RunManager" selected="Python.engine">
     <configuration name="animation" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pyKombat" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -250,7 +259,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="gameObject" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="engine" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pyKombat" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -262,7 +271,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/gameObject.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/engine.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -271,7 +280,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="gameState" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="teste" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="pyKombat" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -283,7 +292,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/gameState.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/teste.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -294,11 +303,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.engine" />
+        <item itemvalue="Python.teste" />
         <item itemvalue="Python.directory" />
         <item itemvalue="Python.animation" />
         <item itemvalue="Python.cameraManager" />
-        <item itemvalue="Python.gameState" />
-        <item itemvalue="Python.gameObject" />
       </list>
     </recent_temporary>
   </component>
@@ -362,13 +371,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/engine.py</url>
-          <line>333</line>
-          <option name="timeStamp" value="4" />
+          <line>314</line>
+          <option name="timeStamp" value="5" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/engine.py</url>
-          <line>292</line>
-          <option name="timeStamp" value="5" />
+          <line>367</line>
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -447,6 +456,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/fightScene.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/delegates.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="833">
+          <caret line="49" column="25" lean-forward="true" selection-start-line="49" selection-start-column="25" selection-end-line="49" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/directory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="434">
+          <caret line="54" column="8" lean-forward="true" selection-start-line="54" selection-start-column="8" selection-end-line="54" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/fighter.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -454,13 +483,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$USER_HOME$/.PyCharmCE2018.3/system/python_stubs/854407629/builtins.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="182">
+          <caret line="815" column="8" selection-start-line="815" selection-start-column="8" selection-end-line="815" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/teste.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/engine.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="292" column="4" lean-forward="true" selection-start-line="292" selection-start-column="4" selection-end-line="294" selection-end-column="60" />
+        <state relative-caret-position="148">
+          <caret line="353" column="40" selection-start-line="353" selection-start-column="40" selection-end-line="353" selection-end-column="40" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
-            <element signature="e#295#4934#0" />
             <element signature="e#1269#1341#0" />
             <element signature="e#1383#1451#0" />
             <element signature="e#1509#2026#0" />
@@ -487,41 +525,18 @@
             <element signature="e#8356#8398#0" />
             <element signature="e#8894#9057#0" />
             <element signature="e#9108#9192#0" />
+            <element signature="e#9071#9178#0" />
             <element signature="e#9441#9502#0" />
             <element signature="e#9671#9695#0" />
             <element signature="e#9725#9749#0" />
-            <element signature="e#9852#12233#0" />
-            <element signature="e#9919#10060#0" />
             <element signature="e#10355#10376#0" />
             <element signature="e#12265#13547#0" />
-            <element signature="e#12293#12454#0" />
-            <element signature="e#12506#12678#0" />
             <element signature="e#12727#12788#0" />
             <element signature="e#12819#12873#0" />
             <element signature="e#12905#13171#0" />
             <element signature="e#13247#13340#0" />
             <element signature="e#13390#13547#0" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/fightScene.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/directory.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="417">
-          <caret line="53" column="17" lean-forward="true" selection-start-line="53" selection-start-column="17" selection-end-line="53" selection-end-column="17" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/delegates.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="182">
-          <caret line="49" column="25" lean-forward="true" selection-start-line="49" selection-start-column="25" selection-end-line="49" selection-end-column="25" />
         </state>
       </provider>
     </entry>
