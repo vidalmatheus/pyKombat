@@ -84,3 +84,5 @@ class Scorpion(Fighter):
         print("Flag04")
         self.anim[self.i].render(positionInDisplay, game)
 
+
+
