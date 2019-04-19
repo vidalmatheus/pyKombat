@@ -145,8 +145,7 @@ class Fighter:
 
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> crouch
         elif keyPressed(self.move[1]) and not self.hit:
-            # down facing animations are the 1st set
-            changeSpriteImage(self.walk, self.frame_walk)
+            print("CROUCH")
 
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> left
         elif keyPressed(self.move[2]) and not self.hit:
