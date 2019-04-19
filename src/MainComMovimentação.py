@@ -7,7 +7,7 @@ modeWidth = 800
 modeHeight = 600
 gameDisplay = pygame.display.set_mode((modeWidth,modeHeight))
 
-bg = pygame.image.load('Bckgrnd0.png')
+bg = pygame.image.load('test/Bckgrnd0.png')
 
         
         

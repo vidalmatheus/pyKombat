@@ -185,7 +185,7 @@ class Fighter:
                     self.Apunch_step = -1
                 if (self.frame_Apunching == 0):
                     self.end_Apunch = True
-                nextFrame += 1.4*frame_step
+                nextFrame += 1.2*frame_step
 
         # just dance :)
         elif not self.hit:
@@ -223,7 +223,7 @@ class Fighter:
                     self.hit_step = -1
                 if (self.frame_Ahit == 0):
                     self.hit = False
-                nextFrame += 1.5*frame_step
+                nextFrame += 1.6*frame_step
 
         #tick(120)
         return nextFrame
