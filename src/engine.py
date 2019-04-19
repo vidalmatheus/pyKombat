@@ -231,7 +231,7 @@ corta-las, e retornar os blitRect para a função update do display desenha-las 
 class Image:
     def __init__(self,local):
         self.local = local #local onde a imagem se encontra na pasta do jogo
-
+        self.anchor = [0.0,0.0]
         self.scale = 1.0
         self.blitRect = []
         """retangulo que determina a regigão que o display irá redesenhar,será  
@@ -239,6 +239,16 @@ class Image:
         if not local == "":
             self.Image = pygame.image.load(local).convert_alpha()
             self.Rect = self.Image.get_rect()
+            self.anchor = [self.Rect.center[0], self.Rect.center[1]]
+
+    def setAnchor(self, x, y):
+        """determina a posição da ancora(ponto que fica constante,pode-se dizer que é o ponto central) da imagem"""
+        self.anchor = [x, y]
+
+    def getAnchor(self,x,y):
+        """retorna a ancora"""
+        return self.anchor
+
     def getScale(self):
         """retorna o valor da 'scale' da imagem"""
         return self.scale
@@ -252,8 +262,8 @@ class Image:
     def drawImage(self,pos = (0.0,0.0), game = None):
         """irá retornar o rect do desenho anterios e o novo"""
         beforeRect = self.blitRect
-        self.blitRect = game.getDisplay().blit(self.Image,(int(pos[0]-self.Rect.center[0]),
-                                                           int(pos[1]-self.Rect.center[1])))
+        self.blitRect = game.getDisplay().blit(self.Image,(int(pos[0]-self.anchor[0]),
+                                                           int(pos[1]-self.anchor[1])))
         return beforeRect + self.blitRect
 
 
