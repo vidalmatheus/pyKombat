@@ -6,7 +6,7 @@ import game
 import engine
 import menu
 from random import randint
-import fighter
+import _fighter
 from pygame_functions import *
 
 
@@ -46,8 +46,8 @@ class Scenario:
                 x1 = player1.getX()
                 x2 = player2.getX()
                 if (player1.isWalking() and player2.isDancing()) or (player2.isWalking() and player1.isDancing()) or (player1.isWalking() and player2.isWalking()):
-                    player1.setX(x1-10)
-                    player2.setX(x2+10) 
+                    player1.setX(x1-12)
+                    player2.setX(x2+12) 
                 # caso houve soco fraco:
                 if ( player1.isPunching() and (player2.isWalking() or player2.isDancing()) ) or ( player2.isPunching() and (player1.isWalking() or player1.isDancing()) ):
                     if player1.isPunching():                        
@@ -62,8 +62,8 @@ class Scenario:
                     self.goBack(player1,player2)
     
     def addFigther(self,scenario):
-        player1 = fighter.Fighter(0) # 0: subzero
-        player2 = fighter.Fighter(1) # 1: scorpion
+        player1 = _fighter.Fighter(0) # 0: subzero
+        player2 = _fighter.Fighter(1) # 1: scorpion
         return player1,player2
     
     def goBack(self,player1,player2):
