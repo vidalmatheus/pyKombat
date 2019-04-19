@@ -8,40 +8,40 @@ Sprites: https://www.spriters-resource.com/snes/mortalkombat2/
 
 Schedule:
 
-[] Entender   Colisões com bonecos grandes em pygame( retângulo, masks)
+[In progress] Entender   Colisões com bonecos grandes em pygame( retângulo, masks)
 
-[] Estudar o   processo de formação de engine (áudio, images, animações) + UI
+[X] Estudar o   processo de formação de engine (áudio, images, animações) + UI
 
-[] Telas de menu
+[No more] Tela de   seleção de personagem
 
-[] Tela de   seleção de personagem
+[No more] Tela de   Rematch
 
-[] Tela de   seleção cenário
+[No more] Tela de Pause
 
-[] Tela de   seleção cenário
+[X] Trilha sonora
 
-[] Tela de   help 
-
-[] Tela de   Rematch
-
-[] Tela de Pause
-
-[] Trilha sonora
-
-[] Spritesheet   Subzero
-
-[] Spritesheet   Scorpion
-
-[] Cenários
-
-[] Lifebars
+[X] Cenários
 
  --------------------------------end week 3---------------------------------------------------
  
-[] Efeitos   Sonoros
+[X] Telas de menu 
+ 
+[X] Spritesheet   Subzero
 
-[] Movimentação
+[X] Spritesheet   Scorpion
 
+ --------------------------------end week 4---------------------------------------------------
+ 
+[X] Tela de   seleção cenário  
+
+[X] Tela de   help 
+  
+[In progress] Efeitos   Sonoros
+
+[In progress] Movimentação
+
+ --------------------------------end week 5---------------------------------------------------
+ 
 [] Jump
 
 [] Soco
@@ -50,29 +50,20 @@ Schedule:
 
 [] Morte normal
 
- --------------------------------end week 4---------------------------------------------------
- 
 [] Defesa
 
-[] Dizzy
+--------------------------------end week 6---------------------------------------------------
 
+[] Dizzy
 
 [] Fatality
 
 [] Fighter Wins
 
- --------------------------------end week 5---------------------------------------------------
- 
+--------------------------------end week 7---------------------------------------------------
+
 [] Special Move
 
 [] Revisão de Bugs
-
---------------------------------end week 6---------------------------------------------------
-
-[] Aperfeiçoamento e adição de personagens
-
---------------------------------end week 7---------------------------------------------------
-
-Folga
 
 --------------------------------end week 8---------------------------------------------------
