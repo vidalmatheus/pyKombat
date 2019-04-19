@@ -166,7 +166,7 @@ class Fighter:
 
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> jump
         elif keyPressed(self.move[0]) and not self.hit:
-            changeSpriteImage(self.walk, self.frame_walk)
+            print("JUMP")
 
         # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> jab
         elif ( (keyPress(self.combat[0]) and self.end_Apunch) or (not keyPress(self.combat[0]) and not self.end_Apunch) ) and (not self.hit): 
