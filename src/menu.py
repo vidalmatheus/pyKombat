@@ -10,7 +10,6 @@ import fightScene
 class Menu:
     pass
 
-
 class MainMenu(Menu):
     def __init__(self, game=engine.Game()):
         clock = pygame.time.Clock()
@@ -19,7 +18,7 @@ class MainMenu(Menu):
         game.getDisplay().blit(mainmenu, (0, 0))
         pygame.display.update()
         while True:
-            clock.tick(15)
+            clock.tick(10)
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()

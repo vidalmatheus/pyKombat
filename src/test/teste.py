@@ -1,6 +1,6 @@
 import pygame,os
 from pygame.locals import *
-import spritesheetloader
+from spriteshesptrietloader import *
 
 
 pygame.init()
