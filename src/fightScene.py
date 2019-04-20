@@ -46,7 +46,7 @@ class Scenario:
             x2 = player2.getX()  
             if(collide(player1,player2)):
                 # caso só encostem
-                if (player1.isWalking() and player2.isDancing()) or (player2.isWalking() and player1.isDancing()) or (player1.isWalking() and player2.isWalking()):
+                if (player1.isWalking() and (player2.isDancing() or player2.isCrouching()) ) or (player2.isWalking() and (player1.isDancing() or player1.isCrouching()) ) or (player1.isWalking() and player2.isWalking()):
                     player1.setX(x1-12)
                     player2.setX(x2+12) 
                 # caso houve soco fraco:

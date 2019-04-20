@@ -28,30 +28,30 @@ class Fighter:
     dance = 0
     walk = 1
     #jump = 2
-    #crouch = 3
+    crouch = 2
     # punches
-    Apunch = 2 # soco fraco
-    Bpunch = 3 # soco forte
+    Apunch = 3 # soco fraco
+    Bpunch = 4 # soco forte
     #Cpunch = 6 # soco agachado fraco
     #DPunch = 7 # soco agachado forte: gancho
     # kicks
-    Akick = 4 # chute fraco
-    Bkick = 5 # chute forte
+    Akick = 5 # chute fraco
+    Bkick = 6 # chute forte
     #Ckick = 10 # chute agachado fraco
     #Dkick = 11 # chute agachado forte: banda
     # hits
-    Ahit = 6 # soco fraco
-    Bhit = 7 # chute fraco
-    Chit = 8 # soco forte
+    Ahit = 7 # soco fraco
+    Bhit = 8 # chute fraco
+    Chit = 9 # soco forte
     #Dhit = 15 # chute agrachado fraco
     #Ehit = 16 # soco agachado fraco
-    Fhit = 9 # chute forte e soco forte agachado (gancho)
+    Fhit = 10 # chute forte e soco forte agachado (gancho)
     #Ghit = 18 # chute agachado forte: banda
     #Hhit = 19 # specialMove
     #fatalityHit = 20 # fatality hit
     # block
-    Ablock = 10
-    Bblock = 22
+    Ablock = 11
+    Bblock = 12
     # special move
     special = 23
     # fatality
@@ -89,7 +89,7 @@ class Fighter:
         self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/dance.png', self.danceLimit)) 
         self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/walk.png', self.walkLimit))
         #self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/jump.png', self.jumpLimit))
-        #self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/crouch.png', self.crouchLimit))
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/crouch.png', self.crouchLimit))
         # Punch sprites
         self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Apunch.png', self.punchLimit[0]))
         self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Bpunch.png', self.punchLimit[1]))
@@ -144,9 +144,9 @@ class Fighter:
         self.jumping = False  # Variável de status
 
         # Crouch vars
-        crouchCounter = 1
         self.crouching = False  # Variável de status
-        auxCrouch = 1
+        self.frame_crouching = 0
+        self.crouch_step = 1
 
         # Spin vars
         spinLeft = False
@@ -243,7 +243,18 @@ class Fighter:
 
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> crouch
         elif keyPressed(self.move[1]) and not self.hit:
-            print("CROUCH")
+            self.curr_sprite = self.spriteList[self.crouch]
+            self.crouching = self.setState()
+            if time > nextFrame:
+                moveSprite(self.spriteList[self.crouch], self.x, self.y, True)
+                self.setSprite(self.spriteList[self.crouch])
+                changeSpriteImage(self.spriteList[self.crouch], self.frame_crouching)
+                self.frame_crouching = (self.frame_crouching+self.crouch_step) % self.crouchLimit
+                print("frame_crouching = ", self.frame_crouching)
+                if self.frame_crouching == self.crouchLimit - 2:
+                    self.crouch_step = 0
+
+                nextFrame += 1*frame_step
 
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> left
         elif keyPressed(self.move[2]) and not self.hit:
@@ -343,8 +354,7 @@ class Fighter:
                 print("frame_Ablocking = ", self.frame_Ablocking)
                 if self.frame_Ablocking == self.blockLimit - 2:
                     self.Ablock_step = 0
-                #if self.frame_Ablocking == 0:
-                    
+
                 nextFrame += 1*frame_step
 
         # just dance :)
@@ -352,6 +362,9 @@ class Fighter:
             # reset block
             self.frame_Ablocking = 0
             self.Ablock_step = 1
+            # reset down
+            self.frame_crouching = 0
+            self.crouch_step = 1
             self.frame_Apunching = self.frame_walk = 0
             self.curr_sprite = self.spriteList[self.dance]
             self.dancing = self.setState()
@@ -368,12 +381,11 @@ class Fighter:
 
 
         
-        #Dhit = 15 # chute agrachado fraco
-        #Ehit = 16 # soco agachado fraco
+        #Dhit = 15 # soco agrachado fraco
+        #Ehit = 16 # chute agachado fraco
         #Fhit = 17 # chute forte e soco forte agachado (gancho)
         #Ghit = 18 # chute agachado forte: banda
         #Hhit = 19 # specialMove
-        #AblockHit = 20 hit em pé
         #BblockHit = 21 hit agachado
         
         # Ouch! Punch on a face (Ahit = 12 # soco fraco)
@@ -466,6 +478,9 @@ class Fighter:
                 nextFrame += 1*frame_step
                  
         
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
 
         tick(120)
         return nextFrame
@@ -486,6 +501,9 @@ class Fighter:
 
     def isWalking(self):
         return self.walking
+
+    def isCrouching(self):
+        return self.crouching
 
     def isDancing(self):
         return self.dancing
