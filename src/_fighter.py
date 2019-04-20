@@ -57,15 +57,31 @@ class Fighter:
     # fatality
     fatality = 24 
 
-    def __init__(self, id):
+    def __init__(self, id, scenario):
         self.fighterId = id
         self.name = self.fighterNames[id]
         self.move = self.fightMoves[id]
         self.combat = self.combatMoves[id] 
 
         # Position
-        self.x = 100+id*600
-        self.y = 350
+        self.x = 150+id*500
+        if scenario == 1:
+            self.y = 350
+        elif scenario == 2:
+            self.y = 370
+        elif scenario == 3:
+            self.y = 400
+        elif scenario == 4:
+            self.y = 370
+        elif scenario == 5:
+            self.y = 380
+        elif scenario == 6:
+            self.y = 380
+        elif scenario == 7:
+            self.y = 360
+        elif scenario == 8:
+            self.y = 395          
+
 
         # Loading sprites
         self.spriteList = []
@@ -187,7 +203,7 @@ class Fighter:
         self.Dhitting = False
         self.Ehitting = False
         self.Fhitting = False
-        self.GAhitting = False
+        self.Ghitting = False
         self.Hhitting = False
         self.frame_Ahit = 0
         self.frame_Bhit = 0

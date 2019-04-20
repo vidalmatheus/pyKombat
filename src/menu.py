@@ -91,7 +91,7 @@ class ScenarioMenu(Menu):
                 if event.type == pygame.KEYDOWN:
                     if event.key == 13:  # 13 == ENTER
                         # Entra no cenário escolhido
-                        sound.setSound("start")
+                        sound.setSound("fight")
                         sound.play()
                         fight = fightScene.Scenario(game,scenario)
                         fight.setScenario(scenario)

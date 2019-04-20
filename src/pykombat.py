@@ -15,5 +15,6 @@ if __name__ == "__main__":
     game = engine.Game()
     music = engine.Music()
     music.play()
+    music.volume(0.5)
     menu = menu.MainMenu(game)
 

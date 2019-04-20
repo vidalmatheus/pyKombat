@@ -17,8 +17,9 @@ class Scenario:
         self.game = game
         self.scenario = scenario
         pygame.mixer.music.stop()
-        #music = engine.Music("mkt")
-        #music.play()
+        music = engine.Music("mkt")
+        music.play()
+        music.volume(0.5)
 
     def setScenario(self, scenario):
         if scenario == 9:
@@ -46,47 +47,47 @@ class Scenario:
             if(collide(player1,player2)):
                 # caso só encostem
                 if (player1.isWalking() and player2.isDancing()) or (player2.isWalking() and player1.isDancing()) or (player1.isWalking() and player2.isWalking()):
-                    player1.setX(x1-18)
-                    player2.setX(x2+18) 
+                    player1.setX(x1-12)
+                    player2.setX(x2+12) 
                 # caso houve soco fraco:
                 if ( player1.isApunching() and (player2.isWalking() or player2.isDancing()) or player2.isApunching() ) or ( player2.isApunching() and (player1.isWalking() or player1.isDancing() or player1.isApunching()) ):
                     if player1.isApunching():                        
                         player2.takeHit("Apunching")
                     if player2.isApunching():    
                         player1.takeHit("Apunching")
-                    sound = engine.Sound("Hit2")  
-                    sound.play()
+                    print("socofraco")
+                    engine.Sound().roundHit()
                 # caso houve soco forte:
                 if ( player1.isBpunching() and (player2.isWalking() or player2.isDancing()) or player2.isBpunching() ) or ( player2.isBpunching() and (player1.isWalking() or player1.isDancing() or player1.isBpunching()) ):
                     if player1.isBpunching():                        
                         player2.takeHit("Bpunching")
                     if player2.isBpunching():    
                         player1.takeHit("Bpunching")
-                    sound = engine.Sound("Hit2")  
-                    sound.play()
+                    print("socoforte")
+                    engine.Sound().roundHit()
                 # caso houve chute fraco:
                 if ( player1.isAkicking() and (player2.isWalking() or player2.isDancing()) or player2.isAkicking() ) or ( player2.isAkicking() and (player1.isWalking() or player1.isDancing() or player1.isAkicking()) ):
                     if player1.isAkicking():                        
                         player2.takeHit("Akicking")
                     if player2.isAkicking():                        
                         player1.takeHit("Akicking")
-                    sound = engine.Sound("Hit2")  
-                    sound.play()
+                    print("chutefraco")
+                    engine.Sound().roundHit()
                 # caso houve chute forte:
                 if ( player1.isBkicking() and (player2.isWalking() or player2.isDancing()) or player2.isBkicking() ) or ( player2.isBkicking() and (player1.isWalking() or player1.isDancing() or player1.isBkicking()) ):
                     if player1.isBkicking():                        
                         player2.takeHit("Bkicking")
                     if player2.isBkicking():                        
                         player1.takeHit("Bkicking")
-                    sound = engine.Sound("Hit2")  
-                    sound.play()
+                    print("chuteforte")
+                    engine.Sound().roundHit()
                 # caso houve bloqueio:
                 if ( (player1.isApunching() or player1.isBpunching() or player1.isAkicking() or player1.isBkicking() ) and player2.isAblocking() ) or ( (player2.isApunching() or player2.isBpunching() or player2.isAkicking() or player2.isBkicking() ) and player1.isAblocking() ):
                     if player1.isAblocking():                        
                         player1.takeHit("Ablocking")
                     if player2.isAblocking():                        
                         player2.takeHit("Ablocking")
-
+                    print("ablock")
 
 
             for event in pygame.event.get():
@@ -96,8 +97,8 @@ class Scenario:
                 self.goBack(player1,player2)
     
     def addFigther(self,scenario):
-        player1 = _fighter.Fighter(0) # 0: subzero
-        player2 = _fighter.Fighter(1) # 1: scorpion
+        player1 = _fighter.Fighter(0,scenario) # 0: subzero
+        player2 = _fighter.Fighter(1,scenario) # 1: scorpion
         return player1,player2
     
     def goBack(self,player1,player2):
@@ -110,6 +111,7 @@ class Scenario:
         pygame.mixer.music.stop()
         music = engine.Music("intro")
         music.play()     
+        music.volume(0.5)
         menu.ScenarioMenu()
        
                         
