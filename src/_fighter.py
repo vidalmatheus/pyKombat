@@ -209,7 +209,7 @@ class Fighter:
         self.posFighter()
 
     def fight(self, time, nextFrame):
-        frame_step = 1000
+        frame_step = 65
 
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> right
         if keyPressed(self.move[3]) and not self.hit:
@@ -333,7 +333,9 @@ class Fighter:
 
         # just dance :)
         elif not self.hit:
+            # reset block
             self.frame_Ablocking = 0
+            self.Ablock_step = 1
             self.frame_Apunching = self.frame_walk = 0
             self.curr_sprite = self.spriteList[self.dance]
             self.dancing = self.setState()
@@ -439,10 +441,10 @@ class Fighter:
                 moveSprite(self.spriteList[self.Ablock], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.Ablock])
                 changeSpriteImage(self.spriteList[self.Ablock], self.frame_Ablocking)
-                self.frame_Ablocking = (self.frame_Ablocking+self.Ablock_step) % self.blockLimit
+                self.frame_Ablocking = (self.frame_Ablocking+self.hit_step) % self.blockLimit
                 if self.frame_Ablocking == self.blockLimit - 1:
                     self.hit_step = -1
-                if self.frame_Ablocking == 0:
+                if self.frame_Ablocking == 1:
                     self.hit_step = 1
                     self.hit = False
                 nextFrame += 1*frame_step
