@@ -17,8 +17,8 @@ class Scenario:
         self.game = game
         self.scenario = scenario
         pygame.mixer.music.stop()
-        music = engine.Music("mkt")
-        music.play()
+        #music = engine.Music("mkt")
+        #music.play()
 
     def setScenario(self, scenario):
         if scenario == 9:

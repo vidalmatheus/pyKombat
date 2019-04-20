@@ -11,14 +11,49 @@ class Fighter:
     combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]]
     danceLimit = 7
     walkLimit = 9
+    jumpLimit = 3
+    crouchLimit = 3
     punchLimit = [3, 11, 3, 5, 3]
-    kLimit = [7, 9, 7, 6, 3]
+    kickLimit = [7, 9, 7, 6, 3]
     hitLimit = [3, 3, 6, 2, 3, 14, 11, 10]
     bLimit = 3
     specialLimit = 4
     victoryLimit = 3
     fatalityLimit = 20
     dizzyLimit = 7
+
+    # indexação
+    # moves
+    dance = 0
+    walk = 1
+    jump = 2
+    crouch = 3
+    # punches
+    Apunch = 4 # soco fraco
+    Bpunch = 5 # soco forte
+    Cpunch = 6 # soco agachado fraco
+    DPunch = 7 # soco agachado forte: gancho
+    # kicks
+    Akick = 8 # chute fraco
+    Bkick = 9 # chute forte
+    Ckick = 10 # chute agachado fraco
+    Dkick = 11 # chute agachado forte: banda
+    # hits
+    Ahit = 12 # soco fraco
+    Bhit = 13 # chute fraco
+    Chit = 14 # soco forte
+    Dhit = 15 # chute agrachado fraco
+    Ehit = 16 # soco agachado fraco
+    Fhit = 17 # chute forte e soco forte agachado (gancho)
+    Ghit = 18 # chute agachado forte: banda
+    Hhit = 19 # specialMove
+    # block
+    Ablock = 21
+    Bblock = 22
+    # special move
+    special = 23
+    # fatality
+    fatal = 24 
 
     def __init__(self, id):
         self.fighterId = id
@@ -31,12 +66,31 @@ class Fighter:
         self.y = 350
 
         # Loading sprites
-        self.dance = makeSprite('../res/Char/'+str(self.name)+'/dance.png', self.danceLimit)
-        self.walk = makeSprite('../res/Char/'+str(self.name)+'/walk.png', self.walkLimit)
+        self.spriteList = []
+        # moves
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/dance.png', self.danceLimit)) 
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/walk.png', self.walkLimit))
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/jump.png', self.jumpLimit))
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/crouch.png', self.crouchLimit))
         # Punch sprites
-        self.Apunch = makeSprite('../res/Char/'+str(self.name)+'/Apunch.png', self.punchLimit[0])
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Apunch.png', self.punchLimit[0]))
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Bpunch.png', self.punchLimit[1]))
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Cpunch.png', self.punchLimit[2]))
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Dpunch.png', self.punchLimit[3]))
+        # Kick sprites
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Akick.png', self.kickLimit[0]))
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Bkick.png', self.kickLimit[1]))
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Ckick.png', self.kickLimit[2]))
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Dkick.png', self.kickLimit[3]))
         # Hit sprites
-        self.Ahit = makeSprite('../res/Char/'+str(self.name)+'/Ahit.png', self.hitLimit[0]) 
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Ahit.png', self.hitLimit[0])) # soco fraco
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Bhit.png', self.hitLimit[1])) # chute fraco
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Chit.png', self.hitLimit[2])) # soco forte
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Dhit.png', self.hitLimit[3])) # chute agrachado fraco
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Ehit.png', self.hitLimit[4])) # soco agachado fraco
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Fhit.png', self.hitLimit[5])) # chute forte e soco forte agachado (gancho)
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Ghit.png', self.hitLimit[6])) # chute agachado forte: banda
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Hhit.png', self.hitLimit[7])) # specialMove
 
         self.act()
 
@@ -91,6 +145,9 @@ class Fighter:
 
         # Kick vars
         self.Akicking = False
+        self.frame_Akicking = 0
+        self.Akick_step = 1
+        self.end_Akick = True
         self.Bkicking = False
         self.Ckicking = False
         self.Dkicking = False
@@ -110,7 +167,14 @@ class Fighter:
         # Hit vars
         self.hit = False
         self.hitName = ""
-        self.Apunch_hitting = False
+        self.Ahitting = False
+        self.Bhitting = False
+        self.Chitting = False
+        self.Dhitting = False
+        self.Ehitting = False
+        self.Fhitting = False
+        self.GAhitting = False
+        self.Hhitting = False
         self.frame_Ahit = 0
         self.hit_step = 1
         hitCounter = 1
@@ -121,22 +185,19 @@ class Fighter:
         X_atual = X_inicio
         X_fim = X_inicio + 327
 
-        moveSprite(self.walk, self.x, self.y, True)
-        moveSprite(self.dance, self.x, self.y, True)
+        self.posFighter()
 
     def fight(self, time, nextFrame):
         frame_step = 70
+
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> right
         if keyPressed(self.move[3]) and not self.hit:
-            self.curr_sprite = self.walk
+            self.curr_sprite = self.spriteList[walk]
             self.walking = self.setState()
-            hideSprite(self.dance)
-            hideSprite(self.Apunch)
-            hideSprite(self.Ahit)
             self.x += 2.5
-            moveSprite(self.walk, self.x, self.y, True)
-            showSprite(self.walk)
-            changeSpriteImage(self.walk, self.frame_walk)
+            moveSprite(self.spriteList[walk], self.x, self.y, True)
+            self.setSprite(self.spriteList[walk])
+            changeSpriteImage(self.spriteList[walk], self.frame_walk)
             if time > nextFrame:
                 # There are 9 frames of animation in each direction
                 self.frame_walk = (self.frame_walk+1) % self.walkLimit
@@ -149,15 +210,12 @@ class Fighter:
 
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> left
         elif keyPressed(self.move[2]) and not self.hit:
-            self.curr_sprite = self.walk
+            self.curr_sprite = self.spriteList[walk]
             self.walking = self.setState()
-            hideSprite(self.dance)
-            hideSprite(self.Apunch)
-            hideSprite(self.Ahit)
             self.x -= 2.5
-            moveSprite(self.walk, self.x, self.y, True)
-            showSprite(self.walk)
-            changeSpriteImage(self.walk, self.walkLimit-1-self.frame_walk)
+            moveSprite(self.spriteList[walk], self.x, self.y, True)
+            self.setSprite(self.spriteList[walk])
+            changeSpriteImage(self.spriteList[walk], self.walkLimit-1-self.frame_walk)
             if time > nextFrame:
                 # There are 9 frames of animation in each direction
                 self.frame_walk = (self.frame_walk+1) % self.walkLimit
@@ -168,16 +226,13 @@ class Fighter:
             print("JUMP")
 
         # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> jab
-        elif ( (keyPress(self.combat[0]) and self.end_Apunch) or (not keyPress(self.combat[0]) and not self.end_Apunch) ) and (not self.hit): 
-            self.curr_sprite = self.Apunch
+        elif ( (keyPress(self.combat[0]) and self.end_Apunch) or (not keyPress() and not self.end_Apunch) ) and (not self.hit): 
+            self.curr_sprite = self.spriteList[Apunch]
             self.Apunching = self.setState()
             self.end_Apunch = False
-            hideSprite(self.dance)
-            hideSprite(self.walk)
-            hideSprite(self.Ahit)
-            moveSprite(self.Apunch, self.x, self.y, True)
-            showSprite(self.Apunch)
-            changeSpriteImage(self.Apunch, self.frame_Apunching)
+            moveSprite(self.spriteList[Apunch], self.x, self.y, True)
+            self.setSprite(self.spriteList[Apunch])
+            changeSpriteImage(self.spriteList[Apunch], self.frame_Apunching)
             if time > nextFrame:
                 self.frame_Apunching = (self.frame_Apunching+self.Apunch_step) % self.punchLimit[0]
                 if (self.frame_Apunching == self.punchLimit[0]-1):
@@ -186,17 +241,30 @@ class Fighter:
                     self.end_Apunch = True
                 nextFrame += 1.2*frame_step
 
+        # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> kick
+        elif ( (keyPress(self.combat[2]) and self.end_Akick) or (not keyPress() and not self.end_Akick) ) and (not self.hit): 
+            self.curr_sprite = self.spriteList[Akick]
+            self.Akicking = self.setState()
+            self.end_Akick = False
+            moveSprite(self.spriteList[Akick], self.x, self.y, True)
+            self.setSprite(self.spriteList[Akick])
+            changeSpriteImage(self.spriteList[Akick], self.frame_Akicking)
+            if time > nextFrame:
+                self.frame_Akicking = (self.frame_Akicking+self.Akick_step) % self.kickLimit[0]
+                if (self.frame_Akicking == self.kickLimit[0]-1):
+                    self.Akick_step = -1
+                if (self.frame_Akicking == 0):
+                    self.end_Akick = True
+                nextFrame += 1.2*frame_step
+
         # just dance :)
         elif not self.hit:
             self.frame_Apunching = self.frame_walk = 0
-            self.curr_sprite = self.dance
+            self.curr_sprite = self.spriteList[dance]
             self.dancing = self.setState()
-            hideSprite(self.Apunch)
-            hideSprite(self.walk)
-            hideSprite(self.Ahit)
-            moveSprite(self.dance, self.x, self.y, True)
-            showSprite(self.dance)
-            changeSpriteImage(self.dance, self.frame_dance)
+            moveSprite(self.spriteList[dance], self.x, self.y, True)
+            self.setSprite(self.spriteList[dance])
+            changeSpriteImage(self.spriteList[dance], self.frame_dance)
             if time > nextFrame:
                 self.frame_dance = (self.frame_dance+self.dance_step) % self.danceLimit
                 if (self.frame_dance == self.danceLimit-1):
@@ -205,16 +273,24 @@ class Fighter:
                     self.dance_step = 1
                 nextFrame += frame_step
 
-        # Ouch! Punch on a face
+
+            #Chit = 14 # soco forte
+            #Dhit = 15 # chute agrachado fraco
+            #Ehit = 16 # soco agachado fraco
+            #Fhit = 17 # chute forte e soco forte agachado (gancho)
+            #Ghit = 18 # chute agachado forte: banda
+            #Hhit = 19 # specialMove
+
+        # Ouch! Punch on a face (Ahit = 12 # soco fraco)
         elif self.hit and self.hitName == "Apunching":
-            self.curr_sprite = self.Ahit
-            self.Apunch_hitting = self.setState()
-            hideSprite(self.Apunch)
-            hideSprite(self.walk)
-            hideSprite(self.dance)
-            moveSprite(self.Ahit, self.x, self.y, True)
-            showSprite(self.Ahit)
-            changeSpriteImage(self.Ahit, self.hitLimit[0]-1-self.frame_Ahit)
+            self.curr_sprite = self.spriteList[Ahit]
+            self.Ahitting = self.setState()
+            if self.fighterId == 0:
+                self.x -=10
+            else: self.x +=10
+            moveSprite(self.spriteList[Ahit], self.x, self.y, True)
+            self.setSprite(self.spriteList[Ahit])
+            changeSpriteImage(self.spriteList[Ahit], self.hitLimit[0]-1-self.frame_Ahit)
             if time > nextFrame:
                 # There are 8 frames of animation in each direction
                 self.frame_Ahit = (self.frame_Ahit+self.hit_step) % self.hitLimit[0]
@@ -223,8 +299,24 @@ class Fighter:
                 if (self.frame_Ahit == 0):
                     self.hit = False
                 nextFrame += 1.6*frame_step
+                
+        # Ouch! kick on a face (Bhit = 13 # chute fraco)
+        elif self.hit and self.hitName == "Akicking":
+            self.curr_sprite = self.Bhit
+            self.Apunch_hitting = self.setState()
+            moveSprite(self.spriteList[Bhit], self.x, self.y, True)
+            self.setSprite(self.spriteList[Bhit])
+            changeSpriteImage(self.spriteList[Bhit], self.hitLimit[1]-1-self.frame_Bhit)
+            if time > nextFrame:
+                # There are 8 frames of animation in each direction
+                self.frame_Bhit = (self.frame_Bhit+self.hit_step) % self.hitLimit[1]
+                if (self.frame_Bhit == self.hitLimit[1] - 1):
+                    self.hit_step = -1
+                if (self.frame_Bhit == 0):
+                    self.hit = False
+                nextFrame += 1.6*frame_step
 
-        #tick(120)
+        tick(120)
         return nextFrame
 
     def getX(self):
@@ -255,8 +347,8 @@ class Fighter:
         return self.hit
 
     def killPlayer(self):
-        killSprite(self.walk)
-        killSprite(self.dance)
+        for i in range(0,len(self.spriteList)-1):
+            killSprite(self.spriteList[i])
 
     def currentSprite(self):
         return self.curr_sprite
@@ -284,7 +376,14 @@ class Fighter:
         self.Dkicking = False
         self.Ekicking = False        
         # punch hits
-        self.Apunch_hitting = False
+        self.Ahitting = False
+        self.Bhitting = False
+        self.Chitting = False
+        self.Dhitting = False
+        self.Ehitting = False
+        self.Fhitting = False
+        self.GAhitting = False
+        self.Hhitting = False
         # blocks
         self.Ablocking = False
         self.Bblocking = False
@@ -296,3 +395,12 @@ class Fighter:
         # actual states
         return True
 
+    def setSprite(self,sprite):
+        for i in range(0,len(self.spriteList)-1):
+            if (not sprite == self.spriteList[i]):
+                hideSprite(self.spriteList[i])
+        showSprite(sprite)    
+
+    def posFighter(self):
+        for i in range(0,len(self.spriteList)-1):
+            moveSprite(self.spriteList[i], self.x, self.y, True)
