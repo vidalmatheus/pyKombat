@@ -177,6 +177,7 @@ class Fighter:
         self.GAhitting = False
         self.Hhitting = False
         self.frame_Ahit = 0
+        self.frame_Bhit = 0
         self.hit_step = 1
         hitCounter = 1
         comeHere = False
@@ -189,7 +190,7 @@ class Fighter:
         self.posFighter()
 
     def fight(self, time, nextFrame):
-        frame_step = 250
+        frame_step = 70
 
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> right
         if keyPressed(self.move[3]) and not self.hit:
@@ -239,13 +240,14 @@ class Fighter:
                 if (self.frame_Apunching == self.punchLimit[0]-1):
                     self.Apunch_step = -1
                 if (self.frame_Apunching == 0):
+                    self.Apunch_step = 1
                     self.end_Apunch = True
                 nextFrame += 1.2*frame_step
 
         # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> kick
         elif ( (keyPress(self.combat[2]) and self.end_Akick) or (not keyPressed() and not self.end_Akick) ) and (not self.hit): 
             self.curr_sprite = self.spriteList[self.Akick]
-            print("frame_kickung = ", self.frame_Akicking)
+            print("frame_kicking = ", self.frame_Akicking)
             self.Akicking = self.setState()
             self.end_Akick = False
             moveSprite(self.spriteList[self.Akick], self.x, self.y, True)
@@ -256,6 +258,7 @@ class Fighter:
                 if (self.frame_Akicking == self.kickLimit[0]-1):
                     self.Akick_step = -1
                 if (self.frame_Akicking == 0):
+                    self.Akick_step = 1
                     self.end_Akick = True
                 nextFrame += 1.2*frame_step
 
@@ -289,13 +292,15 @@ class Fighter:
             self.Ahitting = self.setState()
             moveSprite(self.spriteList[self.Ahit], self.x, self.y, True)
             self.setSprite(self.spriteList[self.Ahit])
-            changeSpriteImage(self.spriteList[self.Ahit], self.hitLimit[0]-1-self.frame_Ahit)
+            changeSpriteImage(self.spriteList[self.Ahit], self.frame_Ahit)
             if time > nextFrame:
                 # There are 8 frames of animation in each direction
+                print("fram_Ahit =",self.frame_Ahit)
                 self.frame_Ahit = (self.frame_Ahit+self.hit_step) % self.hitLimit[0]
                 if (self.frame_Ahit == self.hitLimit[0] - 1):
                     self.hit_step = -1
                 if (self.frame_Ahit == 0):
+                    self.hit_step = 1
                     self.hit = False
                 nextFrame += 1.6*frame_step
                 
@@ -304,17 +309,18 @@ class Fighter:
             self.curr_sprite = self.spriteList[self.Bhit]
             self.Apunch_hitting = self.setState()
             if self.fighterId == 0:
-                self.x -=5
-            else: self.x +=5
+                self.x -=0.8
+            else: self.x +=0.8
             moveSprite(self.spriteList[self.Bhit], self.x, self.y, True)
             self.setSprite(self.spriteList[self.Bhit])
-            changeSpriteImage(self.spriteList[self.Bhit], self.hitLimit[1]-1-self.frame_Bhit)
+            changeSpriteImage(self.spriteList[self.Bhit], self.frame_Bhit)
             if time > nextFrame:
                 # There are 8 frames of animation in each direction
                 self.frame_Bhit = (self.frame_Bhit+self.hit_step) % self.hitLimit[1]
                 if (self.frame_Bhit == self.hitLimit[1] - 1):
                     self.hit_step = -1
                 if (self.frame_Bhit == 0):
+                    self.hit_step = 1
                     self.hit = False
                 nextFrame += 1.6*frame_step
 
@@ -340,16 +346,18 @@ class Fighter:
 
     def isDancing(self):
         return self.dancing
-        print(self.walking)
 
-    def isPunching(self):
-        return self.Apunching
+    def isApunching(self):
+        return self.Apunching 
+    
+    def isAkicking(self):
+        return self.Akicking
     
     def isHit(self):
         return self.hit
 
     def killPlayer(self):
-        for i in range(0,len(self.spriteList)-1):
+        for i in range(0,len(self.spriteList)):
             killSprite(self.spriteList[i])
 
     def currentSprite(self):
@@ -398,11 +406,11 @@ class Fighter:
         return True
 
     def setSprite(self,sprite):
-        for i in range(0,len(self.spriteList)-1):
+        for i in range(0,len(self.spriteList)):
             if (not sprite == self.spriteList[i]):
                 hideSprite(self.spriteList[i])
         showSprite(sprite)    
 
     def posFighter(self):
-        for i in range(0,len(self.spriteList)-1):
+        for i in range(0,len(self.spriteList)):
             moveSprite(self.spriteList[i], self.x, self.y, True)

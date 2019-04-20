@@ -49,12 +49,20 @@ class Scenario:
                     player1.setX(x1-12)
                     player2.setX(x2+12) 
                 # caso houve soco fraco:
-                if ( player1.isPunching() and (player2.isWalking() or player2.isDancing()) ) or ( player2.isPunching() and (player1.isWalking() or player1.isDancing()) ):
-                    if player1.isPunching():                        
+                if ( player1.isApunching() and (player2.isWalking() or player2.isDancing()) ) or ( player2.isApunching() and (player1.isWalking() or player1.isDancing()) ):
+                    if player1.isApunching():                        
                         player2.takeHit("Apunching")
                     else: player1.takeHit("Apunching")
                     sound = engine.Sound("Hit2")  
                     sound.play()
+                # caso houve chute fraco:
+                if ( player1.isAkicking() and (player2.isWalking() or player2.isDancing()) ) or ( player2.isAkicking() and (player1.isWalking() or player1.isDancing()) ):
+                    if player1.isAkicking():                        
+                        player2.takeHit("Akicking")
+                    else: player1.takeHit("Akicking")
+                    sound = engine.Sound("Hit2")  
+                    sound.play()
+                
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
