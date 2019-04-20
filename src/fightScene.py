@@ -40,34 +40,60 @@ class Scenario:
             aux1 = player1.fight(clock(),nextFrame1)
             nextFrame1 = aux1
             aux2 = player2.fight(clock(),nextFrame2)
-            nextFrame2 = aux2    
+            nextFrame2 = aux2
+            x1 = player1.getX()
+            x2 = player2.getX()  
             if(collide(player1,player2)):
                 # caso só encostem
-                x1 = player1.getX()
-                x2 = player2.getX()
                 if (player1.isWalking() and player2.isDancing()) or (player2.isWalking() and player1.isDancing()) or (player1.isWalking() and player2.isWalking()):
-                    player1.setX(x1-12)
-                    player2.setX(x2+12) 
+                    player1.setX(x1-18)
+                    player2.setX(x2+18) 
                 # caso houve soco fraco:
-                if ( player1.isApunching() and (player2.isWalking() or player2.isDancing()) ) or ( player2.isApunching() and (player1.isWalking() or player1.isDancing()) ):
+                if ( player1.isApunching() and (player2.isWalking() or player2.isDancing()) or player2.isApunching() ) or ( player2.isApunching() and (player1.isWalking() or player1.isDancing() or player1.isApunching()) ):
                     if player1.isApunching():                        
                         player2.takeHit("Apunching")
-                    else: player1.takeHit("Apunching")
+                    if player2.isApunching():    
+                        player1.takeHit("Apunching")
+                    sound = engine.Sound("Hit2")  
+                    sound.play()
+                # caso houve soco forte:
+                if ( player1.isBpunching() and (player2.isWalking() or player2.isDancing()) or player2.isBpunching() ) or ( player2.isBpunching() and (player1.isWalking() or player1.isDancing() or player1.isBpunching()) ):
+                    if player1.isBpunching():                        
+                        player2.takeHit("Bpunching")
+                    if player2.isBpunching():    
+                        player1.takeHit("Bpunching")
                     sound = engine.Sound("Hit2")  
                     sound.play()
                 # caso houve chute fraco:
-                if ( player1.isAkicking() and (player2.isWalking() or player2.isDancing()) ) or ( player2.isAkicking() and (player1.isWalking() or player1.isDancing()) ):
+                if ( player1.isAkicking() and (player2.isWalking() or player2.isDancing()) or player2.isAkicking() ) or ( player2.isAkicking() and (player1.isWalking() or player1.isDancing() or player1.isAkicking()) ):
                     if player1.isAkicking():                        
                         player2.takeHit("Akicking")
-                    else: player1.takeHit("Akicking")
+                    if player2.isAkicking():                        
+                        player1.takeHit("Akicking")
                     sound = engine.Sound("Hit2")  
                     sound.play()
-                
+                # caso houve chute forte:
+                if ( player1.isBkicking() and (player2.isWalking() or player2.isDancing()) or player2.isBkicking() ) or ( player2.isBkicking() and (player1.isWalking() or player1.isDancing() or player1.isBkicking()) ):
+                    if player1.isBkicking():                        
+                        player2.takeHit("Bkicking")
+                    if player2.isBkicking():                        
+                        player1.takeHit("Bkicking")
+                    sound = engine.Sound("Hit2")  
+                    sound.play()
+                # caso houve bloqueio:
+                if ( (player1.isApunching() or player1.isBpunching() or player1.isAkicking() or player1.isBkicking() ) and player2.isAblocking() ) or ( (player2.isApunching() or player2.isBpunching() or player2.isAkicking() or player2.isBkicking() ) and player1.isAblocking() ):
+                    if player1.isAblocking():                        
+                        player1.takeHit("Ablocking")
+                    if player2.isAblocking():                        
+                        player2.takeHit("Ablocking")
+
+
+
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
-                if keyPressed("esc"):
-                    self.goBack(player1,player2)
+            if keyPressed("esc"):
+                self.goBack(player1,player2)
     
     def addFigther(self,scenario):
         player1 = _fighter.Fighter(0) # 0: subzero
