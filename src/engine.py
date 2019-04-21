@@ -2,6 +2,7 @@ import pygame,os
 from pygame.locals import *
 import numpy as np
 import delegates
+from random import randint
 
 class GameScene:
 
@@ -628,22 +629,36 @@ class GameScene:
 class Sound:
     def __init__(self, name = "selection"):
         self.sound = pygame.mixer.Sound('../res/Sound/'+ name +'.ogg')  
-    def getSound():
+    def getSound(self):
         return self.sound
     def setSound(self,name):
         self.sound = pygame.mixer.Sound('../res/Sound/'+ name +'.ogg') 
+        return self.sound
     def play(self):
         self.sound.play()
+    def roundHit(self):
+        self.sounds = []
+        for i in range(0,12):
+            self.sounds.append('Hit'+str(i+1))
+        aux = randint(0,11)
+        temp = self.setSound(self.sounds[aux])
+        temp.play()
 
 class Music:
     def __init__(self, name = "intro"):
         self.music = pygame.mixer.music.load('../res/Music/'+ name +'.ogg')  
-    def getMusic():
+    def getMusic(self):
         return self.music
     def setMusic(self,name):
         self.music = pygame.mixer.music.load('../res/Music/'+ name +'.ogg') 
     def play(self,times = 1):
-        pygame.mixer.music.play(1)
+        pygame.mixer.music.play(times)
+    def pause(self):
+        pygame.mixer.music.pause()
+    def resume(self):
+        pygame.music.unpause()
+    def volume(self, value=1):
+        pygame.mixer.music.set_volume(value)
           
         
         

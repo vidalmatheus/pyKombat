@@ -27,53 +27,69 @@ class Fighter:
     # moves
     dance = 0
     walk = 1
-    #jump = 2
-    #crouch = 3
+    jump = 2
+    crouch = 3
     # punches
-    Apunch = 2 # soco fraco
-    Bpunch = 3 # soco forte
+    Apunch = 4 # soco fraco
+    Bpunch = 5 # soco forte
     #Cpunch = 6 # soco agachado fraco
     #DPunch = 7 # soco agachado forte: gancho
     # kicks
-    Akick = 4 # chute fraco
-    Bkick = 5 # chute forte
+    Akick = 6 # chute fraco
+    Bkick = 7 # chute forte
     #Ckick = 10 # chute agachado fraco
     #Dkick = 11 # chute agachado forte: banda
     # hits
-    Ahit = 6 # soco fraco
-    Bhit = 7 # chute fraco
-    Chit = 8 # soco forte
+    Ahit = 8 # soco fraco
+    Bhit = 9 # chute fraco
+    Chit = 10 # soco forte
     #Dhit = 15 # chute agrachado fraco
     #Ehit = 16 # soco agachado fraco
-    Fhit = 9 # chute forte e soco forte agachado (gancho)
+    Fhit = 11 # chute forte e soco forte agachado (gancho)
     #Ghit = 18 # chute agachado forte: banda
     #Hhit = 19 # specialMove
     #fatalityHit = 20 # fatality hit
     # block
-    Ablock = 10
-    Bblock = 22
+    Ablock = 12
+    Bblock = 13
     # special move
     special = 23
     # fatality
     fatality = 24 
 
-    def __init__(self, id):
+    def __init__(self, id, scenario):
         self.fighterId = id
         self.name = self.fighterNames[id]
         self.move = self.fightMoves[id]
         self.combat = self.combatMoves[id] 
 
         # Position
-        self.x = 100+id*600
-        self.y = 350
+        self.x = 150+id*500
+        if scenario == 1:
+            self.y = 350
+        elif scenario == 2:
+            self.y = 370
+        elif scenario == 3:
+            self.y = 400
+        elif scenario == 4:
+            self.y = 370
+        elif scenario == 5:
+            self.y = 380
+        elif scenario == 6:
+            self.y = 380
+        elif scenario == 7:
+            self.y = 360
+        elif scenario == 8:
+            self.y = 395          
+
 
         # Loading sprites
         self.spriteList = []
         # moves
         self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/dance.png', self.danceLimit)) 
         self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/walk.png', self.walkLimit))
-        #self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/jump.png', self.jumpLimit))
-        #self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/crouch.png', self.crouchLimit))
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/jump.png', self.jumpLimit))
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/crouch.png', self.crouchLimit))
         # Punch sprites
         self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Apunch.png', self.punchLimit[0]))
         self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Bpunch.png', self.punchLimit[1]))
@@ -124,13 +140,16 @@ class Fighter:
 
         # Jump vars
         self.jumpHeight = 5  # Altura do pulo
-        self.jumpCounter = 2*self.jumpHeight+1  # Contador correspodente à subida e descida do pulo
+        self.jumpCounter = 0  # Contador correspodente à subida e descida do pulo
         self.jumping = False  # Variável de status
+        self.frame_jumping = 0
+        self.jump_step = 1
+        self.end_jump = True
 
         # Crouch vars
-        crouchCounter = 1
         self.crouching = False  # Variável de status
-        auxCrouch = 1
+        self.frame_crouching = 0
+        self.crouch_step = 1
 
         # Spin vars
         spinLeft = False
@@ -187,7 +206,7 @@ class Fighter:
         self.Dhitting = False
         self.Ehitting = False
         self.Fhitting = False
-        self.GAhitting = False
+        self.Ghitting = False
         self.Hhitting = False
         self.frame_Ahit = 0
         self.frame_Bhit = 0
@@ -209,12 +228,14 @@ class Fighter:
         self.posFighter()
 
     def fight(self, time, nextFrame):
-        frame_step = 1000
+        frame_step = 65
 
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> right
-        if keyPressed(self.move[3]) and not self.hit:
+        if keyPressed(self.move[3]) and not self.hit and not self.jumping:
             self.curr_sprite = self.spriteList[self.walk]
             self.walking = self.setState()
+            self.setEndState()
+            print("frame_walk = ", self.frame_walk)
             self.x += 3.5
             moveSprite(self.spriteList[self.walk], self.x, self.y, True)
             self.setSprite(self.spriteList[self.walk])
@@ -227,12 +248,25 @@ class Fighter:
 
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> crouch
         elif keyPressed(self.move[1]) and not self.hit:
-            print("CROUCH")
+            self.curr_sprite = self.spriteList[self.crouch]
+            self.crouching = self.setState()
+            self.setEndState() 
+            if time > nextFrame:
+                moveSprite(self.spriteList[self.crouch], self.x, self.y, True)
+                self.setSprite(self.spriteList[self.crouch])
+                changeSpriteImage(self.spriteList[self.crouch], self.frame_crouching)
+                self.frame_crouching = (self.frame_crouching+self.crouch_step) % self.crouchLimit
+                print("frame_crouching = ", self.frame_crouching)
+                if self.frame_crouching == self.crouchLimit - 2:
+                    self.crouch_step = 0
+
+                nextFrame += 1*frame_step
 
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> left
-        elif keyPressed(self.move[2]) and not self.hit:
+        elif keyPressed(self.move[2]) and not self.hit and not self.jumping:
             self.curr_sprite = self.spriteList[self.walk]
             self.walking = self.setState()
+            self.setEndState() 
             self.x -= 3.5
             moveSprite(self.spriteList[self.walk], self.x, self.y, True)
             self.setSprite(self.spriteList[self.walk])
@@ -243,13 +277,42 @@ class Fighter:
                 nextFrame += frame_step
 
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> jump
-        elif keyPressed(self.move[0]) and not self.hit:
-            print("JUMP")
+        elif ( (keyPressed(self.move[0]) and self.end_jump) or (not keyPressed(self.move[0]) and not self.end_jump) ) and (not self.hit): 
+            self.curr_sprite = self.spriteList[self.jump]
+            self.jumping = self.setState()
+            self.end_jump = self.setEndState()    
+            if time > nextFrame:
+                if keyPressed(self.move[2]):
+                    self.x -= 15
+                if keyPressed(self.move[3]):
+                    self.x += 15
+                moveSprite(self.spriteList[self.jump], self.x, self.y, True)
+                self.setSprite(self.spriteList[self.jump])
+                self.y -= (self.jumpHeight-self.jumpCounter)*12   
+                changeSpriteImage(self.spriteList[self.jump], self.frame_jumping)
+                print("frame_jumping = ", self.frame_jumping)
+                if (self.jumpCounter < self.jumpHeight -1 or self.jumpCounter > self.jumpHeight +1): # subindo ou descendo
+                    self.frame_jumping = 1
+                if (self.jumpHeight - 1 <= self.jumpCounter <= self.jumpHeight + 1): # quase parado
+                    self.frame_jumping = 2
+                if (self.jumpCounter == 2*self.jumpHeight):
+                    self.frame_jumping = 0
+                    self.jumpCounter = -1
+                    if clock() > nextFrame:
+                        self.setSprite(self.spriteList[self.jump])
+                        changeSpriteImage(self.spriteList[self.jump], self.frame_jumping)
+                        moveSprite(self.spriteList[self.jump], self.x, self.y, True)
+                        self.end_jump = True
+                self.jumpCounter += 1
+                print("jumpCounter =", self.jumpCounter)
+                print("end_jump =", self.end_jump)
+                nextFrame += 1*frame_step
 
         # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> jab
         elif ( (keyPressed(self.combat[0]) and self.end_Apunch) or (not keyPressed(self.combat[0]) and not self.end_Apunch) ) and (not self.hit) : 
             self.curr_sprite = self.spriteList[self.Apunch]
             self.Apunching = self.setState()
+            self.setEndState() 
             self.end_Apunch = False         
             if time > nextFrame:
                 moveSprite(self.spriteList[self.Apunch], self.x, self.y, True)
@@ -268,7 +331,7 @@ class Fighter:
         elif ( (keyPressed(self.combat[1]) and self.end_Bpunch) or (not keyPressed(self.combat[1]) and not self.end_Bpunch) ) and (not self.hit) : 
             self.curr_sprite = self.spriteList[self.Bpunch]
             self.Bpunching = self.setState()
-            self.end_Bpunch = False
+            self.end_Bpunch = self.setEndState()
             if time > nextFrame:
                 moveSprite(self.spriteList[self.Bpunch], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.Bpunch])                
@@ -282,7 +345,7 @@ class Fighter:
         elif ( (keyPressed(self.combat[2]) and self.end_Akick) or (not keyPressed(self.combat[2]) and not self.end_Akick) ) and (not self.hit): 
             self.curr_sprite = self.spriteList[self.Akick]
             self.Akicking = self.setState()
-            self.end_Akick = False
+            self.end_Akick = self.setEndState()
             if time > nextFrame:
                 moveSprite(self.spriteList[self.Akick], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.Akick])
@@ -300,7 +363,7 @@ class Fighter:
         elif ( (keyPressed(self.combat[3]) and self.end_Bkick) or (not keyPressed(self.combat[3]) and not self.end_Bkick) ) and (not self.hit): 
             self.curr_sprite = self.spriteList[self.Bkick]
             self.Bkicking = self.setState()
-            self.end_Bkick = False
+            self.end_Bkick = self.setEndState()
             if time > nextFrame:
                 moveSprite(self.spriteList[self.Bkick], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.Bkick])
@@ -319,6 +382,7 @@ class Fighter:
         elif keyPressed(self.combat[5]) and not self.hit: 
             self.curr_sprite = self.spriteList[self.Ablock]
             self.Ablocking = self.setState()
+            self.setEndState() 
             if time > nextFrame:
                 moveSprite(self.spriteList[self.Ablock], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.Ablock])
@@ -327,14 +391,21 @@ class Fighter:
                 print("frame_Ablocking = ", self.frame_Ablocking)
                 if self.frame_Ablocking == self.blockLimit - 2:
                     self.Ablock_step = 0
-                #if self.frame_Ablocking == 0:
-                    
+
                 nextFrame += 1*frame_step
 
         # just dance :)
         elif not self.hit:
+            # reset block (hold type)
             self.frame_Ablocking = 0
-            self.frame_Apunching = self.frame_walk = 0
+            self.Ablock_step = 1
+            # reset down (hold type)
+            self.frame_crouching = 0
+            self.crouch_step = 1
+            # reset other movement
+            self.frame_walk = self.frame_jumping = self.jumpCounter = 0
+            # reset combat frames
+            self.frame_Apunching = self.frame_Bpunching = self.frame_Akicking = self.frame_Bkicking = 0
             self.curr_sprite = self.spriteList[self.dance]
             self.dancing = self.setState()
             if time > nextFrame:
@@ -348,14 +419,12 @@ class Fighter:
                     self.dance_step = 1
                 nextFrame += frame_step
 
-
         
-        #Dhit = 15 # chute agrachado fraco
-        #Ehit = 16 # soco agachado fraco
+        #Dhit = 15 # soco agrachado fraco
+        #Ehit = 16 # chute agachado fraco
         #Fhit = 17 # chute forte e soco forte agachado (gancho)
         #Ghit = 18 # chute agachado forte: banda
         #Hhit = 19 # specialMove
-        #AblockHit = 20 hit em pé
         #BblockHit = 21 hit agachado
         
         # Ouch! Punch on a face (Ahit = 12 # soco fraco)
@@ -399,8 +468,8 @@ class Fighter:
             self.curr_sprite = self.spriteList[self.Chit]
             self.Chitting = self.setState()
             if self.fighterId == 0:
-                self.x -=0.1
-            else: self.x +=0.1
+                self.x -=0.5
+            else: self.x +=0.5
             moveSprite(self.spriteList[self.Chit], self.x, self.y, True)
             self.setSprite(self.spriteList[self.Chit])
             changeSpriteImage(self.spriteList[self.Chit], self.frame_Chit)
@@ -439,15 +508,18 @@ class Fighter:
                 moveSprite(self.spriteList[self.Ablock], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.Ablock])
                 changeSpriteImage(self.spriteList[self.Ablock], self.frame_Ablocking)
-                self.frame_Ablocking = (self.frame_Ablocking+self.Ablock_step) % self.blockLimit
+                self.frame_Ablocking = (self.frame_Ablocking+self.hit_step) % self.blockLimit
                 if self.frame_Ablocking == self.blockLimit - 1:
                     self.hit_step = -1
-                if self.frame_Ablocking == 0:
+                if self.frame_Ablocking == 1:
                     self.hit_step = 1
                     self.hit = False
                 nextFrame += 1*frame_step
                  
         
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
 
         tick(120)
         return nextFrame
@@ -468,6 +540,9 @@ class Fighter:
 
     def isWalking(self):
         return self.walking
+
+    def isCrouching(self):
+        return self.crouching
 
     def isDancing(self):
         return self.dancing
@@ -500,6 +575,10 @@ class Fighter:
     def takeHit(self,by):
         self.hit = True
         self.hitName = by
+    
+    def stopHit(self):
+        self.hit = False
+        self.hitName = ""
         
     def setState(self):
         # moves
@@ -526,7 +605,7 @@ class Fighter:
         self.Dhitting = False
         self.Ehitting = False
         self.Fhitting = False
-        self.GAhitting = False
+        self.Ghitting = False
         self.Hhitting = False
         # blocks
         self.Ablocking = False
@@ -538,6 +617,17 @@ class Fighter:
 
         # actual states
         return True
+
+    def setEndState(self):
+        self.end_jump = True
+        self.end_Apunch = True
+        self.end_Bpunch = True
+        self.end_Akick = True
+        self.end_Bkick = True
+        self.end_special = True
+
+        return False
+
 
     def setSprite(self,sprite):
         for i in range(0,len(self.spriteList)):
