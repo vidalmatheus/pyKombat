@@ -629,10 +629,10 @@ class GameScene:
 class Sound:
     def __init__(self, name = "selection"):
         self.sound = pygame.mixer.Sound('../res/Sound/'+ name +'.ogg')  
-    def getSound():
+    def getSound(self):
         return self.sound
     def setSound(self,name):
-        return pygame.mixer.Sound('../res/Sound/'+ name +'.ogg') 
+        self.sound = pygame.mixer.Sound('../res/Sound/'+ name +'.ogg') 
     def play(self):
         self.sound.play()
     def roundHit(self):
@@ -642,14 +642,10 @@ class Sound:
         aux = randint(0,11)
         self.setSound(self.sounds[aux]).play()
 
-         
-
-
-
 class Music:
     def __init__(self, name = "intro"):
         self.music = pygame.mixer.music.load('../res/Music/'+ name +'.ogg')  
-    def getMusic():
+    def getMusic(self):
         return self.music
     def setMusic(self,name):
         self.music = pygame.mixer.music.load('../res/Music/'+ name +'.ogg') 
