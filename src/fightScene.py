@@ -43,7 +43,21 @@ class Scenario:
             aux2 = player2.fight(clock(),nextFrame2)
             nextFrame2 = aux2
             x1 = player1.getX()
-            x2 = player2.getX()  
+            x2 = player2.getX()
+            
+            # caso encostem na tela
+            if player1.getX() < 20:
+                player1.setX(20) 
+
+            if player2.getX() < 20:
+                player2.setX(20)  
+            
+            if player1.getX() > (800-20):
+                player1.setX(800-20) 
+
+            if player2.getX() > (800-20):
+                player2.setX(800-20)    
+                
             if(collide(player1,player2)):
                 # caso só encostem
                 if (player1.isWalking() and (player2.isDancing() or player2.isCrouching()) ) or (player2.isWalking() and (player1.isDancing() or player1.isCrouching()) ) or (player1.isWalking() and player2.isWalking()):
@@ -66,7 +80,7 @@ class Scenario:
                     print("socoforte")
                     engine.Sound().roundHit()
                 # caso houve chute fraco:
-                if ( player1.isAkicking() and (player2.isWalking() or player2.isDancing()) or player2.isAkicking() ) or ( player2.isAkicking() and (player1.isWalking() or player1.isDancing() or player1.isAkicking()) ):
+                if ( player1.isAkicking() and (player2.isWalking() or player2.isDancing() or player2.isAkicking() or player2.isCrouching() )) or ( player2.isAkicking() and (player1.isWalking() or player1.isDancing() or player1.isAkicking() or player1.isCrouching()) ):
                     if player1.isAkicking():                        
                         player2.takeHit("Akicking")
                     if player2.isAkicking():                        
