@@ -140,7 +140,7 @@ class Fighter:
 
         # Jump vars
         self.jumpHeight = 5  # Altura do pulo
-        self.jumpCounter = 2*self.jumpHeight+1  # Contador correspodente à subida e descida do pulo
+        self.jumpCounter = 0  # Contador correspodente à subida e descida do pulo
         self.jumping = False  # Variável de status
         self.frame_jumping = 0
         self.jump_step = 1
@@ -231,10 +231,11 @@ class Fighter:
         frame_step = 65
 
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> right
-        if keyPressed(self.move[3]) and not self.hit:
+        if keyPressed(self.move[3]) and not self.hit and not self.jumping:
             self.curr_sprite = self.spriteList[self.walk]
             self.walking = self.setState()
-            self.setEndState() 
+            self.setEndState()
+            print("frame_walk = ", self.frame_walk)
             self.x += 3.5
             moveSprite(self.spriteList[self.walk], self.x, self.y, True)
             self.setSprite(self.spriteList[self.walk])
@@ -262,7 +263,7 @@ class Fighter:
                 nextFrame += 1*frame_step
 
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> left
-        elif keyPressed(self.move[2]) and not self.hit:
+        elif keyPressed(self.move[2]) and not self.hit and not self.jumping:
             self.curr_sprite = self.spriteList[self.walk]
             self.walking = self.setState()
             self.setEndState() 
@@ -276,21 +277,35 @@ class Fighter:
                 nextFrame += frame_step
 
         # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> jump
-        elif ( (keyPressed(self.move[0]) and self.end_jump) or (not keyPressed(self.move[0]) and not self.end_jump) ) and (not self.hit) : 
+        elif ( (keyPressed(self.move[0]) and self.end_jump) or (not keyPressed(self.move[0]) and not self.end_jump) ) and (not self.hit): 
             self.curr_sprite = self.spriteList[self.jump]
             self.jumping = self.setState()
-            self.end_jump = self.setEndState()         
+            self.end_jump = self.setEndState()    
             if time > nextFrame:
+                if keyPressed(self.move[2]):
+                    self.x -= 15
+                if keyPressed(self.move[3]):
+                    self.x += 15
                 moveSprite(self.spriteList[self.jump], self.x, self.y, True)
-                self.setSprite(self.spriteList[self.jump])   
+                self.setSprite(self.spriteList[self.jump])
+                self.y -= (self.jumpHeight-self.jumpCounter)*12   
                 changeSpriteImage(self.spriteList[self.jump], self.frame_jumping)
-                self.frame_jumping = (self.frame_jumping+self.jump_step) % (self.jumpLimit+1)
-                if (self.frame_jumping == self.jumpLimit-1):
-                    self.jump_step = -1
-                if (self.frame_jumping == self.jumpLimit):
+                print("frame_jumping = ", self.frame_jumping)
+                if (self.jumpCounter < self.jumpHeight -1 or self.jumpCounter > self.jumpHeight +1): # subindo ou descendo
+                    self.frame_jumping = 1
+                if (self.jumpHeight - 1 <= self.jumpCounter <= self.jumpHeight + 1): # quase parado
+                    self.frame_jumping = 2
+                if (self.jumpCounter == 2*self.jumpHeight):
                     self.frame_jumping = 0
-                    self.jump_step = 1
-                    self.end_jump = True
+                    self.jumpCounter = -1
+                    if clock() > nextFrame:
+                        self.setSprite(self.spriteList[self.jump])
+                        changeSpriteImage(self.spriteList[self.jump], self.frame_jumping)
+                        moveSprite(self.spriteList[self.jump], self.x, self.y, True)
+                        self.end_jump = True
+                self.jumpCounter += 1
+                print("jumpCounter =", self.jumpCounter)
+                print("end_jump =", self.end_jump)
                 nextFrame += 1*frame_step
 
         # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> jab
@@ -381,13 +396,16 @@ class Fighter:
 
         # just dance :)
         elif not self.hit:
-            # reset block
+            # reset block (hold type)
             self.frame_Ablocking = 0
             self.Ablock_step = 1
-            # reset down
+            # reset down (hold type)
             self.frame_crouching = 0
             self.crouch_step = 1
-            self.frame_Apunching = self.frame_walk = 0
+            # reset other movement
+            self.frame_walk = self.frame_jumping = self.jumpCounter = 0
+            # reset combat frames
+            self.frame_Apunching = self.frame_Bpunching = self.frame_Akicking = self.frame_Bkicking = 0
             self.curr_sprite = self.spriteList[self.dance]
             self.dancing = self.setState()
             if time > nextFrame:
@@ -400,7 +418,6 @@ class Fighter:
                 if (self.frame_dance == 0):
                     self.dance_step = 1
                 nextFrame += frame_step
-
 
         
         #Dhit = 15 # soco agrachado fraco
@@ -451,8 +468,8 @@ class Fighter:
             self.curr_sprite = self.spriteList[self.Chit]
             self.Chitting = self.setState()
             if self.fighterId == 0:
-                self.x -=0.1
-            else: self.x +=0.1
+                self.x -=0.5
+            else: self.x +=0.5
             moveSprite(self.spriteList[self.Chit], self.x, self.y, True)
             self.setSprite(self.spriteList[self.Chit])
             changeSpriteImage(self.spriteList[self.Chit], self.frame_Chit)
@@ -558,6 +575,10 @@ class Fighter:
     def takeHit(self,by):
         self.hit = True
         self.hitName = by
+    
+    def stopHit(self):
+        self.hit = False
+        self.hitName = ""
         
     def setState(self):
         # moves
@@ -584,7 +605,7 @@ class Fighter:
         self.Dhitting = False
         self.Ehitting = False
         self.Fhitting = False
-        self.GAhitting = False
+        self.Ghitting = False
         self.Hhitting = False
         # blocks
         self.Ablocking = False

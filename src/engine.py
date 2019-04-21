@@ -633,6 +633,7 @@ class Sound:
         return self.sound
     def setSound(self,name):
         self.sound = pygame.mixer.Sound('../res/Sound/'+ name +'.ogg') 
+        return self.sound
     def play(self):
         self.sound.play()
     def roundHit(self):
@@ -640,7 +641,8 @@ class Sound:
         for i in range(0,12):
             self.sounds.append('Hit'+str(i+1))
         aux = randint(0,11)
-        self.setSound(self.sounds[aux]).play()
+        temp = self.setSound(self.sounds[aux])
+        temp.play()
 
 class Music:
     def __init__(self, name = "intro"):

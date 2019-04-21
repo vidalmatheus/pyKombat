@@ -72,7 +72,7 @@ class Scenario:
                     if player2.isAkicking():                        
                         player1.takeHit("Akicking")
                     print("chutefraco")
-                    engine.Sound().roundHit()
+                    engine.Sound().roundHit()     
                 # caso houve chute forte:
                 if ( player1.isBkicking() and (player2.isWalking() or player2.isDancing()) or player2.isBkicking() ) or ( player2.isBkicking() and (player1.isWalking() or player1.isDancing() or player1.isBkicking()) ):
                     if player1.isBkicking():                        
@@ -87,6 +87,8 @@ class Scenario:
                         player1.takeHit("Ablocking")
                     if player2.isAblocking():                        
                         player2.takeHit("Ablocking")
+                    player1.setX(x1-12)
+                    player2.setX(x2+12) 
                     print("ablock")
 
 
