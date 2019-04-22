@@ -19,6 +19,7 @@ class Fighter:
     hitLimit = [3, 3, 6, 2, 3, 14, 11, 10]
     blockLimit = 3
     specialLimit = [4,7]
+    hitSpecialLimit = [3,1]
     victoryLimit = 3
     fatalityLimit = 20
     dizzyLimit = 7
@@ -47,15 +48,15 @@ class Fighter:
     Ehit = 16 # soco agachado fraco
     Fhit = 17 # chute forte e soco forte agachado (gancho)
     Ghit = 18 # chute agachado forte: banda
-    #Hhit = 19 # specialMove
-    #fatalityHit = 20 # fatality hit
+    Hhit = 19 # specialMove
     # block
-    Ablock = 19
-    Bblock = 20
+    Ablock = 20
+    Bblock = 21
     # special move
-    special = 21
+    special = 22
     # fatality
-    fatality = 24 
+    fatality = 23 
+    fatalityHit = 24 # fatality hit
 
     def __init__(self, id, scenario):
         self.fighterId = id
@@ -108,7 +109,7 @@ class Fighter:
         self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Ehit.png', self.hitLimit[4])) # soco agachado fraco
         self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Fhit.png', self.hitLimit[5])) # chute forte e soco forte agachado (gancho)
         self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Ghit.png', self.hitLimit[6])) # chute agachado forte: banda
-        #self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Hhit.png', self.hitLimit[7])) # specialMove
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/hitSpecial.png', self.hitSpecialLimit[self.fighterId])) # specialMove
         # blocking sprites
         self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Ablock.png', self.blockLimit)) # defesa em pé
         self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Bblock.png', self.blockLimit)) # defesa agachado
@@ -216,7 +217,7 @@ class Fighter:
         self.Ehitting = False
         self.Fhitting = False
         self.Ghitting = False
-        self.Hhitting = False
+        self.hitSpecial = False
         self.frame_Ahit = 0
         self.frame_Bhit = 0
         self.frame_Chit = 0
@@ -372,9 +373,7 @@ class Fighter:
                                     self.Bblock_step = 0      
 
 
-                        #--------------Hit em agachado--------------------
-                        #Hhit = 19 # specialMove
-                        #BblockHit = 21 hit agachado                  
+                        #--------------Hits em agachado--------------------
                         
                         #Ehit = 16 # chute ou soco agachado fraco
                         elif self.downHit and self.hitName == "Ehit":
@@ -547,7 +546,6 @@ class Fighter:
 
 
             #--------------Hit em pé--------------------
-            #Hhit = 19 # specialMove
             
             # Ouch! Punch on a face (Ahit = 12 # soco fraco)
             elif self.hit and self.hitName == "Apunching":
@@ -648,7 +646,25 @@ class Fighter:
                     self.frame_Ghit = (self.frame_Ghit+self.hit_step) % self.hitLimit[6]
                     if (self.frame_Ghit == self.hitLimit[6] - 1):
                         self.hit = False
-                    nextFrame += 1.2*frame_step     
+                    nextFrame += 1.2*frame_step
+
+            #Hhit = 19 # specialMove
+            elif self.hit and self.hitName == "special":
+                self.curr_sprite = self.spriteList[self.Hhit]
+                self.hitSpecial = self.setState()
+                moveSprite(self.spriteList[self.Hhit], self.x, self.y, True)
+                if self.fighterId == 0: # subzero
+                    self.x -= 70
+                self.setSprite(self.spriteList[self.Hhit])
+                changeSpriteImage(self.spriteList[self.Hhit], self.frame_Hhit)
+                if self.fighterId == 1: # scorpion
+                    tick(30)
+                if time > nextFrame:
+                    self.frame_Hhit = (self.frame_Hhit+self.hit_step) % self.hitSpecialLimit[self.fighterId]
+                    if (self.frame_Hhit == self.hitSpecialLimit[self.fighterId] - 1):
+                        self.hit = False
+                    nextFrame += 1.2*frame_step
+                 
 
             #blockHit! Defesa em pé.
             elif self.hit and self.hitName == "Ablocking":
@@ -747,6 +763,9 @@ class Fighter:
     def isDkicking(self):
         return self.Dkicking
 
+    def isSpecialMove(self):
+        return self.specialMove
+
     def isAblocking(self):
         return self.Ablocking      
 
@@ -755,6 +774,9 @@ class Fighter:
     
     def isHit(self):
         return self.hit
+
+    def ishitSpecial(self):
+        return self.hitSpecial
 
     def killPlayer(self):
         for i in range(0,len(self.spriteList)):
@@ -799,7 +821,7 @@ class Fighter:
         self.Ehitting = False
         self.Fhitting = False
         self.Ghitting = False
-        self.Hhitting = False
+        self.hitSpecial = False
         # blocks
         self.Ablocking = False
         self.Bblocking = False

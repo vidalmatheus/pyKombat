@@ -646,9 +646,9 @@ def tick(fps):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-    #if (keys[pygame.K_ESCAPE]):
-    #    pygame.quit()
-    #    sys.exit()
+    if (keys[pygame.K_BACKSPACE]):
+        pygame.quit()
+        sys.exit()
     gameClock.tick(fps)
     return gameClock.get_fps()
 

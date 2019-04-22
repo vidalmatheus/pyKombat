@@ -66,7 +66,7 @@ class Scenario:
                     player1.setX(x1-15)
                     player2.setX(x2+15) 
                 # caso houve soco fraco:
-                if ( player1.isApunching() and (player2.isWalking() or player2.isDancing() or player2.isApunching()) ) or ( player2.isApunching() and (player1.isWalking() or player1.isDancing() or player1.isApunching()) ):
+                if ( player1.isApunching() and (player2.isWalking() or player2.isDancing() or player2.isApunching() or player2.ishitSpecial()) ) or ( player2.isApunching() and (player1.isWalking() or player1.isDancing() or player1.isApunching()) ):
                     if player1.isApunching():                        
                         player2.takeHit("Apunching")
                     if player2.isApunching():    
@@ -165,7 +165,19 @@ class Scenario:
                     player1.setX(x1-12)
                     player2.setX(x2+12) 
                     print("bblock")
-                
+                # caso houve special
+                if ( player1.isSpecialMove() and (player2.isWalking() or player2.isDancing() or player2.isApunching()) ) or ( player2.isSpecialMove() and (player1.isWalking() or player1.isDancing() or player1.isApunching()) ):
+                    if player1.isSpecialMove():   
+                        engine.Sound("IceSound2").play()                     
+                        player2.takeHit("special")
+                    if player2.isSpecialMove(): 
+                        engine.Sound("Hit10").play()   
+                        player1.takeHit("special")
+                    print("socofraco")
+                    
+
+
+
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
