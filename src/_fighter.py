@@ -293,6 +293,7 @@ class Fighter:
                         if ( (keyPressed(self.combat[0]) and self.end_Cpunch) or (not self.end_Cpunch) ) and (not self.hit) and not self.downHit:
                             self.curr_sprite = self.spriteList[self.Cpunch]
                             self.Cpunching = self.setState()
+                            self.crouching = True
                             self.setEndState() 
                             self.end_Cpunch = False         
                             if time > nextFrame:
@@ -310,6 +311,7 @@ class Fighter:
                         elif ( (keyPressed(self.combat[1]) and self.end_Dpunch) or ( not self.end_Dpunch) ) and (not self.hit) and not self.downHit:
                             self.curr_sprite = self.spriteList[self.Dpunch]
                             self.Dpunching = self.setState()
+                            self.crouching = True
                             self.setEndState() 
                             self.end_Dpunch = False         
                             if time > nextFrame:
@@ -325,8 +327,10 @@ class Fighter:
                                     self.end_Dpunch = True
                         # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> crouch and kick
                         elif ( (keyPressed(self.combat[2]) and self.end_Ckick) or ( not self.end_Ckick) ) and (not self.hit) and not self.downHit: 
+                            print("Crouch_Kick!")
                             self.curr_sprite = self.spriteList[self.Ckick]
                             self.Ckicking = self.setState()
+                            self.crouching = True
                             self.end_Ckick = self.setEndState()
                             if time > nextFrame:
                                 moveSprite(self.spriteList[self.Ckick], self.x, self.y, True)
@@ -343,6 +347,7 @@ class Fighter:
                         elif ( (keyPressed(self.combat[3]) and self.end_Dkick) or ( not self.end_Dkick) ) and (not self.hit) and not self.downHit: 
                             self.curr_sprite = self.spriteList[self.Dkick]
                             self.Dkicking = self.setState()
+                            self.crouching = True
                             self.end_Dkick = self.setEndState()
                             if time > nextFrame:
                                 moveSprite(self.spriteList[self.Dkick], self.x, self.y, True)
@@ -356,6 +361,7 @@ class Fighter:
                         elif keyPressed(self.combat[5]) and not self.hit and not self.downHit: 
                             self.curr_sprite = self.spriteList[self.Bblock]
                             self.Bblocking = self.setState()
+                            self.crouching = True
                             self.setEndState() 
                             if time > nextFrame:
                                 moveSprite(self.spriteList[self.Bblock], self.x, self.y, True)
@@ -390,6 +396,7 @@ class Fighter:
                         elif (self.downHit or self.hit) and self.hitName == "Bblocking":
                             self.curr_sprite = self.spriteList[self.Bblock]
                             self.Bblocking = self.setState()
+                            self.crouching = True
                             if time > nextFrame:
                                 moveSprite(self.spriteList[self.Bblock], self.x, self.y, True)
                                 self.setSprite(self.spriteList[self.Bblock])
@@ -411,7 +418,6 @@ class Fighter:
             
             # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> jab
             elif ((keyPressed(self.combat[0]) and self.end_Apunch) or ( not self.end_Apunch) ) and (not self.hit) : 
-                print("flag!")
                 self.curr_sprite = self.spriteList[self.Apunch]
                 self.Apunching = self.setState()
                 self.setEndState() 
@@ -712,6 +718,9 @@ class Fighter:
     def isWalking(self):
         return self.walking
 
+    def isJumping(self):
+        return self.jumping
+
     def isCrouching(self):
         return self.crouching
 
@@ -764,7 +773,6 @@ class Fighter:
     
     def takeDownHit(self,by):
         self.downHit = True
-        print("flag")
         self.hitName = by
 
     def stopHit(self):

@@ -61,7 +61,7 @@ class Scenario:
                 
             if(collide(player1,player2)):
                 # caso só encostem
-                if (player1.isWalking() and (player2.isDancing() or player2.isCrouching()) ) or (player2.isWalking() and (player1.isDancing() or player1.isCrouching()) ) or (player1.isWalking() and player2.isWalking()):
+                if ( (player1.isWalking() or player1.isJumping()) and (player2.isDancing() or player2.isCrouching()) ) or ((player2.isWalking() or player2.isJumping()) and (player1.isDancing() or player1.isCrouching()) ) or (player1.isWalking() and player2.isWalking()) or (player1.isJumping() and player2.isJumping()):
                     player1.setX(x1-15)
                     player2.setX(x2+15) 
                 # caso houve soco fraco:
@@ -85,7 +85,7 @@ class Scenario:
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5 
                 # caso houve chute fraco:
-                if ( player1.isAkicking() and (player2.isWalking() or player2.isDancing() or player2.isAkicking() or player2.isCrouching()) ) or ( player2.isAkicking() and (player1.isWalking() or player1.isDancing() or player1.isAkicking() or player1.isCrouching()) ):
+                if ( player1.isAkicking() and (player2.isWalking() or player2.isDancing() or player2.isAkicking() or player2.isCrouching()) and not player2.isBblocking() ) or ( player2.isAkicking() and (player1.isWalking() or player1.isDancing() or player1.isAkicking() or player1.isCrouching() and not player1.isBblocking()) ):
                     if player1.isAkicking():                        
                         player2.takeHit("Akicking")
                     if player2.isAkicking():                        
@@ -120,17 +120,17 @@ class Scenario:
                         player2.takeHit("Cpunching")
                     if player2.isCpunching() or player2.isCkicking():    
                         player1.takeHit("Cpunching")
-                    print("socofraco")
+                    print("socofraco!!!!!!!")
                     engine.Sound("Hit0").play()
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5
                 # caso houve soco agachado forte em alguém em pé:
-                if ( player1.isDpunching()  or player2.isDpunching() ): 
+                if ( (player1.isDpunching() and (not player2.isAblocking() and not player2.isBblocking())  )  or player2.isDpunching() and (not player1.isAblocking() and not player1.isBblocking()) ): 
                     if player1.isDpunching():                        
                         player2.takeHit("Bkicking")
                     if player2.isDpunching():    
                         player1.takeHit("Bkicking")
-                    print("socofraco")
+                    print("socofraco$#$")
                     engine.Sound("Hit0").play()
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5 
@@ -145,17 +145,17 @@ class Scenario:
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5 
                 # caso houve soco ou chute agachado fraco em alguém agachado:
-                if ( ( (player1.isCpunching() or player1.isCkicking()) and player2.isCrouching()  )  or ( (player2.isCpunching() or player2.isCkicking()) and player1.isCrouching()  ) ): # falta adicionar o Bblock
+                if ( ( (player1.isCpunching() or player1.isCkicking()) and player2.isCrouching() and not player2.isBblocking()  )  or ( (player2.isCpunching() or player2.isCkicking()) and player1.isCrouching() and not player1.isBblocking() ) ):
                     if player1.isCpunching() or player1.isCkicking():                        
                         player2.takeDownHit("Ehit")
                     if player2.isCpunching() or player2.isCkicking():    
                         player1.takeDownHit("Ehit")
-                    print("socofraco")
+                    print("socofraco**")
                     engine.Sound("Hit0").play()
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5
                 # caso houve bloqueio agachado:
-                if ( (player1.isCpunching() or player1.isDpunching() or player1.isBkicking() or player1.isCkicking() ) and player2.isBblocking() ) or ( (player2.isCpunching() or player2.isDpunching() or player2.isBkicking() or player2.isCkicking() ) and player1.isBblocking() ):
+                if ( (player1.isCpunching() or player1.isDpunching() or player1.isAkicking() or player1.isCkicking() ) and player2.isBblocking() ) or ( (player2.isCpunching() or player2.isDpunching() or player2.isAkicking() or player2.isCkicking() ) and player1.isBblocking() ):
                     if player1.isBblocking():                        
                         player1.takeDownHit("Bblocking")
                     if player2.isBblocking():                        
