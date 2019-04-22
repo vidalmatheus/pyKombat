@@ -382,9 +382,8 @@ class Fighter:
                 self.curr_sprite = self.spriteList[self.Apunch]
                 self.Apunching = self.setState()
                 self.setEndState() 
-                self.end_Apunch = False
-                print("(clock,nextframe)=",time,nextFrame)         
-                if time > nextFrame:
+                self.end_Apunch = False         
+                if clock() > 0.2*nextFrame:
                     moveSprite(self.spriteList[self.Apunch], self.x, self.y, True)
                     self.setSprite(self.spriteList[self.Apunch])   
                     changeSpriteImage(self.spriteList[self.Apunch], self.frame_Apunching)
@@ -492,7 +491,7 @@ class Fighter:
                 self.frame_walk = self.frame_jumping = 0
                 # reset combat frames
                 self.frame_Apunching = self.frame_Bpunching = self.frame_Cpunching = self.frame_Dpunching = self.frame_Akicking = self.frame_Bkicking = self.frame_Ckicking = self.frame_Dkicking = 0
-                #self.setEndState()
+                self.setEndState()
                 # start to dance
                 self.curr_sprite = self.spriteList[self.dance]
                 self.dancing = self.setState()

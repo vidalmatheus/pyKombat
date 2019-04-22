@@ -382,9 +382,8 @@ class Fighter:
                 self.curr_sprite = self.spriteList[self.Apunch]
                 self.Apunching = self.setState()
                 self.setEndState() 
-                self.end_Apunch = False
-                print("(clock,nextframe)=",time,nextFrame)         
-                if time > nextFrame:
+                self.end_Apunch = False         
+                if clock() > nextFrame:
                     moveSprite(self.spriteList[self.Apunch], self.x, self.y, True)
                     self.setSprite(self.spriteList[self.Apunch])   
                     changeSpriteImage(self.spriteList[self.Apunch], self.frame_Apunching)
@@ -396,8 +395,6 @@ class Fighter:
                         self.Apunch_step = 1
                         self.end_Apunch = True
                     nextFrame += 1*frame_step
-                print("frame_apunching =", self.frame_Apunching)
-                print("end_Apunch =", self.end_Apunch)
 
             # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> strong punch
             elif ( (keyPressed(self.combat[1]) and self.end_Bpunch) or (not keyPressed(self.combat[1]) and not self.end_Bpunch) ) and (not self.hit) : 
@@ -492,7 +489,7 @@ class Fighter:
                 self.frame_walk = self.frame_jumping = 0
                 # reset combat frames
                 self.frame_Apunching = self.frame_Bpunching = self.frame_Cpunching = self.frame_Dpunching = self.frame_Akicking = self.frame_Bkicking = self.frame_Ckicking = self.frame_Dkicking = 0
-                #self.setEndState()
+                self.setEndState()
                 # start to dance
                 self.curr_sprite = self.spriteList[self.dance]
                 self.dancing = self.setState()
@@ -630,6 +627,8 @@ class Fighter:
                         self.hit = False
                     nextFrame += 1*frame_step
             
+            print("frame_apunching =", self.frame_Apunching)
+            print("end_Apunch =", self.end_Apunch)
 
         else:              
              # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> jump    

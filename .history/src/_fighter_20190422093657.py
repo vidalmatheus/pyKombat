@@ -384,7 +384,7 @@ class Fighter:
                 self.setEndState() 
                 self.end_Apunch = False
                 print("(clock,nextframe)=",time,nextFrame)         
-                if time > nextFrame:
+                if time > 0.01*nextFrame:
                     moveSprite(self.spriteList[self.Apunch], self.x, self.y, True)
                     self.setSprite(self.spriteList[self.Apunch])   
                     changeSpriteImage(self.spriteList[self.Apunch], self.frame_Apunching)

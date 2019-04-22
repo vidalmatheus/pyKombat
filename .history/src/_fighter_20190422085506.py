@@ -47,13 +47,13 @@ class Fighter:
     Ehit = 16 # soco agachado fraco
     Fhit = 17 # chute forte e soco forte agachado (gancho)
     Ghit = 18 # chute agachado forte: banda
-    #Hhit = 19 # specialMove
+    Hhit = 19 # specialMove
     #fatalityHit = 20 # fatality hit
     # block
-    Ablock = 19
+    Ablock = 20
     #Bblock = 13
     # special move
-    special = 20
+    special = 21
     # fatality
     fatality = 24 
 
@@ -233,7 +233,7 @@ class Fighter:
         self.posFighter()
 
     def fight(self, time, nextFrame):
-        frame_step = 60
+        frame_step = 65
         
         if not self.jumping:
             # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> jump
@@ -377,13 +377,12 @@ class Fighter:
                     nextFrame += 1*frame_step
             
             # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> jab
-            elif ((keyPressed(self.combat[0]) and self.end_Apunch) or ( not keyPressed(self.combat[0]) and not self.end_Apunch) ) and (not self.hit) : 
+            elif ((keyPressed(self.combat[0]) and self.end_Apunch) or ( not self.end_Apunch) ) and (not self.hit) : 
                 print("flag!")
                 self.curr_sprite = self.spriteList[self.Apunch]
                 self.Apunching = self.setState()
                 self.setEndState() 
-                self.end_Apunch = False
-                print("(clock,nextframe)=",time,nextFrame)         
+                self.end_Apunch = False         
                 if time > nextFrame:
                     moveSprite(self.spriteList[self.Apunch], self.x, self.y, True)
                     self.setSprite(self.spriteList[self.Apunch])   
@@ -396,8 +395,6 @@ class Fighter:
                         self.Apunch_step = 1
                         self.end_Apunch = True
                     nextFrame += 1*frame_step
-                print("frame_apunching =", self.frame_Apunching)
-                print("end_Apunch =", self.end_Apunch)
 
             # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> strong punch
             elif ( (keyPressed(self.combat[1]) and self.end_Bpunch) or (not keyPressed(self.combat[1]) and not self.end_Bpunch) ) and (not self.hit) : 
@@ -489,10 +486,10 @@ class Fighter:
                 self.frame_crouching = 0
                 self.crouch_step = 1
                 # reset other movement
-                self.frame_walk = self.frame_jumping = 0
+                self.frame_walk = self.frame_jumping 
                 # reset combat frames
                 self.frame_Apunching = self.frame_Bpunching = self.frame_Cpunching = self.frame_Dpunching = self.frame_Akicking = self.frame_Bkicking = self.frame_Ckicking = self.frame_Dkicking = 0
-                #self.setEndState()
+                self.setEndState()
                 # start to dance
                 self.curr_sprite = self.spriteList[self.dance]
                 self.dancing = self.setState()
@@ -629,7 +626,6 @@ class Fighter:
                         self.hit_step = 1
                         self.hit = False
                     nextFrame += 1*frame_step
-            
 
         else:              
              # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> jump    
