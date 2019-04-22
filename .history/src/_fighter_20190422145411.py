@@ -289,6 +289,7 @@ class Fighter:
                         self.frame_crouching = (self.frame_crouching+self.crouch_step) % self.crouchLimit
                     if self.frame_crouching == self.crouchLimit - 2:
                         self.crouch_step = 0
+
                         # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> crouch and jab
                         if ( (keyPressed(self.combat[0]) and self.end_Cpunch) or (not self.end_Cpunch) ) and (not self.hit) and not self.downHit:
                             self.curr_sprite = self.spriteList[self.Cpunch]
@@ -352,6 +353,11 @@ class Fighter:
                                 if (self.frame_Dkicking == 0):
                                     self.end_Dkick = True
                         
+                        #--------------Hit em agachado--------------------
+                        #Hhit = 19 # specialMove
+                        #BblockHit = 21 hit agachado
+                        
+                        
                         # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> defesa agachado
                         elif keyPressed(self.combat[5]) and not self.hit and not self.downHit: 
                             self.curr_sprite = self.spriteList[self.Bblock]
@@ -363,12 +369,7 @@ class Fighter:
                                 changeSpriteImage(self.spriteList[self.Bblock], self.frame_Bblocking)
                                 self.frame_Bblocking = (self.frame_Bblocking+self.Bblock_step) % self.blockLimit
                                 if self.frame_Bblocking == self.blockLimit - 2:
-                                    self.Bblock_step = 0      
-
-
-                        #--------------Hit em agachado--------------------
-                        #Hhit = 19 # specialMove
-                        #BblockHit = 21 hit agachado                  
+                                    self.Bblock_step = 0                        
                         
                         #Ehit = 16 # chute ou soco agachado fraco
                         elif self.downHit and self.hitName == "Ehit":
@@ -400,12 +401,10 @@ class Fighter:
                                 if self.frame_Bblocking == 1:
                                     self.hit_step = 1
                                     self.hit = False
-                                    self.downHit = False
 
                         elif not self.downHit:
                             self.frame_Bblocking = 0
                             self.Bblock_step = 1
-                            self.Bblocking = False
                                             
                     nextFrame += 1*frame_step
             
@@ -542,6 +541,7 @@ class Fighter:
 
             #--------------Hit em pé--------------------
             #Hhit = 19 # specialMove
+            #BblockHit = 21 hit agachado
             
             # Ouch! Punch on a face (Ahit = 12 # soco fraco)
             elif self.hit and self.hitName == "Apunching":
@@ -743,10 +743,7 @@ class Fighter:
         return self.Dkicking
 
     def isAblocking(self):
-        return self.Ablocking      
-
-    def isBblocking(self):
-        return self.Bblocking    
+        return self.Ablocking        
     
     def isHit(self):
         return self.hit

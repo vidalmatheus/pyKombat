@@ -289,6 +289,7 @@ class Fighter:
                         self.frame_crouching = (self.frame_crouching+self.crouch_step) % self.crouchLimit
                     if self.frame_crouching == self.crouchLimit - 2:
                         self.crouch_step = 0
+                        print("frame_Bblocking =",self.frame_Bblocking)
                         # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> crouch and jab
                         if ( (keyPressed(self.combat[0]) and self.end_Cpunch) or (not self.end_Cpunch) ) and (not self.hit) and not self.downHit:
                             self.curr_sprite = self.spriteList[self.Cpunch]
@@ -402,10 +403,7 @@ class Fighter:
                                     self.hit = False
                                     self.downHit = False
 
-                        elif not self.downHit:
-                            self.frame_Bblocking = 0
-                            self.Bblock_step = 1
-                            self.Bblocking = False
+
                                             
                     nextFrame += 1*frame_step
             
@@ -542,6 +540,7 @@ class Fighter:
 
             #--------------Hit em pé--------------------
             #Hhit = 19 # specialMove
+            #BblockHit = 21 hit agachado
             
             # Ouch! Punch on a face (Ahit = 12 # soco fraco)
             elif self.hit and self.hitName == "Apunching":

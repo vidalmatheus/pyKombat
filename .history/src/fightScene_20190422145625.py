@@ -115,7 +115,7 @@ class Scenario:
                     player2.setX(x2+12) 
                     print("ablock")
                 # caso houve soco ou chute agachado fraco em alguém em pé:
-                if ( ((player1.isCpunching() or player1.isCkicking() ) and not player2.isCrouching() and not player2.isBblocking() ) or ((player2.isCpunching() or player2.isCkicking() ) and not player1.isCrouching() and not player1.isBblocking() ) ): # falta adicionar o Bblock
+                if ( ((player1.isCpunching() or player1.isCkicking() ) and not player2.isCrouching() ) or ((player2.isCpunching() or player2.isCkicking() ) and not player1.isCrouching() ) ): # falta adicionar o Bblock
                     if player1.isCpunching() or player1.isCkicking():                        
                         player2.takeHit("Cpunching")
                     if player2.isCpunching() or player2.isCkicking():    
@@ -155,15 +155,15 @@ class Scenario:
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5
                 # caso houve bloqueio agachado:
-                if ( (player1.isCpunching() or player1.isDpunching() or player1.isBkicking() or player1.isCkicking() ) and player2.isBblocking() ) or ( (player2.isCpunching() or player2.isDpunching() or player2.isBkicking() or player2.isCkicking() ) and player1.isBblocking() ):
-                    if player1.isBblocking():                        
-                        player1.takeDownHit("Bblocking")
-                    if player2.isBblocking():                        
-                        player2.takeDownHit("Bblocking")
+                if ( (player1.isApunching() or player1.isBpunching() or player1.isDpunching() or player1.isAkicking() or player1.isBkicking() ) and player2.isAblocking() ) or ( (player2.isApunching() or player2.isBpunching() or player1.isDpunching() or player2.isAkicking() or player2.isBkicking() ) and player1.isAblocking() ):
+                    if player1.isAblocking():                        
+                        player1.takeHit("Ablocking")
+                    if player2.isAblocking():                        
+                        player2.takeHit("Ablocking")
                     engine.Sound("block").play()
                     player1.setX(x1-12)
                     player2.setX(x2+12) 
-                    print("bblock")
+                    print("ablock")
                 
 
             for event in pygame.event.get():
