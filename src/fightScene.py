@@ -27,7 +27,8 @@ class Scenario:
         #self.scene = pygame.image.load('../res/Background/Scenario'+str(scenario)+'.png')
         #self.game.getDisplay().blit(self.scene, (0, 0))
         #pygame.display.update()
-        screenSize(800, 500,"pyKombat")
+        #screenSize(800, 500,"pyKombat",None,None,True) # FullScreen
+        screenSize(800, 500,"pyKombat") # Minimized
         setBackgroundImage('../res/Background/Scenario'+str(scenario)+'.png')
         self.judge(scenario)
     
@@ -165,10 +166,11 @@ class Scenario:
                     player2.setX(x2+12) 
                     print("bblock")
                 
-
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
+            if keyPressed("backspace"):
+                pygame.quit()
             if keyPressed("esc"):
                 self.goBack(player1,player2)
     

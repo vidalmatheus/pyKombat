@@ -694,11 +694,7 @@ class Fighter:
                     self.jumpCounter += 2
                     nextFrame += 1*frame_step
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-
-        tick(120)
+    
         return nextFrame
 
     def getX(self):

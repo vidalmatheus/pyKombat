@@ -25,6 +25,8 @@ class MainMenu(Menu):
                 if event.type == pygame.KEYDOWN:
                     # carregar áudio   
                     sound = engine.Sound()
+                    if event.key == pygame.K_BACKSPACE: 
+                        pygame.quit()
                     if event.key == 13:  # 13 == ENTER
                         # coloca áudio "in"
                         if screen == "start":
@@ -89,6 +91,8 @@ class ScenarioMenu(Menu):
                 # carregar áudio
                 sound = engine.Sound() 
                 if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_BACKSPACE: 
+                        pygame.quit()
                     if event.key == 13:  # 13 == ENTER
                         # Entra no cenário escolhido
                         sound.setSound("fight")

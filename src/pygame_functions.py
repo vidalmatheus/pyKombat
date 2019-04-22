@@ -49,7 +49,8 @@ keydict = {"space": pygame.K_SPACE, "esc": pygame.K_ESCAPE, "up": pygame.K_UP, "
            "7": pygame.K_KP7,
            "8": pygame.K_KP8,
            "9": pygame.K_KP9,
-           "0": pygame.K_KP0}
+           "0": pygame.K_KP0,
+           "backspace": pygame.K_BACKSPACE}
 screen = ""
 
 
@@ -681,13 +682,10 @@ def updateDisplay():
     spriteRects = spriteGroup.draw(screen)
     textboxRects = textboxGroup.draw(screen)
     pygame.display.update()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-    #keys = pygame.key.get_pressed()
-    #if (keys[pygame.K_ESCAPE]):
-    #    pygame.quit()
-    #    sys.exit()
+    keys = pygame.key.get_pressed()
+    if (keys[pygame.K_BACKSPACE]):
+        pygame.quit()
+        sys.exit()
     spriteGroup.clear(screen, background.surface)
     textboxGroup.clear(screen, background.surface)
 
