@@ -274,12 +274,12 @@ class Fighter:
             
             # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> crouch
             elif keyPressed(self.move[1]) and not self.hit: 
-                if  self.end_Cpunch and self.end_Dpunch and self.end_Ckick and self.end_Dkick and not self.hit:
+                if  self.end_Cpunch and self.end_Dpunch and self.end_Ckick and self.end_Dkick:
                     self.curr_sprite = self.spriteList[self.crouch]
                     self.crouching = self.setState()
                     self.setEndState() 
                 if time > nextFrame:
-                    if self.end_Cpunch and self.end_Dpunch and self.end_Ckick and self.end_Dkick and not self.hit:
+                    if self.end_Cpunch and self.end_Dpunch and self.end_Ckick and self.end_Dkick:
                         moveSprite(self.spriteList[self.crouch], self.x, self.y, True)
                         self.setSprite(self.spriteList[self.crouch])
                         changeSpriteImage(self.spriteList[self.crouch], self.frame_crouching)

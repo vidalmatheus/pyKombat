@@ -274,12 +274,12 @@ class Fighter:
             
             # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> crouch
             elif keyPressed(self.move[1]) and not self.hit: 
-                if  self.end_Cpunch and self.end_Dpunch and self.end_Ckick and self.end_Dkick and not self.hit:
+                if  self.end_Cpunch and self.end_Dpunch and self.end_Ckick and self.end_Dkick:
                     self.curr_sprite = self.spriteList[self.crouch]
                     self.crouching = self.setState()
                     self.setEndState() 
                 if time > nextFrame:
-                    if self.end_Cpunch and self.end_Dpunch and self.end_Ckick and self.end_Dkick and not self.hit:
+                    if self.end_Cpunch and self.end_Dpunch and self.end_Ckick and self.end_Dkick:
                         moveSprite(self.spriteList[self.crouch], self.x, self.y, True)
                         self.setSprite(self.spriteList[self.crouch])
                         changeSpriteImage(self.spriteList[self.crouch], self.frame_crouching)
@@ -458,6 +458,7 @@ class Fighter:
                     nextFrame += 1*frame_step
             
             # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> special move
+
             elif ((keyPressed(self.combat[4]) and self.end_special) or (not keyPressed(self.combat[4]) and not self.end_special) ) and (not self.hit): 
                 print("SpecialMove")  
                 self.curr_sprite = self.spriteList[self.special]
@@ -637,6 +638,7 @@ class Fighter:
                     self.setSprite(self.spriteList[self.jump])
                     self.y -= (self.jumpHeight-self.jumpCounter)*7  
                     changeSpriteImage(self.spriteList[self.jump], self.frame_jumping)
+                    print("frame_jumping = ", self.frame_jumping)
                     if (self.jumpCounter < self.jumpHeight -1 or self.jumpCounter > self.jumpHeight +1): # subindo ou descendo
                         self.frame_jumping = 1
                     if (self.jumpHeight - 1 <= self.jumpCounter <= self.jumpHeight + 1): # quase parado
@@ -651,6 +653,8 @@ class Fighter:
                             self.end_jump = self.setState()# MUDANÇA
                             self.jumping = self.setEndState() #MUDANÇA
                     self.jumpCounter += 2
+                    print("jumpCounter =", self.jumpCounter)
+                    print("end_jump =", self.end_jump)
                     nextFrame += 1*frame_step
 
         for event in pygame.event.get():
