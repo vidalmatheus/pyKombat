@@ -1,0 +1,125 @@
+Atualizações
+
+_fighter.py
+
+
+def __init__(self, id, scenario):
+        self.fighterId = id
+        self.name = self.fighterNames[id]
+        self.move = self.fightMoves[id]
+        self.combat = self.combatMoves[id]
+--------------------------------------------------------------------------------
+        if id == 0:
+            self.life = LifeBars.Player1LifeBar("Subzero")
+            self.life.setLifePosition([200-self.life.getLifeImage().get_width()/2,10])
+            #self.life.addDamage(110)
+        else:
+            self.life = LifeBars.Player2LifeBar("Scorpion")
+            self.life.setLifePosition([600-self.life.getLifeImage().get_width()/2,10])
+            #self.life.addDamage(60)
+------------------------------------------------------------------------------------------
+        # Position
+        self.x = 150+id*500
+        if scenario == 1:
+
+
+
+
+
+
+
+def getLife(self):
+        return self.life
+
+ def act(self):
+----------------------------------------------------------------------------------------------------
+        self.projectileFighter = projectile.Projectile([self.getX(),self.getY()],self.fighterId)
+        self.projectileFighter.moveProjectile()
+ --------------------------------------------------------------------------------------------------
+        # Combat control
+        combat = False
+        block = False
+        alive = False
+
+
+
+
+
+
+ def fight(self, time, nextFrame):
+        frame_step = 65
+-------------------------------------------------------------------------------------------------------------        
+        if not self.projectileFighter.isProjectileEnded() and self.fighterId == 0:
+            self.projectileFighter.drawProjectile(time,nextFrame)
+        elif not self.projectileFighter.isProjectileEnded() and self.fighterId == 1:
+            if not self.end_special and self.projectileFighter.isProjectileEnded():
+                    self.frame_special = 0
+                    self.special_step = 1
+                    self.end_special = True
+                    self.projectileFighter.endProjectile()
+            else:
+                print("SpecialMove")
+                print("self.end_special: " + str(self.end_special))  
+                self.curr_sprite = self.spriteList[self.special]
+                self.projectileFighter.startProjectile()
+                self.projectileFighter.setPos([self.getX(),self.getY()])
+                        
+                self.specialMove = self.setState()
+                self.setEndState() 
+                self.end_special = False         
+                if time > nextFrame:
+                    moveSprite(self.spriteList[self.special], self.x, self.y, True)
+                    self.setSprite(self.spriteList[self.special])   
+                    changeSpriteImage(self.spriteList[self.special], self.frame_special)
+                    self.projectileFighter.drawProjectile(clock(),nextFrame)
+                    self.frame_special = (self.frame_special+self.special_step) % (self.specialLimit[self.fighterId]+1)
+                    if (self.frame_special == self.specialLimit[self.fighterId]-1):
+                        self.special_step = -1
+                    if (self.frame_special == self.specialLimit[self.fighterId]):
+                        self.frame_special = 0
+                        self.special_step = 1
+                        self.end_special = True
+                        self.projectileFighter.endProjectile()
+                    nextFrame += 1*frame_step
+            return nextFrame
+------------------------------------------------------------------------------------------------------------------------
+
+
+# Mudança no especial
+
+elif ((keyPressed(self.combat[4]) and self.end_special) or (not keyPressed(self.combat[4]) and (not self.end_special)) ) and (not self.hit): 
+                if not self.end_special and self.projectileFighter.isProjectileEnded():
+                    self.frame_special = 0
+                    self.special_step = 1
+                    self.end_special = True
+                    self.projectileFighter.endProjectile()
+                else:
+
+                    print("SpecialMove")
+                    print("self.end_special: " + str(self.end_special))  
+                    self.curr_sprite = self.spriteList[self.special]
+                    self.projectileFighter.startProjectile()
+                    self.projectileFighter.setPos([self.getX(),self.getY()])
+                        
+                    self.specialMove = self.setState()
+                    self.setEndState()
+                    if self.end_special and self.fighterId == 1:
+                        self.frame_special = 0
+                        self.special_step = 1
+                    self.end_special = False         
+                    if time > nextFrame:
+                        moveSprite(self.spriteList[self.special], self.x, self.y, True)
+                        self.setSprite(self.spriteList[self.special])   
+                        changeSpriteImage(self.spriteList[self.special], self.frame_special)
+                        self.projectileFighter.drawProjectile(clock(),nextFrame)
+                        self.frame_special = (self.frame_special+self.special_step) % (self.specialLimit[self.fighterId]+1)
+                        if (self.frame_special == self.specialLimit[self.fighterId]-1):
+                            self.special_step = -1
+                        if (self.frame_special == self.specialLimit[self.fighterId]):
+                            self.frame_special = 0
+                            self.special_step = 1
+                            self.end_special = True
+                            self.projectileFighter.endProjectile()
+                        nextFrame += 1*frame_step
+----------------------------------------------------------------------------------------------------------------------------
+            # just dance :)
