@@ -247,7 +247,7 @@ class Fighter:
                 self.curr_sprite = self.spriteList[self.walk]
                 self.walking = self.setState()
                 self.setEndState()
-                self.x += 4
+                self.x += 6
                 moveSprite(self.spriteList[self.walk], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.walk])
                 changeSpriteImage(self.spriteList[self.walk], self.frame_walk)
@@ -262,7 +262,7 @@ class Fighter:
                 self.curr_sprite = self.spriteList[self.walk]
                 self.walking = self.setState()
                 self.setEndState() 
-                self.x -= 4
+                self.x -= 6
                 moveSprite(self.spriteList[self.walk], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.walk])
                 changeSpriteImage(self.spriteList[self.walk], self.walkLimit-1-self.frame_walk)
