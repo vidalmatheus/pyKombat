@@ -61,7 +61,7 @@ class Scenario:
                 
             if(collide(player1,player2)):
                 # caso só encostem
-                if ( (player1.isWalking() or player1.isJumping()) and (player2.isDancing() or player2.isCrouching() or player2.isWalking()) ) or ((player2.isWalking() or player2.isJumping()) and (player1.isDancing() or player1.isCrouching() or player2.isWalking()) ) or (player1.isWalking() and player2.isWalking()) or (player1.isJumping() and player2.isJumping()):
+                if ( (player1.isWalking() or player1.isJumping()) and (player2.isDancing() or player2.isCrouching()) ) or ((player2.isWalking() or player2.isJumping()) and (player1.isDancing() or player1.isCrouching()) ) or (player1.isWalking() and player2.isWalking()) or (player1.isJumping() and player2.isJumping()):
                     player1.setX(x1-15)
                     player2.setX(x2+15) 
                 # caso houve soco fraco:
@@ -125,17 +125,17 @@ class Scenario:
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5
                 # caso houve soco agachado forte em alguém em pé:
-                if ( (player1.isDpunching() and (not player2.isAblocking() and not player2.isBblocking())  )  or player2.isDpunching() and (not player1.isAblocking() and not player1.isBblocking()) ): 
+                if ( player1.isDpunching()  or player2.isDpunching() ): 
                     if player1.isDpunching():                        
                         player2.takeHit("Bkicking")
                     if player2.isDpunching():    
                         player1.takeHit("Bkicking")
-                    print("socofraco$#$")
+                    print("socofraco")
                     engine.Sound("Hit0").play()
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5 
                 # caso houve chute agachado forte em alguém em pé:
-                if ( player1.isDkicking()  or player2.isDkicking() ): 
+                if ( (player1.isDkicking() and (player2.isAblocking() or player2.isBblocking()) )  or player2.isDkicking() ): 
                     if player1.isDkicking():                        
                         player2.takeHit("Dkicking")
                     if player2.isDkicking():    

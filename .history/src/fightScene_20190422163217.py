@@ -61,7 +61,7 @@ class Scenario:
                 
             if(collide(player1,player2)):
                 # caso só encostem
-                if ( (player1.isWalking() or player1.isJumping()) and (player2.isDancing() or player2.isCrouching() or player2.isWalking()) ) or ((player2.isWalking() or player2.isJumping()) and (player1.isDancing() or player1.isCrouching() or player2.isWalking()) ) or (player1.isWalking() and player2.isWalking()) or (player1.isJumping() and player2.isJumping()):
+                if ( (player1.isWalking() or player1.isJumping()) and (player2.isDancing() or player2.isCrouching()) ) or ((player2.isWalking() or player2.isJumping()) and (player1.isDancing() or player1.isCrouching()) ) or (player1.isWalking() and player2.isWalking()) or (player1.isJumping() and player2.isJumping()):
                     player1.setX(x1-15)
                     player2.setX(x2+15) 
                 # caso houve soco fraco:
