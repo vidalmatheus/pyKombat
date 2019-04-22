@@ -554,8 +554,8 @@ class Fighter:
                 self.curr_sprite = self.spriteList[self.Chit]
                 self.Chitting = self.setState()
                 if self.fighterId == 0:
-                    self.x -=2
-                else: self.x +=2
+                    self.x -=0.5
+                else: self.x +=0.5
                 moveSprite(self.spriteList[self.Chit], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.Chit])
                 changeSpriteImage(self.spriteList[self.Chit], self.frame_Chit)
@@ -590,8 +590,8 @@ class Fighter:
                 self.Fhitting = self.setState()
                 if self.frame_Fhit <= 6:
                     if self.fighterId == 0:
-                        self.x -=5
-                    else: self.x +=5
+                        self.x -=3
+                    else: self.x +=3
                 moveSprite(self.spriteList[self.Fhit], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.Fhit])
                 changeSpriteImage(self.spriteList[self.Fhit], self.frame_Fhit)
