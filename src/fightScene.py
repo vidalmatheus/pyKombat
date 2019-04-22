@@ -104,8 +104,8 @@ class Scenario:
                     engine.Sound("Hit0").play()
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5 
-                # caso houve bloqueio:
-                if ( (player1.isApunching() or player1.isBpunching() or player1.isAkicking() or player1.isBkicking() ) and player2.isAblocking() ) or ( (player2.isApunching() or player2.isBpunching() or player2.isAkicking() or player2.isBkicking() ) and player1.isAblocking() ):
+                # caso houve bloqueio em pé:
+                if ( (player1.isApunching() or player1.isBpunching() or player1.isDpunching() or player1.isAkicking() or player1.isBkicking() ) and player2.isAblocking() ) or ( (player2.isApunching() or player2.isBpunching() or player1.isDpunching() or player2.isAkicking() or player2.isBkicking() ) and player1.isAblocking() ):
                     if player1.isAblocking():                        
                         player1.takeHit("Ablocking")
                     if player2.isAblocking():                        
@@ -114,9 +114,47 @@ class Scenario:
                     player1.setX(x1-12)
                     player2.setX(x2+12) 
                     print("ablock")
+                # caso houve soco ou chute agachado fraco em alguém em pé:
+                if ( (player1.isCpunching() or player1.isCkicking() )  or (player2.isCpunching() or player2.isCkicking()) ): # falta adicionar o Bblock
+                    if player1.isCpunching() or player1.isCkicking():                        
+                        player2.takeHit("Cpunching")
+                    if player2.isCpunching() or player2.isCkicking():    
+                        player1.takeHit("Cpunching")
+                    print("socofraco")
+                    engine.Sound("Hit0").play()
+                    if hitCounter == 0: engine.Sound().roundHit()
+                    hitCounter = (hitCounter+1) % 5
+                # caso houve soco agachado forte em alguém em pé:
+                if ( player1.isDpunching()  or player2.isDpunching() ): 
+                    if player1.isDpunching():                        
+                        player2.takeHit("Bkicking")
+                    if player2.isDpunching():    
+                        player1.takeHit("Bkicking")
+                    print("socofraco")
+                    engine.Sound("Hit0").play()
+                    if hitCounter == 0: engine.Sound().roundHit()
+                    hitCounter = (hitCounter+1) % 5 
+                # caso houve chute agachado forte em alguém em pé:
+                if ( player1.isDkicking()  or player2.isDkicking() ): 
+                    if player1.isDkicking():                        
+                        player2.takeHit("Dkicking")
+                    if player2.isDkicking():    
+                        player1.takeHit("Dkicking")
+                    print("socofraco")
+                    engine.Sound("Hit0").play()
+                    if hitCounter == 0: engine.Sound().roundHit()
+                    hitCounter = (hitCounter+1) % 5 
+                # caso houve soco ou chute agachado fraco em alguém agachado:
+                if ( ( (player1.isCpunching() or player1.isCkicking()) and player2.isCrouching()  )  or ( (player2.isCpunching() or player2.isCkicking()) and player1.isCrouching()  ) ): # falta adicionar o Bblock
+                    if player1.isCpunching() or player1.isCkicking():                        
+                        player2.takeHit("Ehit")
+                    if player2.isCpunching() or player2.isCkicking():    
+                        player1.takeHit("Ehit")
+                    print("socofraco")
+                    engine.Sound("Hit0").play()
+                    if hitCounter == 0: engine.Sound().roundHit()
+                    hitCounter = (hitCounter+1) % 5
                 
-                
-                print(hitCounter)
 
             for event in pygame.event.get():
                 if event.type == QUIT:
