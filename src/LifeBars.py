@@ -23,6 +23,9 @@ class LifeBar:
         return self.lifeBarImg
     def addDamage(self,dmg):
         """Adciona dano ao hp do personagem,se quizer curar basta um numero inteiro negativo"""
+        if self.hp<=0:
+            self.hp = 0
+            return
         self.hp = self.hp - dmg
         self.damage = self.damage + dmg
         if self.damage > 100:

@@ -21,10 +21,11 @@ class Fighter:
     blockLimit = 3
     specialLimit = [12,7]
     hitSpecialLimit = [3,1]
-    specialSound = [["iceSound","Hit10"],["ComeHere","IceSound2"]]
+    specialSound = [["iceSound","Hit10"],["ComeHere"]]
     victoryLimit = 3
     fatalityLimit = 20
     dizzyLimit = 7
+    deadLimit = 6
 
     # indexação
     # moves
@@ -56,10 +57,13 @@ class Fighter:
     Bblock = 21
     # special move
     special = 22
+    # dizzy
+    dizzy = 23
+    # dead
+    dead = 18
     # fatality
-    fatality = 23 
-    fatalityHit = 24 # fatality hit
-    dizzy = 25
+    fatality = 25 
+    fatalityHit = 26 # fatality hit
 
     def __init__(self, id, scenario):
         self.fighterId = id
@@ -74,10 +78,12 @@ class Fighter:
         if id == 0:
             self.life = LifeBars.Player1LifeBar("Subzero")
             self.life.setLifePosition([200-self.life.getLifeImage().get_width()/2,10])
+            
 
         else:
             self.life = LifeBars.Player2LifeBar("Scorpion")
             self.life.setLifePosition([600-self.life.getLifeImage().get_width()/2,10])
+            #self.life.addDamage(99)
 
         # Position
         self.x = 150+id*500
@@ -133,7 +139,8 @@ class Fighter:
         self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Special.png', self.specialLimit[self.fighterId])) # Especial
 
         # dizzy sprite ----------------------------------
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/dizzy.png', self.specialLimit[self.fighterId])) # Especial
+        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/dizzy.png', self.dizzyLimit)) # Dizzy
+
 
         self.act()
 
@@ -148,14 +155,7 @@ class Fighter:
         self.projectileFighter.moveProjectile()
 
         # Combat control
-        combat = False
-        block = False
-        alive = False
-        fatality = False
-        dizzyCounter = 1
-        dizzyCounterAux = 1
-        fatalityCounter = 8
-        fatalityCounterAux = 1
+
 
         # Control reflection var
         reflection = False
@@ -254,11 +254,14 @@ class Fighter:
         self.frame_Hhit = 0
         self.hit_step = 1
 
+        # dizzy vars
+        self.dizzing = False
+        self.frame_dizzy = 0
+        self.dizzy_counter = 1
 
-        # Life Vars
-        X_inicio = 37
-        X_atual = X_inicio
-        X_fim = X_inicio + 327
+        # dead vars
+        self.deading = False
+        self.frame_dead = 0
 
         self.posFighter()
 
@@ -617,7 +620,7 @@ class Fighter:
                             self.projectileFighter.endProjectile()
                         nextFrame += 1*frame_step
             # just dance :)
-            elif not self.hit:
+            elif not self.hit :
                 # reset block (hold type)
                 self.frame_Ablocking = 0
                 self.Ablock_step = 1
@@ -751,7 +754,7 @@ class Fighter:
 
             #Hhit = 19 # specialHit
             elif self.hit and self.hitName == "special":
-                if (self.frame_Hhit == 0): engine.Sound(self.specialSound[self.fighterId][1]).play()  
+                if (self.frame_Hhit == 0 and self.fighterId == 0): engine.Sound(self.specialSound[self.fighterId][1]).play()  
                 self.curr_sprite = self.spriteList[self.Hhit]
                 self.hitSpecial = self.setState()
                 moveSprite(self.spriteList[self.Hhit], self.x, self.y, True)
@@ -781,7 +784,41 @@ class Fighter:
                         self.hit_step = 1
                         self.hit = False
                     nextFrame += 1*frame_step
+            # dizzy
+            elif self.hit and self.hitName == "dizzy":
+                self.curr_sprite = self.spriteList[self.dizzy]
+                self.dizzing = self.setState()
+                moveSprite(self.spriteList[self.dizzy], self.x, self.y, True)
+                self.setSprite(self.spriteList[self.dizzy])
+                changeSpriteImage(self.spriteList[self.dizzy], self.frame_dizzy)
+                if time > nextFrame:
+                    self.frame_dizzy = (self.frame_dizzy+self.hit_step) % self.dizzyLimit
+                    nextFrame += 1.8*frame_step
+
+            # Dead
+            elif self.hit and self.hitName == "dead":
+                self.curr_sprite = self.spriteList[self.dead]
+                self.deading = self.setState()
+                moveSprite(self.spriteList[self.dead], self.x, self.y, True)
+                self.setSprite(self.spriteList[self.dead])
+                changeSpriteImage(self.spriteList[self.dead], self.frame_dead)
+                if time > nextFrame:
+                    self.frame_dead = (self.frame_dead+self.hit_step) % self.deadLimit
+                    if (self.frame_dead == self.deadLimit - 1):
+                        self.hit_step = 0
+                        if self.fighterId == 0:
+                            if not pygame.mixer.get_busy() and not self.lostOnce:
+                                engine.Sound("ScorpionWins").play()
+                                self.lostOnce = True
+                            print("Subzero Wins")
+                        else:
+                            if not pygame.mixer.get_busy() and not self.lostOnce:
+                                self.lostOnce = True 
+                                engine.Sound("SubZeroWins").play() 
+                            print("Scorpion Wins")
+                    nextFrame += 1.2*frame_step
             
+
 
         else:              
              # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> jump    
@@ -881,6 +918,9 @@ class Fighter:
     def ishitSpecial(self):
         return self.hitSpecial
 
+    def isAlive(self):
+        return not self.isDead
+
     def killPlayer(self):
         for i in range(0,len(self.spriteList)):
             killSprite(self.spriteList[i])
@@ -891,25 +931,24 @@ class Fighter:
     def takeHit(self,by):
         self.hit = True
         self.hitName = by
-        dicionario = {"Apunching":8,"Bpunching":12,"Akicking":10,"Bkicking":15,"Cpunching":6,"Dkicking":10,"special":5}
-        if dicionario[by]:
+        dicionario = {"Apunching":5,"Bpunching":8,"Akicking":3,"Ablocking":0,"Bkicking":10,"Cpunching":6,"Dkicking":9,"special":5}
+        if by in dicionario:
             self.life.addDamage(dicionario[by])
             if self.life.isDead():
+                pygame.mixer.music.stop()
+                engine.Sound("FinishHim").play()
                 self.isDead = True
-                if not self.lostOnce:
-                    self.lostOnce = True
-                    self.wait = self.waitTime[0]
-                else:
-                    self.waitingFatality = True
-                    self.wait = self.waitTime[1]
 
     def takeDownHit(self,by):
         self.downHit = True
         self.hitName = by
 
-    def stopHit(self):
+    def setHitName(self,by):
+        self.hitName = by
+
+    def stopHit(self,by = ""):
         self.hit = False
-        self.hitName = ""
+        self.hitName = by
         
     def setState(self):
         # moves
@@ -941,6 +980,8 @@ class Fighter:
         self.Bblocking = False
         # special move
         self.specialMove = False
+        # dizzy
+        self.dizzing = False
         # fatality
         self.fatality = False
 

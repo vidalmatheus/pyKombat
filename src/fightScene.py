@@ -19,7 +19,7 @@ class Scenario:
         pygame.mixer.music.stop()
         music = engine.Music("mkt")
         music.play()
-        music.volume(0.5)
+        music.volume(0.1)
 
     def setScenario(self, scenario):
         if scenario == 9:
@@ -39,6 +39,9 @@ class Scenario:
         nextFrame1 = clock()
         nextFrame2 = clock()
         hitCounter = 0
+        dizzyCounter = 1
+        specialCounter = 1
+        specialLimit = 41
         while True:
             aux1 = player1.fight(clock(),nextFrame1)
             player1.life.render()
@@ -49,6 +52,20 @@ class Scenario:
             x1 = player1.getX()
             x2 = player2.getX()
             #print(x1, x2, x2-x1)
+
+            if not player1.isAlive() or not player2.isAlive():
+                if not player1.isAlive():
+                    player1.takeHit("dizzy")
+                    if dizzyCounter >= 100:
+                        print(dizzyCounter)
+                        player1.takeHit("dead")
+                if not player2.isAlive():
+                    player2.takeHit("dizzy")
+                    if dizzyCounter >= 100:
+                        player2.takeHit("dead")
+                dizzyCounter += 1
+
+
             # caso encostem na tela
             if player1.getX() < 20:
                 player1.setX(20) 
@@ -65,12 +82,13 @@ class Scenario:
             if(collide(player1.currentSprite(),player2.currentSprite())):
                 # caso só encostem
                 if ( (player1.isWalking() or player1.isJumping()) and (player2.isDancing() or player2.isCrouching() or player2.isWalking()) ) or ((player2.isWalking() or player2.isJumping()) and (player1.isDancing() or player1.isCrouching() or player2.isWalking()) ) or (player1.isWalking() and player2.isWalking()) or (player1.isJumping() and player2.isJumping()) or (player1.isDancing() and player2.isDancing()) or (player2.isSpecialMove() and player1.ishitSpecial()):
-                    player1.setX(x1-12)
-                    if not player2.isSpecialMove() :player2.setX(x2+12) 
+                    player1.setX(x1-6)
+                    if not player2.isSpecialMove() :player2.setX(x2+6) 
                 # caso houve soco fraco:
                 if ( player1.isApunching() and (player2.isWalking() or player2.isDancing() or player2.isApunching() or player2.ishitSpecial()) ) or ( player2.isApunching() and (player1.isWalking() or player1.isDancing() or player1.isApunching()) ):
                     if player1.isApunching():                        
                         player2.takeHit("Apunching")
+                        specialCounter = specialLimit
                     if player2.isApunching():    
                         player1.takeHit("Apunching")
                     print("socofraco")
@@ -78,9 +96,10 @@ class Scenario:
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5 
                 # caso houve soco forte:
-                if ( player1.isBpunching() and (player2.isWalking() or player2.isDancing() or player2.isBpunching()) ) or ( player2.isBpunching() and (player1.isWalking() or player1.isDancing() or player1.isBpunching()) ):
+                if ( player1.isBpunching() and (player2.isWalking() or player2.isDancing() or player2.isBpunching() or player2.ishitSpecial()) ) or ( player2.isBpunching() and (player1.isWalking() or player1.isDancing() or player1.isBpunching()) ):
                     if player1.isBpunching():                        
                         player2.takeHit("Bpunching")
+                        specialCounter = specialLimit
                     if player2.isBpunching():    
                         player1.takeHit("Bpunching")
                     print("socoforte")
@@ -88,9 +107,10 @@ class Scenario:
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5 
                 # caso houve chute fraco:
-                if ( player1.isAkicking() and (player2.isWalking() or player2.isDancing() or player2.isAkicking() or player2.isCrouching()) and not player2.isBblocking() ) or ( player2.isAkicking() and (player1.isWalking() or player1.isDancing() or player1.isAkicking() or player1.isCrouching() and not player1.isBblocking()) ):
+                if ( player1.isAkicking() and (player2.isWalking() or player2.isDancing() or player2.isAkicking() or player2.isCrouching() or player2.ishitSpecial()) and not player2.isBblocking() ) or ( player2.isAkicking() and (player1.isWalking() or player1.isDancing() or player1.isAkicking() or player1.isCrouching() and not player1.isBblocking()) ):
                     if player1.isAkicking():                        
                         player2.takeHit("Akicking")
+                        specialCounter = specialLimit
                     if player2.isAkicking():                        
                         player1.takeHit("Akicking")
                     print("chutefraco")
@@ -98,9 +118,10 @@ class Scenario:
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5 
                 # caso houve chute forte:
-                if ( player1.isBkicking() and (player2.isWalking() or player2.isDancing() or player2.isBkicking()) ) or ( player2.isBkicking() and (player1.isWalking() or player1.isDancing() or player1.isBkicking()) ):
+                if ( player1.isBkicking() and (player2.isWalking() or player2.isDancing() or player2.isBkicking() or player2.ishitSpecial()) ) or ( player2.isBkicking() and (player1.isWalking() or player1.isDancing() or player1.isBkicking()) ):
                     if player1.isBkicking():                        
                         player2.takeHit("Bkicking")
+                        specialCounter = specialLimit
                     if player2.isBkicking():                        
                         player1.takeHit("Bkicking")
                     print("chuteforte")
@@ -121,6 +142,7 @@ class Scenario:
                 if ( ((player1.isCpunching() or player1.isCkicking() ) and not player2.isCrouching() and not player2.isBblocking() ) or ((player2.isCpunching() or player2.isCkicking() ) and not player1.isCrouching() and not player1.isBblocking() ) ): # falta adicionar o Bblock
                     if player1.isCpunching() or player1.isCkicking():                        
                         player2.takeHit("Cpunching")
+                        specialCounter = specialLimit
                     if player2.isCpunching() or player2.isCkicking():    
                         player1.takeHit("Cpunching")
                     print("socofraco!!!!!!!")
@@ -131,6 +153,7 @@ class Scenario:
                 if ( (player1.isDpunching() and (not player2.isAblocking() and not player2.isBblocking())  )  or player2.isDpunching() and (not player1.isAblocking() and not player1.isBblocking()) ): 
                     if player1.isDpunching():                        
                         player2.takeHit("Bkicking")
+                        specialCounter = specialLimit
                     if player2.isDpunching():    
                         player1.takeHit("Bkicking")
                     print("socofraco$#$")
@@ -141,6 +164,7 @@ class Scenario:
                 if ( player1.isDkicking()  or player2.isDkicking() ): 
                     if player1.isDkicking():                        
                         player2.takeHit("Dkicking")
+                        specialCounter = specialLimit
                     if player2.isDkicking():    
                         player1.takeHit("Dkicking")
                     print("socofraco")
@@ -176,7 +200,20 @@ class Scenario:
                 if player2.isSpecialMove() and collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()):   # and collide(projetil,player1)   
                     if not player1.isAblocking():   player1.takeHit("special")
                 print("special")
-                    
+                
+            # caso frozen
+            if ( player2.ishitSpecial() and specialCounter <= 40 ):
+                player2.takeHit("special")
+                player2.life.addDamage(-5)
+                specialCounter+=1
+                if specialCounter == 41: 
+                    specialCounter = 1
+                    player2.stopHit()
+            if specialCounter == 41: 
+                specialCounter = 1
+
+            
+            
 
             for event in pygame.event.get():
                 if event.type == QUIT:
