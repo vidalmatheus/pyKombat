@@ -183,7 +183,7 @@ class Scenario:
                     player2.setX(x2+12) 
 
             # caso houve special
-            if ( player1.isSpecialMove() and (player2.isWalking() or player2.isDancing() or player2.isCrouching() or player2.isAblocking() or player2.isBblocking() or player2.ishitSpecial()) ) or ( player2.isSpecialMove() and (player1.isWalking() or player1.isDancing() or player1.isAblocking() or player1.ishitSpecial()) ):
+            if ( player1.isSpecialMove() and (player2.isWalking() or player2.isDancing() or player2.isAblocking() or player2.isBblocking() or player2.ishitSpecial()) ) or ( player2.isSpecialMove() and (player1.isWalking() or player1.isDancing() or player1.isAblocking() or player1.ishitSpecial()) ):
                 if player1.isSpecialMove() and collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()):   # and collide(projetil,player2)
                     player1.getProjectile().endProjectile()
                     if not player2.isAblocking() and not player2.isBblocking() and not player2.ishitSpecial():   player2.takeHit("special")
