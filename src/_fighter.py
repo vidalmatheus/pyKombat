@@ -84,7 +84,7 @@ class Fighter:
         else:
             self.life = LifeBars.Player2LifeBar("Scorpion")
             self.life.setLifePosition([600-self.life.getLifeImage().get_width()/2,10])
-            #self.life.addDamage(99)
+            self.life.addDamage(99)
 
         # Position
         self.x = 150+id*500
@@ -165,7 +165,7 @@ class Fighter:
         self.projectileFighter.moveProjectile()
 
         # Combat control
-
+        self.attacking = False
 
         # Control reflection var
         reflection = False
@@ -302,7 +302,7 @@ class Fighter:
             else:
                 """
 
-        # Animação dos projéteis (iceshot e snake)
+        # Animação dos special moves (iceshot e snake)
         if not self.projectileFighter.isProjectileEnded() and self.fighterId == 0:
             self.projectileFighter.drawProjectile(time,nextFrame)
         elif not self.projectileFighter.isProjectileEnded() and self.fighterId == 1:
@@ -317,8 +317,8 @@ class Fighter:
                 self.curr_sprite = self.spriteList[self.special]
                 self.projectileFighter.startProjectile()
                 self.projectileFighter.setPos([self.getX(),self.getY()])
-                        
                 self.specialMove = self.setState()
+                self.attacking = True
                 self.setEndState() 
                 self.end_special = False         
                 if time > nextFrame:
@@ -341,6 +341,7 @@ class Fighter:
             # fightMoves = [ ["w", "s", "a", "d"], ["up", "down", "left", "right"] ] -> jump
             if keyPressed(self.move[0]) and not self.hit:
                 self.jumping = True
+                self.attacking = False
                 self.end_jump = False
                 self.curr_sprite = self.spriteList[self.jump]
             
@@ -349,6 +350,7 @@ class Fighter:
                 self.curr_sprite = self.spriteList[self.walk]
                 self.walking = self.setState()
                 self.setEndState()
+                self.attacking = False
                 self.x += 6
                 moveSprite(self.spriteList[self.walk], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.walk])
@@ -364,6 +366,7 @@ class Fighter:
                 self.curr_sprite = self.spriteList[self.walk]
                 self.walking = self.setState()
                 self.setEndState() 
+                self.attacking = False
                 self.x -= 6
                 moveSprite(self.spriteList[self.walk], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.walk])
@@ -379,6 +382,7 @@ class Fighter:
                 if  self.end_Cpunch and self.end_Dpunch and self.end_Ckick and self.end_Dkick and not self.hit and not self.downHit and not self.Bblocking:
                     self.curr_sprite = self.spriteList[self.crouch]
                     self.crouching = self.setState()
+                    self.attacking = False
                     self.setEndState() 
                 if time > nextFrame:
                     if self.end_Cpunch and self.end_Dpunch and self.end_Ckick and self.end_Dkick and not self.hit and not self.downHit and not self.Bblocking:
@@ -393,6 +397,7 @@ class Fighter:
                             self.curr_sprite = self.spriteList[self.Cpunch]
                             self.Cpunching = self.setState()
                             self.crouching = True
+                            self.attacking = True
                             self.setEndState() 
                             self.end_Cpunch = False         
                             if time > nextFrame:
@@ -411,6 +416,7 @@ class Fighter:
                             self.curr_sprite = self.spriteList[self.Dpunch]
                             self.Dpunching = self.setState()
                             self.crouching = True
+                            self.attacking = True
                             self.setEndState() 
                             self.end_Dpunch = False         
                             if time > nextFrame:
@@ -430,6 +436,7 @@ class Fighter:
                             self.curr_sprite = self.spriteList[self.Ckick]
                             self.Ckicking = self.setState()
                             self.crouching = True
+                            self.attacking = True
                             self.end_Ckick = self.setEndState()
                             if time > nextFrame:
                                 moveSprite(self.spriteList[self.Ckick], self.x, self.y, True)
@@ -447,6 +454,7 @@ class Fighter:
                             self.curr_sprite = self.spriteList[self.Dkick]
                             self.Dkicking = self.setState()
                             self.crouching = True
+                            self.attacking = True
                             self.end_Dkick = self.setEndState()
                             if time > nextFrame:
                                 moveSprite(self.spriteList[self.Dkick], self.x, self.y, True)
@@ -493,6 +501,7 @@ class Fighter:
                         elif (self.downHit or self.hit) and self.hitName == "Bblocking":
                             self.curr_sprite = self.spriteList[self.Bblock]
                             self.Bblocking = self.setState()
+                            self.attacking = False
                             self.crouching = True
                             if time > nextFrame:
                                 moveSprite(self.spriteList[self.Bblock], self.x, self.y, True)
@@ -518,6 +527,7 @@ class Fighter:
                 self.curr_sprite = self.spriteList[self.Apunch]
                 self.Apunching = self.setState()
                 self.setEndState() 
+                self.attacking = True
                 self.end_Apunch = False       
                 if time > nextFrame:
                     moveSprite(self.spriteList[self.Apunch], self.x, self.y, True)
@@ -536,6 +546,7 @@ class Fighter:
             elif ( (keyPressed(self.combat[1]) and self.end_Bpunch) or ( not self.end_Bpunch) ) and (not self.hit) : 
                 self.curr_sprite = self.spriteList[self.Bpunch]
                 self.Bpunching = self.setState()
+                self.attacking = True
                 self.end_Bpunch = self.setEndState()
                 if time > nextFrame:
                     moveSprite(self.spriteList[self.Bpunch], self.x, self.y, True)
@@ -550,6 +561,7 @@ class Fighter:
             elif ( (keyPressed(self.combat[2]) and self.end_Akick) or ( not self.end_Akick) ) and (not self.hit): 
                 self.curr_sprite = self.spriteList[self.Akick]
                 self.Akicking = self.setState()
+                self.attacking = True
                 self.end_Akick = self.setEndState()
                 if time > nextFrame:
                     moveSprite(self.spriteList[self.Akick], self.x, self.y, True)
@@ -568,6 +580,7 @@ class Fighter:
             elif ( (keyPressed(self.combat[3]) and self.end_Bkick) or ( not self.end_Bkick) ) and (not self.hit): 
                 self.curr_sprite = self.spriteList[self.Bkick]
                 self.Bkicking = self.setState()
+                self.attacking = True
                 self.end_Bkick = self.setEndState()
                 if time > nextFrame:
                     moveSprite(self.spriteList[self.Bkick], self.x, self.y, True)
@@ -583,6 +596,7 @@ class Fighter:
             elif keyPressed(self.combat[5]) and not self.hit: 
                 self.curr_sprite = self.spriteList[self.Ablock]
                 self.Ablocking = self.setState()
+                self.attacking = False
                 self.setEndState() 
                 if time > nextFrame:
                     moveSprite(self.spriteList[self.Ablock], self.x, self.y, True)
@@ -820,6 +834,7 @@ class Fighter:
                         self.hit_step = 0
                         if self.fighterId == 0:
                             if not pygame.mixer.get_busy() and not self.lostOnce:
+                                engine.Sound("Hit0").play()
                                 engine.Sound("ScorpionWins").play()
                                 self.lostOnce = True
                                 hideSprite(self.spriteFinish)
@@ -830,8 +845,9 @@ class Fighter:
                         else:
                             print("Scorpion Wins")
                             if not pygame.mixer.get_busy() and not self.lostOnce:
-                                self.lostOnce = True 
+                                engine.Sound("Hit0").play()
                                 engine.Sound("SubZeroWins").play()
+                                self.lostOnce = True 
                                 hideSprite(self.spriteFinish) 
                                 moveSprite(self.spriteWins, 400, 120, True) 
                                 showSprite(self.spriteWins)
@@ -940,6 +956,9 @@ class Fighter:
 
     def isAlive(self):
         return not self.isDead
+    
+    def isAttacking(self):
+        return self.attacking
 
     def killPlayer(self):
         for i in range(0,len(self.spriteList)):

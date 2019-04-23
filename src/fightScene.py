@@ -19,7 +19,7 @@ class Scenario:
         pygame.mixer.music.stop()
         music = engine.Music("mkt")
         music.play()
-        music.volume(0.1)
+        music.volume(0.2)
 
     def setScenario(self, scenario):
         if scenario == 9:
@@ -56,14 +56,16 @@ class Scenario:
             if not player1.isAlive() or not player2.isAlive():
                 if not player1.isAlive(): # finish player1
                     player1.takeHit("dizzy")
-                    if (collide(player1.currentSprite(),player2.currentSprite())):
-                        if player2.isApunching():
+                    if (collide(player1.currentSprite(),player2.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite())):
+                        if player2.isAttacking():
                             dizzyCounter = 100
                     if dizzyCounter >= 100:
-                        print(dizzyCounter)
                         player1.takeHit("dead") # player1 morreu
                 if not player2.isAlive(): # finish player 2
                     player2.takeHit("dizzy")
+                    if (collide(player2.currentSprite(),player1.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite())):
+                        if player1.isAttacking():
+                            dizzyCounter = 100
                     if dizzyCounter >= 100:
                         player2.takeHit("dead") # player2 morreu
                 dizzyCounter += 1

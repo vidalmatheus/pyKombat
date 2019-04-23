@@ -10,6 +10,7 @@ y = 350
 walk = makeSprite("../res/Char/Sub-Zero/walk.png", 9)
 dance = makeSprite("../res/Char/Sub-Zero/dance.png", 7)
 
+
 moveSprite(walk, x, y, True)
 moveSprite(dance, x, y, True)
 
