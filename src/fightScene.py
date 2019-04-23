@@ -226,6 +226,8 @@ class Scenario:
     def addFigther(self,scenario):
         player1 = _fighter.Fighter(0,scenario) # 0: subzero
         player2 = _fighter.Fighter(1,scenario) # 1: scorpion
+        hideSprite(player1.spriteWins)
+        hideSprite(player2.spriteWins)
         return player1,player2
     
     def goBack(self,player1,player2):

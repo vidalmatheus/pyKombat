@@ -78,12 +78,13 @@ class Fighter:
         if id == 0:
             self.life = LifeBars.Player1LifeBar("Subzero")
             self.life.setLifePosition([200-self.life.getLifeImage().get_width()/2,10])
+            self.life.addDamage(99)
             
 
         else:
             self.life = LifeBars.Player2LifeBar("Scorpion")
             self.life.setLifePosition([600-self.life.getLifeImage().get_width()/2,10])
-            #self.life.addDamage(99)
+            self.life.addDamage(99)
 
         # Position
         self.x = 150+id*500
@@ -141,6 +142,15 @@ class Fighter:
         # dizzy sprite ----------------------------------
         self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/dizzy.png', self.dizzyLimit)) # Dizzy
 
+        # finish him sprite ----------------------------------
+        self.spriteFinish = makeSprite('../res/finishhim.png', 1) # Dizzy
+
+        # wins sprite ----------------------------------
+        if self.fighterId == 0:
+            self.spriteWins = makeSprite('../res/'+str("Scorpion")+'wins.png', 1) # wins
+
+        else:
+            self.spriteWins = makeSprite('../res/'+str("Sub-Zero")+'wins.png', 1) # wins
 
         self.act()
 
@@ -791,6 +801,8 @@ class Fighter:
                 moveSprite(self.spriteList[self.dizzy], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.dizzy])
                 changeSpriteImage(self.spriteList[self.dizzy], self.frame_dizzy)
+                moveSprite(self.spriteFinish, 400, 120, True)
+                showSprite(self.spriteFinish)
                 if time > nextFrame:
                     self.frame_dizzy = (self.frame_dizzy+self.hit_step) % self.dizzyLimit
                     nextFrame += 1.8*frame_step
@@ -810,12 +822,20 @@ class Fighter:
                             if not pygame.mixer.get_busy() and not self.lostOnce:
                                 engine.Sound("ScorpionWins").play()
                                 self.lostOnce = True
-                            print("Subzero Wins")
+                                hideSprite(self.spriteFinish)
+                                moveSprite(self.spriteWins, 400, 120, True) 
+                                showSprite(self.spriteWins)
+                                
+                        
                         else:
+                            print("Scorpion Wins")
                             if not pygame.mixer.get_busy() and not self.lostOnce:
                                 self.lostOnce = True 
-                                engine.Sound("SubZeroWins").play() 
-                            print("Scorpion Wins")
+                                engine.Sound("SubZeroWins").play()
+                                hideSprite(self.spriteFinish) 
+                                moveSprite(self.spriteWins, 400, 120, True) 
+                                showSprite(self.spriteWins)
+                            
                     nextFrame += 1.2*frame_step
             
 
@@ -924,6 +944,9 @@ class Fighter:
     def killPlayer(self):
         for i in range(0,len(self.spriteList)):
             killSprite(self.spriteList[i])
+
+        killSprite(self.spriteFinish)
+        killSprite(self.spriteWins)
 
     def currentSprite(self):
         return self.curr_sprite
