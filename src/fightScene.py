@@ -53,24 +53,6 @@ class Scenario:
             x2 = player2.getX()
             #print(x1, x2, x2-x1)
 
-            if not player1.isAlive() or not player2.isAlive():
-                if not player1.isAlive(): # finish player1
-                    player1.takeHit("dizzy")
-                    if (collide(player1.currentSprite(),player2.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite())):
-                        if player2.isAttacking() or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()):
-                            dizzyCounter = 100
-                    if dizzyCounter >= 100:
-                        player1.takeHit("dead") # player1 morreu
-                if not player2.isAlive(): # finish player 2
-                    player2.takeHit("dizzy")
-                    if (collide(player2.currentSprite(),player1.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite())):
-                        if player1.isAttacking() or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()):
-                            dizzyCounter = 100
-                    if dizzyCounter >= 100:
-                        player2.takeHit("dead") # player2 morreu
-                dizzyCounter += 1
-
-            
             # caso encostem na tela
             if player1.getX() < 20:
                 player1.setX(20) 
@@ -82,9 +64,26 @@ class Scenario:
                 player1.setX(800-20) 
 
             if player2.getX() > (800-20):
-                player2.setX(800-20)    
+                player2.setX(800-20)  
+
+            if not player1.isAlive() or not player2.isAlive():
+                if not player1.isAlive(): # finish player1
+                    player1.takeHit("dizzy")
+                    if (collide(player1.currentSprite(),player2.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite())):
+                        if player2.isAttacking() or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()):
+                            dizzyCounter = 100
+                    if dizzyCounter >= 100:
+                        player1.takeHit("dead") # player1 morreu
+                if not player2.isAlive(): # finish player 2
+                    player2.takeHit("dizzy")
+                    if (collide(player2.currentSprite(),player1.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite())):
+                        #if player1.isAttacking() or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()):
+                        dizzyCounter = 100
+                    if dizzyCounter >= 100:
+                        player2.takeHit("dead") # player2 morreu
+                dizzyCounter += 1  
                 
-            if(collide(player1.currentSprite(),player2.currentSprite())):
+            elif (collide(player1.currentSprite(),player2.currentSprite())):
                 if dizzyCounter <= 10: print("Hey!")
                 # caso só encostem
                 if ( (player1.isWalking() or player1.isJumping()) and (player2.isDancing() or player2.isCrouching() or player2.isWalking() or player2.isDizzing() ) ) or ((player2.isWalking() or player2.isJumping()) and (player1.isDancing() or player1.isCrouching() or player1.isWalking() or player1.isDizzing() ) ) or (player1.isWalking() and player2.isWalking()) or (player1.isJumping() and player2.isJumping()) or (player1.isDancing() and player2.isDancing()) or (player1.isSpecialMove() and player2.ishitSpecial()):
