@@ -62,7 +62,7 @@ class Fighter:
     # dead
     dead = 18
     # fatality
-    fatality = 25 
+    fatal = 25 
     fatalityHit = 26 # fatality hit
 
     def __init__(self, id, scenario):
@@ -269,6 +269,9 @@ class Fighter:
         self.dizzing = False
         self.frame_dizzy = 0
         self.dizzy_counter = 1
+
+        # fatality vars
+        self.fatality = False
 
         # dead vars
         self.deading = False
@@ -591,7 +594,24 @@ class Fighter:
                     if (self.frame_Bkicking == 0):
                         self.end_Bkick = True
                         
-                    nextFrame += 1*frame_step      
+                    nextFrame += 1*frame_step   
+
+            # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> fatality
+            elif ( (keyPressed(self.combat[3]) and self.end_Bkick) or ( not self.end_Bkick) ) and (not self.hit): 
+                self.curr_sprite = self.spriteList[self.Bkick]
+                self.Bkicking = self.setState()
+                self.attacking = True
+                self.end_Bkick = self.setEndState()
+                if time > nextFrame:
+                    moveSprite(self.spriteList[self.Bkick], self.x, self.y, True)
+                    self.setSprite(self.spriteList[self.Bkick])
+                    changeSpriteImage(self.spriteList[self.Bkick], self.frame_Bkicking)
+                    self.frame_Bkicking = (self.frame_Bkicking+self.Bkick_step) % self.kickLimit[1]
+                    if (self.frame_Bkicking == 0):
+                        self.end_Bkick = True
+                        
+                    nextFrame += 1*frame_step   
+
             
             # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> defesa em pé
             elif keyPressed(self.combat[5]) and not self.hit: 
