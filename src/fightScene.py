@@ -169,12 +169,12 @@ class Scenario:
                     print("bblock")
 
             # caso houve special
-            if ( player1.isSpecialMove() and (player2.isWalking() or player2.isDancing()) ) or ( player2.isSpecialMove() and (player1.isWalking() or player1.isDancing()) ):
+            if ( player1.isSpecialMove() and (player2.isWalking() or player2.isDancing() or player2.isAblocking()) ) or ( player2.isSpecialMove() and (player1.isWalking() or player1.isDancing() or player1.isAblocking()) ):
                 if player1.isSpecialMove() and collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()):   # and collide(projetil,player2)
                     player1.getProjectile().endProjectile()
-                    player2.takeHit("special")
+                    if not player2.isAblocking():   player2.takeHit("special")
                 if player2.isSpecialMove() and collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()):   # and collide(projetil,player1)   
-                    player1.takeHit("special")
+                    if not player1.isAblocking():   player1.takeHit("special")
                 print("special")
                     
 
