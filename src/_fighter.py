@@ -71,6 +71,7 @@ class Fighter:
         self.move = self.fightMoves[id]
         self.combat = self.combatMoves[id]
         self.lostOnce = False
+        self.lostOnceFinish = False
         self.waitingFatality = False
         self.waitTime = [48,240]# '0' é pos derrota e '1' espera do fatality   
         self.wait = 0
@@ -840,8 +841,6 @@ class Fighter:
                                 hideSprite(self.spriteFinish)
                                 moveSprite(self.spriteWins, 400, 120, True) 
                                 showSprite(self.spriteWins)
-                                
-                        
                         else:
                             print("Scorpion Wins")
                             if not pygame.mixer.get_busy() and not self.lostOnce:
@@ -980,8 +979,11 @@ class Fighter:
         if by in dicionario:
             self.life.addDamage(dicionario[by])
             if self.life.isDead():
-                pygame.mixer.music.stop()
-                engine.Sound("FinishHim").play()
+                pygame.mixer.music.stop()               
+                if not pygame.mixer.get_busy() and not self.lostOnceFinish:
+                    engine.Sound("FinishHim").play()
+                    self.lostOnceFinish = True 
+                #engine.Sound("FinishHim").play()
                 self.isDead = True
 
     def takeDownHit(self,by):
