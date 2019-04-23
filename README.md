@@ -42,28 +42,28 @@ Schedule:
 
  --------------------------------end week 5---------------------------------------------------
  
-[] Jump
+[X] Jump
 
-[] Soco
+[X] Soco
 
-[] Chute
+[X] Chute
 
-[] Morte normal
+[X] Morte normal
 
-[] Defesa
+[X] Defesa
 
 --------------------------------end week 6---------------------------------------------------
 
-[] Dizzy
+[X] Dizzy
 
-[] Fatality
+[~] Fatality
 
-[] Fighter Wins
+[X] Fighter Wins
 
 --------------------------------end week 7---------------------------------------------------
 
-[] Special Move
+[X] Special Move
 
-[] Revisão de Bugs
+[~] Revisão de Bugs
 
 --------------------------------end week 8---------------------------------------------------
