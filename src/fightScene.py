@@ -1,8 +1,6 @@
 import pygame
 import os
 from pygame.locals import *
-import config
-import game
 import engine
 import menu
 from random import randint
@@ -36,19 +34,18 @@ class Scenario:
         [player1,player2] = self.addFigther(scenario) 
         player1.act()
         player2.act()
-        nextFrame1 = clock()
-        nextFrame2 = clock()
+        nextFrame = clock()
         hitCounter = 0
         dizzyCounter = 1
         specialCounter = 1
         specialLimit = 41
         while True:
-            aux1 = player1.fight(clock(),nextFrame1)
-            player1.life.render()
-            nextFrame1 = aux1
-            aux2 = player2.fight(clock(),nextFrame2)
-            player2.life.render()
-            nextFrame2 = aux2
+            player1.fight(clock(),nextFrame) # call fight moves
+            player1.life.render() # add lifebar
+            player2.fight(clock(),nextFrame) # call fight moves
+            player2.life.render() # add lifebar
+            
+            # fighter positions
             x1 = player1.getX()
             x2 = player2.getX()
 
@@ -83,7 +80,6 @@ class Scenario:
                 dizzyCounter += 1  
                 
             elif (collide(player1.currentSprite(),player2.currentSprite())):
-                if dizzyCounter <= 10: print("Hey!")
                 # caso só encostem
                 if ( (player1.isWalking() or player1.isJumping()) and (player2.isDancing() or player2.isCrouching() or player2.isWalking() or player2.isDizzing() or player2.ishitSpecial() ) ) or ((player2.isWalking() or player2.isJumping()) and (player1.isDancing() or player1.isCrouching() or player1.isWalking() or player1.isDizzing() or player1.ishitSpecial()) ) or (player1.isWalking() and player2.isWalking()) or (player1.isJumping() and player2.isJumping()) or (player1.isDancing() and player2.isDancing()) or (player1.isSpecialMove() and player2.ishitSpecial()):
                     player1.setX(x1-6)
@@ -95,7 +91,6 @@ class Scenario:
                         specialCounter = specialLimit
                     if player2.isApunching():    
                         player1.takeHit("Apunching")
-                    print("socofraco")
                     engine.Sound("Hit0").play()
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5 
@@ -106,7 +101,6 @@ class Scenario:
                         specialCounter = specialLimit
                     if player2.isBpunching():    
                         player1.takeHit("Bpunching")
-                    print("socoforte")
                     engine.Sound("Hit0").play()
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5 
@@ -117,7 +111,6 @@ class Scenario:
                         specialCounter = specialLimit
                     if player2.isAkicking():                        
                         player1.takeHit("Akicking")
-                    print("chutefraco")
                     engine.Sound("Hit0").play()
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5 
@@ -128,7 +121,6 @@ class Scenario:
                         specialCounter = specialLimit
                     if player2.isBkicking():                        
                         player1.takeHit("Bkicking")
-                    print("chuteforte")
                     engine.Sound("Hit0").play()
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5 
@@ -141,7 +133,6 @@ class Scenario:
                     engine.Sound("block").play()
                     player1.setX(x1-12)
                     player2.setX(x2+12) 
-                    print("ablock")
                 # caso houve soco ou chute agachado fraco em alguém em pé:
                 if ( ((player1.isCpunching() or player1.isCkicking() ) and not player2.isCrouching() and not player2.isBblocking() ) or ((player2.isCpunching() or player2.isCkicking() ) and not player1.isCrouching() and not player1.isBblocking() ) ): # falta adicionar o Bblock
                     if player1.isCpunching() or player1.isCkicking():                        
@@ -149,7 +140,6 @@ class Scenario:
                         specialCounter = specialLimit
                     if player2.isCpunching() or player2.isCkicking():    
                         player1.takeHit("Cpunching")
-                    print("socofraco!!!!!!!")
                     engine.Sound("Hit0").play()
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5
@@ -160,7 +150,6 @@ class Scenario:
                         specialCounter = specialLimit
                     if player2.isDpunching():    
                         player1.takeHit("Bkicking")
-                    print("socofraco$#$")
                     engine.Sound("Hit0").play()
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5 
@@ -171,7 +160,6 @@ class Scenario:
                         specialCounter = specialLimit
                     if player2.isDkicking():    
                         player1.takeHit("Dkicking")
-                    print("socofraco")
                     engine.Sound("Hit0").play()
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5 
@@ -181,7 +169,6 @@ class Scenario:
                         player2.takeDownHit("Ehit")
                     if player2.isCpunching() or player2.isCkicking():    
                         player1.takeDownHit("Ehit")
-                    print("socofraco**")
                     engine.Sound("Hit0").play()
                     if hitCounter == 0: engine.Sound().roundHit()
                     hitCounter = (hitCounter+1) % 5
@@ -194,17 +181,15 @@ class Scenario:
                     engine.Sound("block").play()
                     player1.setX(x1-12)
                     player2.setX(x2+12) 
-                    print("bblock")
 
             # caso houve special
-            if ( player1.isSpecialMove() and (player2.isWalking() or player2.isDancing() or player2.isAblocking() or player2.ishitSpecial()) ) or ( player2.isSpecialMove() and (player1.isWalking() or player1.isDancing() or player1.isAblocking() or player1.ishitSpecial()) ):
+            if ( player1.isSpecialMove() and (player2.isWalking() or player2.isDancing() or player2.isCrouching() or player2.isAblocking() or player2.isBblocking() or player2.ishitSpecial()) ) or ( player2.isSpecialMove() and (player1.isWalking() or player1.isDancing() or player1.isAblocking() or player1.ishitSpecial()) ):
                 if player1.isSpecialMove() and collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()):   # and collide(projetil,player2)
                     player1.getProjectile().endProjectile()
-                    if not player2.isAblocking() and not player2.ishitSpecial():   player2.takeHit("special")
+                    if not player2.isAblocking() and not player2.isBblocking() and not player2.ishitSpecial():   player2.takeHit("special")
                 if player2.isSpecialMove() and collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()):   # and collide(projetil,player1) 
                     player2.getProjectile().endProjectile()  
                     if not player1.isAblocking() and not player1.ishitSpecial() and not collide(player1.currentSprite(),player2.currentSprite()):   player1.takeHit("special")
-                print("special")
                 
             # caso frozen
             if ( player2.ishitSpecial() and specialCounter <= specialLimit-1 ):

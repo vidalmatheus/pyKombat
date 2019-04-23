@@ -5,7 +5,7 @@ class Projectile:
     def __init__(self,pos = [0,0],id_fighter = 0):
         self.vel = 200
         self.id = id_fighter
-        self.relativePos = [[150,-10],[-200,-10]]
+        self.relativePos = [[150,-15],[-200,-10]]
         self.position = pos + self.relativePos[id_fighter]
         self.projectileLimit = [12,6]
         self.name = ["Sub-Zero","Scorpion"]
@@ -13,10 +13,11 @@ class Projectile:
         self.projectile = makeSprite('../res/Char/'+str(self.name[self.id])+'/projectile.png', self.projectileLimit[self.id])
         self.frame_step = 60
         self.end_Projectile = True
+
     def setPos(self,pos = [0,0]):
         self.position = [pos[0] + self.relativePos[self.id][0],pos[1] 
             + self.relativePos[self.id][1]]
-        print(self.position)
+
     def moveProjectile(self):
         if self.id == 0:
             self.position = self.position + self.vel*[1,0]
@@ -45,7 +46,6 @@ class Projectile:
                self.frame_projectile = 0
                self.end_Projectile = True
                hideSprite(self.projectile)
-               print("Projetil ended")  
         
         return nextFrame + self.frame_step
 

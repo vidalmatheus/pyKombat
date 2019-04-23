@@ -316,8 +316,6 @@ class Fighter:
                     self.end_special = True
                     self.projectileFighter.endProjectile()
             else:
-                print("SpecialMove")
-                print("self.end_special: " + str(self.end_special))  
                 self.curr_sprite = self.spriteList[self.special]
                 self.projectileFighter.startProjectile()
                 self.projectileFighter.setPos([self.getX(),self.getY()])
@@ -355,7 +353,7 @@ class Fighter:
                 self.walking = self.setState()
                 self.setEndState()
                 self.attacking = False
-                self.x += 6
+                self.x += 7
                 moveSprite(self.spriteList[self.walk], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.walk])
                 changeSpriteImage(self.spriteList[self.walk], self.frame_walk)
@@ -371,7 +369,7 @@ class Fighter:
                 self.walking = self.setState()
                 self.setEndState() 
                 self.attacking = False
-                self.x -= 6
+                self.x -= 7
                 moveSprite(self.spriteList[self.walk], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.walk])
                 changeSpriteImage(self.spriteList[self.walk], self.walkLimit-1-self.frame_walk)
@@ -436,7 +434,6 @@ class Fighter:
                                     self.end_Dpunch = True
                         # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> crouch and kick
                         elif ( (keyPressed(self.combat[2]) and self.end_Ckick) or ( not self.end_Ckick) ) and (not self.hit) and not self.downHit: 
-                            print("Crouch_Kick!")
                             self.curr_sprite = self.spriteList[self.Ckick]
                             self.Ckicking = self.setState()
                             self.crouching = True
@@ -637,8 +634,6 @@ class Fighter:
                     self.end_special = True
                     self.projectileFighter.endProjectile()
                 else:
-                    print("SpecialMove")
-                    print("self.end_special: " + str(self.end_special))  
                     if (self.frame_special == 0): engine.Sound(self.specialSound[self.fighterId][0]).play()
                     self.curr_sprite = self.spriteList[self.special]
                     self.projectileFighter.startProjectile()
@@ -862,7 +857,6 @@ class Fighter:
                                 moveSprite(self.spriteWins, 400, 120, True) 
                                 showSprite(self.spriteWins)
                         else:
-                            print("Scorpion Wins")
                             if not pygame.mixer.get_busy() and not self.lostOnce:
                                 engine.Sound("Hit0").play()
                                 engine.Sound("SubZeroWins").play()

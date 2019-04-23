@@ -1,8 +1,6 @@
 import pygame
 import os
 from pygame.locals import *
-import config
-import game
 import engine
 import fightScene
 
