@@ -79,7 +79,7 @@ class Fighter:
         if id == 0:
             self.life = LifeBars.Player1LifeBar("Subzero")
             self.life.setLifePosition([200-self.life.getLifeImage().get_width()/2,10])
-            #self.life.addDamage(99)
+            self.life.addDamage(99)
             
 
         else:
@@ -578,7 +578,7 @@ class Fighter:
                         self.frame_Akicking = 0
                         self.Akick_step = 1
                         self.end_Akick = True 
-                    nextFrame += 1*frame_step
+                    nextFrame += 0.8*frame_step
             
             # combatMoves = [["j","n","k","m","l","u","f"],["1","4","2","5","3","0","6"]] -> strong kick
             elif ( (keyPressed(self.combat[3]) and self.end_Bkick) or ( not self.end_Bkick) ) and (not self.hit): 
@@ -979,6 +979,9 @@ class Fighter:
     def isAttacking(self):
         return self.attacking
     
+    def setAttacking(self,state):
+        self.attacking = state
+    
     def isDizzing(self):
         return self.dizzing
 
@@ -997,8 +1000,8 @@ class Fighter:
         self.hitName = by
         dicionario = {"Apunching":5,"Bpunching":8,"Akicking":3,"Ablocking":0,"Bkicking":8,"Cpunching":2,"Dkicking":4,"special":5}
         if by in dicionario:
-            self.life.addDamage(dicionario[by])
-            if self.life.isDead():
+            if not self.life.isDead(): self.life.addDamage(dicionario[by])
+            elif self.life.isDead():
                 pygame.mixer.music.stop()               
                 if not pygame.mixer.get_busy() and not self.lostOnceFinish:
                     engine.Sound("FinishHim").play()
@@ -1016,6 +1019,12 @@ class Fighter:
     def stopHit(self,by = ""):
         self.hit = False
         self.hitName = by
+    
+    def getHit(self):
+        return self.hit
+
+    def getHitName(self):
+        return self.hitName
         
     def setState(self):
         # moves

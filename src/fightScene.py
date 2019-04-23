@@ -51,7 +51,6 @@ class Scenario:
             nextFrame2 = aux2
             x1 = player1.getX()
             x2 = player2.getX()
-            #print(x1, x2, x2-x1)
 
             # caso encostem na tela
             if player1.getX() < 20:
@@ -68,7 +67,7 @@ class Scenario:
 
             if not player1.isAlive() or not player2.isAlive():
                 if not player1.isAlive(): # finish player1
-                    player1.takeHit("dizzy")
+                    player1.takeHit("dizzy")    
                     if (collide(player1.currentSprite(),player2.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite())):
                         if player2.isAttacking() or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()):
                             dizzyCounter = 100 # tempo de dizzy
@@ -204,7 +203,7 @@ class Scenario:
                     if not player2.isAblocking() and not player2.ishitSpecial():   player2.takeHit("special")
                 if player2.isSpecialMove() and collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()):   # and collide(projetil,player1) 
                     player2.getProjectile().endProjectile()  
-                    if not player1.isAblocking() and not player1.ishitSpecial():   player1.takeHit("special")
+                    if not player1.isAblocking() and not player1.ishitSpecial() and not collide(player1.currentSprite(),player2.currentSprite()):   player1.takeHit("special")
                 print("special")
                 
             # caso frozen
