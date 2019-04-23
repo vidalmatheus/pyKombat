@@ -65,7 +65,7 @@ class Scenario:
                         player2.takeHit("dead")
                 dizzyCounter += 1
 
-
+            
             # caso encostem na tela
             if player1.getX() < 20:
                 player1.setX(20) 
@@ -80,6 +80,7 @@ class Scenario:
                 player2.setX(800-20)    
                 
             if(collide(player1.currentSprite(),player2.currentSprite())):
+                if dizzyCounter <= 10: print("Hey!")
                 # caso só encostem
                 if ( (player1.isWalking() or player1.isJumping()) and (player2.isDancing() or player2.isCrouching() or player2.isWalking()) ) or ((player2.isWalking() or player2.isJumping()) and (player1.isDancing() or player1.isCrouching() or player2.isWalking()) ) or (player1.isWalking() and player2.isWalking()) or (player1.isJumping() and player2.isJumping()) or (player1.isDancing() and player2.isDancing()) or (player2.isSpecialMove() and player1.ishitSpecial()):
                     player1.setX(x1-6)

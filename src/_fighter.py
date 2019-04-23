@@ -78,13 +78,13 @@ class Fighter:
         if id == 0:
             self.life = LifeBars.Player1LifeBar("Subzero")
             self.life.setLifePosition([200-self.life.getLifeImage().get_width()/2,10])
-            self.life.addDamage(99)
+            #self.life.addDamage(99)
             
 
         else:
             self.life = LifeBars.Player2LifeBar("Scorpion")
             self.life.setLifePosition([600-self.life.getLifeImage().get_width()/2,10])
-            self.life.addDamage(99)
+            #self.life.addDamage(99)
 
         # Position
         self.x = 150+id*500
@@ -675,7 +675,7 @@ class Fighter:
                     if (self.frame_Ahit == 0):
                         self.hit_step = 1
                         self.hit = False
-                    nextFrame += 1.2*frame_step
+                    nextFrame += 1*frame_step
                     
             # Ouch! kick on a face (Bhit = 13 # chute fraco)
             elif self.hit and self.hitName == "Akicking":
@@ -695,7 +695,7 @@ class Fighter:
                     if (self.frame_Bhit == 0):
                         self.hit_step = 1
                         self.hit = False
-                    nextFrame += 1.2*frame_step
+                    nextFrame += 1*frame_step
 
             # Ouch! combo punch (Chit = 14 # soco forte)
             elif self.hit and self.hitName == "Bpunching":
@@ -714,7 +714,7 @@ class Fighter:
                     if (self.frame_Chit == 0):
                         self.hit_step = 1
                         self.hit = False
-                    nextFrame += 1.2*frame_step
+                    nextFrame += 1*frame_step
 
             #Dhit = 15 # soco agrachado fraco
             elif self.hit and self.hitName == "Cpunching":
@@ -730,7 +730,7 @@ class Fighter:
                     if (self.frame_Dhit == 0):
                         self.hit_step = 1
                         self.hit = False
-                    nextFrame += 1.2*frame_step            
+                    nextFrame += 1*frame_step            
 
             #Fhit = 17 # chute forte e soco forte agachado (gancho)
             elif self.hit and self.hitName == "Bkicking":
@@ -747,7 +747,7 @@ class Fighter:
                     self.frame_Fhit = (self.frame_Fhit+self.hit_step) % self.hitLimit[5]
                     if (self.frame_Fhit == self.hitLimit[5] - 1):
                         self.hit = False
-                    nextFrame += 1.2*frame_step 
+                    nextFrame += 1*frame_step 
 
             #Ghit = 18 # chute agachado forte: banda
             elif self.hit and self.hitName == "Dkicking":
@@ -760,7 +760,7 @@ class Fighter:
                     self.frame_Ghit = (self.frame_Ghit+self.hit_step) % self.hitLimit[6]
                     if (self.frame_Ghit == self.hitLimit[6] - 1):
                         self.hit = False
-                    nextFrame += 1.2*frame_step
+                    nextFrame += 1*frame_step
 
             #Hhit = 19 # specialHit
             elif self.hit and self.hitName == "special":
@@ -776,7 +776,7 @@ class Fighter:
                     self.frame_Hhit = (self.frame_Hhit+self.hit_step) % self.hitSpecialLimit[self.fighterId]
                     if (self.frame_Hhit == self.hitSpecialLimit[self.fighterId] - 1):
                         self.hit = False
-                    nextFrame += 1.2*frame_step
+                    nextFrame += 1*frame_step
                  
 
             #blockHit! Defesa em pé.
@@ -805,7 +805,7 @@ class Fighter:
                 showSprite(self.spriteFinish)
                 if time > nextFrame:
                     self.frame_dizzy = (self.frame_dizzy+self.hit_step) % self.dizzyLimit
-                    nextFrame += 1.8*frame_step
+                    nextFrame += 1.6*frame_step
 
             # Dead
             elif self.hit and self.hitName == "dead":
@@ -954,7 +954,7 @@ class Fighter:
     def takeHit(self,by):
         self.hit = True
         self.hitName = by
-        dicionario = {"Apunching":5,"Bpunching":8,"Akicking":3,"Ablocking":0,"Bkicking":10,"Cpunching":6,"Dkicking":9,"special":5}
+        dicionario = {"Apunching":5,"Bpunching":8,"Akicking":3,"Ablocking":0,"Bkicking":8,"Cpunching":6,"Dkicking":8,"special":5}
         if by in dicionario:
             self.life.addDamage(dicionario[by])
             if self.life.isDead():
