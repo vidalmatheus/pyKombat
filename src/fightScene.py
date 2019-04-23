@@ -57,14 +57,14 @@ class Scenario:
                 if not player1.isAlive(): # finish player1
                     player1.takeHit("dizzy")
                     if (collide(player1.currentSprite(),player2.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite())):
-                        if player2.isAttacking():
+                        if player2.isAttacking() or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()):
                             dizzyCounter = 100
                     if dizzyCounter >= 100:
                         player1.takeHit("dead") # player1 morreu
                 if not player2.isAlive(): # finish player 2
                     player2.takeHit("dizzy")
                     if (collide(player2.currentSprite(),player1.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite())):
-                        if player1.isAttacking():
+                        if player1.isAttacking() :
                             dizzyCounter = 100
                     if dizzyCounter >= 100:
                         player2.takeHit("dead") # player2 morreu
@@ -87,9 +87,9 @@ class Scenario:
             if(collide(player1.currentSprite(),player2.currentSprite())):
                 if dizzyCounter <= 10: print("Hey!")
                 # caso só encostem
-                if ( (player1.isWalking() or player1.isJumping()) and (player2.isDancing() or player2.isCrouching() or player2.isWalking()) ) or ((player2.isWalking() or player2.isJumping()) and (player1.isDancing() or player1.isCrouching() or player2.isWalking()) ) or (player1.isWalking() and player2.isWalking()) or (player1.isJumping() and player2.isJumping()) or (player1.isDancing() and player2.isDancing()) or (player2.isSpecialMove() and player1.ishitSpecial()):
-                    player1.setX(x1-6)
-                    if not player2.isSpecialMove() :player2.setX(x2+6) 
+                if ( (player1.isWalking() or player1.isJumping()) and (player2.isDancing() or player2.isCrouching() or player2.isWalking() or player2.isDizzing() ) ) or ((player2.isWalking() or player2.isJumping()) and (player1.isDancing() or player1.isCrouching() or player1.isWalking() or player1.isDizzing() ) ) or (player1.isWalking() and player2.isWalking()) or (player1.isJumping() and player2.isJumping()) or (player1.isDancing() and player2.isDancing()) or (player1.isSpecialMove() and player2.ishitSpecial()):
+                    player1.setX(x1-5)
+                    if not player2.isSpecialMove() :player2.setX(x2+5) 
                 # caso houve soco fraco:
                 if ( player1.isApunching() and (player2.isWalking() or player2.isDancing() or player2.isApunching() or player2.ishitSpecial()) ) or ( player2.isApunching() and (player1.isWalking() or player1.isDancing() or player1.isApunching()) ):
                     if player1.isApunching():                        

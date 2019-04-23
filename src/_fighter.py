@@ -84,7 +84,7 @@ class Fighter:
         else:
             self.life = LifeBars.Player2LifeBar("Scorpion")
             self.life.setLifePosition([600-self.life.getLifeImage().get_width()/2,10])
-            self.life.addDamage(99)
+            #self.life.addDamage(99)
 
         # Position
         self.x = 150+id*500
@@ -334,7 +334,7 @@ class Fighter:
                         self.special_step = 1
                         self.end_special = True
                         self.projectileFighter.endProjectile()
-                    nextFrame += 1*frame_step
+                    nextFrame += 1.2*frame_step
             return nextFrame
 
         if not self.jumping:
@@ -642,7 +642,7 @@ class Fighter:
                             self.special_step = 1
                             self.end_special = True
                             self.projectileFighter.endProjectile()
-                        nextFrame += 1*frame_step
+                        nextFrame += 1.2*frame_step
             # just dance :)
             elif not self.hit :
                 # reset block (hold type)
@@ -959,6 +959,9 @@ class Fighter:
     
     def isAttacking(self):
         return self.attacking
+    
+    def isDizzing(self):
+        return self.dizzing
 
     def killPlayer(self):
         for i in range(0,len(self.spriteList)):
@@ -973,7 +976,7 @@ class Fighter:
     def takeHit(self,by):
         self.hit = True
         self.hitName = by
-        dicionario = {"Apunching":5,"Bpunching":8,"Akicking":3,"Ablocking":0,"Bkicking":8,"Cpunching":2,"Dkicking":8,"special":5}
+        dicionario = {"Apunching":5,"Bpunching":8,"Akicking":3,"Ablocking":0,"Bkicking":8,"Cpunching":2,"Dkicking":4,"special":5}
         if by in dicionario:
             self.life.addDamage(dicionario[by])
             if self.life.isDead():
