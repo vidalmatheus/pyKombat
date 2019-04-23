@@ -79,7 +79,7 @@ class Fighter:
         if id == 0:
             self.life = LifeBars.Player1LifeBar("Subzero")
             self.life.setLifePosition([200-self.life.getLifeImage().get_width()/2,10])
-            self.life.addDamage(99)
+            #self.life.addDamage(99)
             
 
         else:
