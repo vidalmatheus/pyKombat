@@ -41,12 +41,14 @@ class Scenario:
         hitCounter = 0
         while True:
             aux1 = player1.fight(clock(),nextFrame1)
+            player1.life.render()
             nextFrame1 = aux1
             aux2 = player2.fight(clock(),nextFrame2)
+            player2.life.render()
             nextFrame2 = aux2
             x1 = player1.getX()
             x2 = player2.getX()
-            
+            #print(x1, x2, x2-x1)
             # caso encostem na tela
             if player1.getX() < 20:
                 player1.setX(20) 
@@ -60,11 +62,11 @@ class Scenario:
             if player2.getX() > (800-20):
                 player2.setX(800-20)    
                 
-            if(collide(player1,player2)):
+            if(collide(player1.currentSprite(),player2.currentSprite())):
                 # caso só encostem
-                if ( (player1.isWalking() or player1.isJumping()) and (player2.isDancing() or player2.isCrouching() or player2.isWalking()) ) or ((player2.isWalking() or player2.isJumping()) and (player1.isDancing() or player1.isCrouching() or player2.isWalking()) ) or (player1.isWalking() and player2.isWalking()) or (player1.isJumping() and player2.isJumping()):
-                    player1.setX(x1-15)
-                    player2.setX(x2+15) 
+                if ( (player1.isWalking() or player1.isJumping()) and (player2.isDancing() or player2.isCrouching() or player2.isWalking()) ) or ((player2.isWalking() or player2.isJumping()) and (player1.isDancing() or player1.isCrouching() or player2.isWalking()) ) or (player1.isWalking() and player2.isWalking()) or (player1.isJumping() and player2.isJumping()) or (player1.isDancing() and player2.isDancing()) or (player2.isSpecialMove() and player1.ishitSpecial()):
+                    player1.setX(x1-12)
+                    if not player2.isSpecialMove() :player2.setX(x2+12) 
                 # caso houve soco fraco:
                 if ( player1.isApunching() and (player2.isWalking() or player2.isDancing() or player2.isApunching() or player2.ishitSpecial()) ) or ( player2.isApunching() and (player1.isWalking() or player1.isDancing() or player1.isApunching()) ):
                     if player1.isApunching():                        
@@ -165,18 +167,16 @@ class Scenario:
                     player1.setX(x1-12)
                     player2.setX(x2+12) 
                     print("bblock")
-                # caso houve special
-                if ( player1.isSpecialMove() and (player2.isWalking() or player2.isDancing() or player2.isApunching()) ) or ( player2.isSpecialMove() and (player1.isWalking() or player1.isDancing() or player1.isApunching()) ):
-                    if player1.isSpecialMove():   
-                        engine.Sound("IceSound2").play()                     
-                        player2.takeHit("special")
-                    if player2.isSpecialMove(): 
-                        engine.Sound("Hit10").play()   
-                        player1.takeHit("special")
-                    print("socofraco")
+
+            # caso houve special
+            if ( player1.isSpecialMove() and (player2.isWalking() or player2.isDancing()) ) or ( player2.isSpecialMove() and (player1.isWalking() or player1.isDancing()) ):
+                if player1.isSpecialMove() and collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()):   # and collide(projetil,player2)
+                    player1.getProjectile().endProjectile()
+                    player2.takeHit("special")
+                if player2.isSpecialMove() and collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()):   # and collide(projetil,player1)   
+                    player1.takeHit("special")
+                print("special")
                     
-
-
 
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -205,5 +205,5 @@ class Scenario:
         menu.ScenarioMenu()
        
                         
-def collide(player1,player2):
-    return pygame.sprite.collide_mask(player1.currentSprite(), player2.currentSprite())
+def collide(sprite1,sprite2):
+    return pygame.sprite.collide_mask(sprite1,sprite2)

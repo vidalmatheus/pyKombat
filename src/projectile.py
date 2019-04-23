@@ -24,6 +24,7 @@ class Projectile:
         
     def isProjectileEnded(self):
         return self.end_Projectile
+
     def endProjectile(self):
         self.frame_projectile = 0
         self.end_Projectile = True
@@ -47,3 +48,7 @@ class Projectile:
                print("Projetil ended")  
         
         return nextFrame + self.frame_step
+
+    def getProjectileSprite(self):
+        return self.projectile
+
