@@ -201,7 +201,8 @@ class Scenario:
                 if player1.isSpecialMove() and collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()):   # and collide(projetil,player2)
                     player1.getProjectile().endProjectile()
                     if not player2.isAblocking() and not player2.ishitSpecial():   player2.takeHit("special")
-                if player2.isSpecialMove() and collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()):   # and collide(projetil,player1)   
+                if player2.isSpecialMove() and collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()):   # and collide(projetil,player1) 
+                    player2.getProjectile().endProjectile()  
                     if not player1.isAblocking() and not player1.ishitSpecial():   player1.takeHit("special")
                 print("special")
                 

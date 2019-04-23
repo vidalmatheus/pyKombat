@@ -769,7 +769,7 @@ class Fighter:
                 self.hitSpecial = self.setState()
                 moveSprite(self.spriteList[self.Hhit], self.x, self.y, True)
                 if self.fighterId == 0: # subzero
-                    self.x += 20
+                    self.x += 25
                 self.setSprite(self.spriteList[self.Hhit])
                 changeSpriteImage(self.spriteList[self.Hhit], self.frame_Hhit)
                 if time > nextFrame:
