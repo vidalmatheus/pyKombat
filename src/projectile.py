@@ -5,7 +5,7 @@ class Projectile:
     def __init__(self,pos = [0,0],id_fighter = 0):
         self.vel = 200
         self.id = id_fighter
-        self.relativePos = [[150,0],[-200,-10]]
+        self.relativePos = [[150,-10],[-200,-10]]
         self.position = pos + self.relativePos[id_fighter]
         self.projectileLimit = [12,6]
         self.name = ["Sub-Zero","Scorpion"]

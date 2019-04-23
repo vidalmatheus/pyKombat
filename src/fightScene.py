@@ -54,15 +54,18 @@ class Scenario:
             #print(x1, x2, x2-x1)
 
             if not player1.isAlive() or not player2.isAlive():
-                if not player1.isAlive():
+                if not player1.isAlive(): # finish player1
                     player1.takeHit("dizzy")
+                    if (collide(player1.currentSprite(),player2.currentSprite())):
+                        if player2.isApunching():
+                            dizzyCounter = 100
                     if dizzyCounter >= 100:
                         print(dizzyCounter)
-                        player1.takeHit("dead")
-                if not player2.isAlive():
+                        player1.takeHit("dead") # player1 morreu
+                if not player2.isAlive(): # finish player 2
                     player2.takeHit("dizzy")
                     if dizzyCounter >= 100:
-                        player2.takeHit("dead")
+                        player2.takeHit("dead") # player2 morreu
                 dizzyCounter += 1
 
             
@@ -194,23 +197,23 @@ class Scenario:
                     print("bblock")
 
             # caso houve special
-            if ( player1.isSpecialMove() and (player2.isWalking() or player2.isDancing() or player2.isAblocking()) ) or ( player2.isSpecialMove() and (player1.isWalking() or player1.isDancing() or player1.isAblocking()) ):
+            if ( player1.isSpecialMove() and (player2.isWalking() or player2.isDancing() or player2.isAblocking() or player2.ishitSpecial()) ) or ( player2.isSpecialMove() and (player1.isWalking() or player1.isDancing() or player1.isAblocking() or player1.ishitSpecial()) ):
                 if player1.isSpecialMove() and collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()):   # and collide(projetil,player2)
                     player1.getProjectile().endProjectile()
-                    if not player2.isAblocking():   player2.takeHit("special")
+                    if not player2.isAblocking() and not player2.ishitSpecial():   player2.takeHit("special")
                 if player2.isSpecialMove() and collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()):   # and collide(projetil,player1)   
-                    if not player1.isAblocking():   player1.takeHit("special")
+                    if not player1.isAblocking() and not player1.ishitSpecial():   player1.takeHit("special")
                 print("special")
                 
             # caso frozen
-            if ( player2.ishitSpecial() and specialCounter <= 40 ):
+            if ( player2.ishitSpecial() and specialCounter <= specialLimit-1 ):
                 player2.takeHit("special")
                 player2.life.addDamage(-5)
                 specialCounter+=1
-                if specialCounter == 41: 
+                if specialCounter == specialLimit: 
                     specialCounter = 1
                     player2.stopHit()
-            if specialCounter == 41: 
+            if specialCounter == specialLimit: 
                 specialCounter = 1
 
             

@@ -954,7 +954,7 @@ class Fighter:
     def takeHit(self,by):
         self.hit = True
         self.hitName = by
-        dicionario = {"Apunching":5,"Bpunching":8,"Akicking":3,"Ablocking":0,"Bkicking":8,"Cpunching":6,"Dkicking":8,"special":5}
+        dicionario = {"Apunching":5,"Bpunching":8,"Akicking":3,"Ablocking":0,"Bkicking":8,"Cpunching":2,"Dkicking":8,"special":5}
         if by in dicionario:
             self.life.addDamage(dicionario[by])
             if self.life.isDead():
