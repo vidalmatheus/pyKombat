@@ -25,8 +25,8 @@ class Scenario:
         #self.scene = pygame.image.load('../res/Background/Scenario'+str(scenario)+'.png')
         #self.game.getDisplay().blit(self.scene, (0, 0))
         #pygame.display.update()
-        screenSize(800, 500,"pyKombat",None,None,True) # FullScreen
-        #screenSize(800, 500,"pyKombat") # Minimized
+        #screenSize(800, 500,"pyKombat",None,None,True) # FullScreen
+        screenSize(800, 500,"pyKombat") # Minimized
         setBackgroundImage('../res/Background/Scenario'+str(scenario)+'.png')
         self.judge(scenario)
     

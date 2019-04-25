@@ -24,8 +24,8 @@ class Game:
         self.scale = 1.0
         self.ppm = 70 #pixel por metros
         os.environ['SDL_VIDEO_CENTERED'] = '1'
-        self.display = pygame.display.set_mode((self.width,self.height),pygame.FULLSCREEN)
-        #self.display = pygame.display.set_mode((self.width,self.height))
+        #self.display = pygame.display.set_mode((self.width,self.height),pygame.FULLSCREEN)
+        self.display = pygame.display.set_mode((self.width,self.height))
         self.clock = pygame.time.Clock()
         self.deltaTime = 0.0
         self.musicVolume = 10
