@@ -22,5 +22,5 @@ BACKSPACE: close the game
 
 # After the round ends, you can play again with "ESC" button
 
-The executable is "pyKombat1.0.exe" in "src" directory. 
+Executable file is "pyKombat1.0.exe" in "src" directory. 
 Enjoy! :)
