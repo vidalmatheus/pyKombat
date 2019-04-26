@@ -18,6 +18,9 @@ class Scenario:
         music = engine.Music("mkt")
         music.play()
         music.volume(0.2)
+        # buttons sprite
+        self.back = makeSprite('../res/back.png')
+        self.esc = makeSprite('../res/esc.png')
 
     def setScenario(self, scenario):
         if scenario == 9:
@@ -34,15 +37,18 @@ class Scenario:
         [player1,player2] = self.addFigther(scenario) 
         player1.act()
         player2.act()
-        nextFrame = clock()
+        nextFrame1 = clock()
+        nextFrame2 = clock()
         hitCounter = 0
         dizzyCounter = 1
         specialCounter = 1
         specialLimit = 41
         while True:
-            player1.fight(clock(),nextFrame) # call fight moves
+            aux1 = player1.fight(clock(),nextFrame1) # call fight moves
+            nextFrame1 = aux1
             player1.life.render() # add lifebar
-            player2.fight(clock(),nextFrame) # call fight moves
+            aux2 = player2.fight(clock(),nextFrame2) # call fight moves
+            nextFrame2 = aux2
             player2.life.render() # add lifebar
             
             # fighter positions
@@ -77,6 +83,13 @@ class Scenario:
                         dizzyCounter = 100
                     if dizzyCounter >= 100:
                         player2.takeHit("dead") # player2 morreu
+                if dizzyCounter >= 150:
+                    # back button
+                    moveSprite(self.back, 600, 486, True) 
+                    showSprite(self.back)
+                    # esc button
+                    moveSprite(self.esc, 200, 486, True) 
+                    showSprite(self.esc)                    
                 dizzyCounter += 1  
                 
             elif (collide(player1.currentSprite(),player2.currentSprite())):
@@ -208,9 +221,9 @@ class Scenario:
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
-            if keyPressed("backspace"):
-                pygame.quit()
             if keyPressed("esc"):
+                pygame.quit()
+            if keyPressed("backspace"):
                 self.goBack(player1,player2)
     
     def addFigther(self,scenario):
@@ -221,6 +234,10 @@ class Scenario:
         return player1,player2
     
     def goBack(self,player1,player2):
+        # kill buttons
+        killSprite(self.back)
+        killSprite(self.esc)
+        # kill players
         player1.killPlayer()
         player2.killPlayer()
         del(player1)

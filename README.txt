@@ -10,7 +10,7 @@ github: https://github.com/vidalmatheus/pyKombat
 
 -------------------------------------------------------------------------------------------------------
 
-This game is an 1.0 version. So, some problems may be met. 
+This game is an 1.0 version. So, some problems may be found. 
 Feel free to use/improve our code to yourself and for other.
 
 -------------------------------------------------------------------------------------------------------

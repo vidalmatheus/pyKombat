@@ -153,6 +153,7 @@ class Fighter:
         else:
             self.spriteWins = makeSprite('../res/'+str("Sub-Zero")+'wins.png', 1) # wins
 
+
         self.act()
 
 
@@ -280,7 +281,7 @@ class Fighter:
         self.posFighter()
 
     def fight(self, time, nextFrame):
-        frame_step = 60
+        frame_step = 50
         """if self.isDead:
             if self.wait > 0:
                 self.wait = self.wait - 1
@@ -835,7 +836,7 @@ class Fighter:
                 showSprite(self.spriteFinish)
                 if time > nextFrame:
                     self.frame_dizzy = (self.frame_dizzy+self.hit_step) % self.dizzyLimit
-                    nextFrame += 1.6*frame_step
+                    nextFrame += 1.7*frame_step
 
             # Dead
             elif self.hit and self.hitName == "dead":

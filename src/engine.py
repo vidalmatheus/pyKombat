@@ -26,6 +26,7 @@ class Game:
         os.environ['SDL_VIDEO_CENTERED'] = '1'
         #self.display = pygame.display.set_mode((self.width,self.height),pygame.FULLSCREEN)
         self.display = pygame.display.set_mode((self.width,self.height))
+        pygame.mouse.set_visible(False)
         self.clock = pygame.time.Clock()
         self.deltaTime = 0.0
         self.musicVolume = 10

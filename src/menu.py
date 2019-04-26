@@ -23,7 +23,7 @@ class MainMenu(Menu):
                 if event.type == pygame.KEYDOWN:
                     # carregar áudio   
                     sound = engine.Sound()
-                    if event.key == pygame.K_BACKSPACE: 
+                    if event.key == pygame.K_ESCAPE: 
                         pygame.quit()
                     if event.key == 13:  # 13 == ENTER
                         # coloca áudio "in"
@@ -64,7 +64,7 @@ class OptionMenu(Menu):
                 if event.type == QUIT:
                     pygame.quit()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == K_ESCAPE:
+                    if event.key == K_BACKSPACE:
                         # colocar áudio "out"
                         sound = engine.Sound("back")
                         sound.play()     
@@ -89,7 +89,7 @@ class ScenarioMenu(Menu):
                 # carregar áudio
                 sound = engine.Sound() 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_BACKSPACE: 
+                    if event.key == pygame.K_ESCAPE: 
                         pygame.quit()
                     if event.key == 13:  # 13 == ENTER
                         # Entra no cenário escolhido
@@ -197,7 +197,7 @@ class ScenarioMenu(Menu):
                             scenario = 6
                         self.setScenario(scenario)
 
-                    if event.key == pygame.K_ESCAPE:
+                    if event.key == pygame.K_BACKSPACE:
                         # colocar áudio "out"
                         sound = engine.Sound("back")
                         sound.play()     

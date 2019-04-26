@@ -283,6 +283,7 @@ def loadImage(fileName, useColorKey=False):
 def screenSize(sizex, sizey, label="Graphics Window", xpos=None, ypos=None, fullscreen=False):
     global screen
     global background
+    pygame.mouse.set_visible(False)
     if xpos != None and ypos != None:
         os.environ['SDL_VIDEO_WINDOW_POS'] = "%d, %d" % (xpos, ypos + 50)
     else:
@@ -646,7 +647,7 @@ def tick(fps):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-    if (keys[pygame.K_BACKSPACE]):
+    if (keys[pygame.K_ESCAPE]):
         pygame.quit()
         sys.exit()
     gameClock.tick(fps)
@@ -683,7 +684,7 @@ def updateDisplay():
     textboxRects = textboxGroup.draw(screen)
     pygame.display.update()
     keys = pygame.key.get_pressed()
-    if (keys[pygame.K_BACKSPACE]):
+    if (keys[pygame.K_ESCAPE]):
         pygame.quit()
         sys.exit()
     spriteGroup.clear(screen, background.surface)
