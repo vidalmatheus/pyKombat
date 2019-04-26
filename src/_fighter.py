@@ -675,6 +675,7 @@ class Fighter:
                 # reset combat frames
                 self.frame_Apunching = self.frame_Bpunching = self.frame_Cpunching = self.frame_Dpunching = self.frame_Akicking = self.frame_Bkicking = self.frame_Ckicking = self.frame_Dkicking = 0
                 self.setEndState()
+                self.attacking = False
                 # start to dance
                 self.curr_sprite = self.spriteList[self.dance]
                 self.dancing = self.setState()

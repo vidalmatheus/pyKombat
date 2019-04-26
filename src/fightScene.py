@@ -79,11 +79,11 @@ class Scenario:
                 if not player2.isAlive(): # finish player 2
                     player2.takeHit("dizzy")
                     if (collide(player2.currentSprite(),player1.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite())):
-                        #if player1.isAttacking() or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()):
-                        dizzyCounter = 100
+                        if player1.isAttacking() or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()):
+                            dizzyCounter = 100 # tempo de dizzy
                     if dizzyCounter >= 100:
                         player2.takeHit("dead") # player2 morreu
-                if dizzyCounter >= 150:
+                if dizzyCounter == 150:
                     # back button
                     moveSprite(self.back, 600, 486, True) 
                     showSprite(self.back)
