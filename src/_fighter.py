@@ -77,13 +77,13 @@ class Fighter:
         self.wait = 0
         self.isDead = False
         if id == 0:
-            self.life = LifeBars.Player1LifeBar("Subzero")
+            self.life = LifeBars.ProxyPlayerLifeBar(id)
             self.life.setLifePosition([200-self.life.getLifeImage().get_width()/2,10])
             #self.life.addDamage(99)
             
 
         else:
-            self.life = LifeBars.Player2LifeBar("Scorpion")
+            self.life = LifeBars.ProxyPlayerLifeBar(id)
             self.life.setLifePosition([600-self.life.getLifeImage().get_width()/2,10])
             #self.life.addDamage(99)
 
