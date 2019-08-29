@@ -7,6 +7,8 @@ Sprites: https://www.spriters-resource.com/snes/mortalkombat2/
 
 ![alt text](https://github.com/vidalmatheus/pyKombat/blob/master/res/Background/MainMenu01.png)
 
+![alt text](https://github.com/vidalmatheus/pyKombat/blob/master/res/Screenshot.png)
+
 Schedule:
 
 [In progress] Entender   Colisões com bonecos grandes em pygame( retângulo, masks)
