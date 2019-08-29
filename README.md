@@ -5,6 +5,7 @@ Group: Adriano Soares/ Matheus Vidal/ Pedro Alves
 
 Sprites: https://www.spriters-resource.com/snes/mortalkombat2/
 
+![alt text](http://url/to/img.png)
 
 Schedule:
 
