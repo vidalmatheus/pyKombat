@@ -9,4 +9,11 @@ Sprites: https://www.spriters-resource.com/snes/mortalkombat2/
 
 ![alt text](https://github.com/vidalmatheus/pyKombat/blob/master/res/Screenshot.png)
 
+
+## Run the game with:
+
+```
+python pykombat.py
+```
+
 Enjoy! :)
