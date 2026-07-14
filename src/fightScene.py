@@ -43,6 +43,7 @@ class Scenario:
         dizzyCounter = 1
         specialCounter = 1
         specialLimit = 41
+        setAutoUpdate(False) # evita um flip de tela por sprite; um único updateDisplay() por frame (fim do loop)
         while True:
             aux1 = player1.fight(clock(),nextFrame1) # call fight moves
             nextFrame1 = aux1
@@ -225,6 +226,9 @@ class Scenario:
                 pygame.quit()
             if keyPressed("backspace"):
                 self.goBack(player1,player2)
+
+            updateDisplay() # redesenha tudo uma única vez por frame
+            tick(60) # limita a 60 fps
     
     def addFigther(self,scenario):
         player1 = _fighter.Fighter(0,scenario) # 0: subzero
@@ -234,6 +238,7 @@ class Scenario:
         return player1,player2
     
     def goBack(self,player1,player2):
+        setAutoUpdate(True) # menus dependem do refresh automático
         # kill buttons
         killSprite(self.back)
         killSprite(self.esc)
