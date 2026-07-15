@@ -21,7 +21,8 @@ class Fighter:
     hitSpecialLimit = [3,1]
     specialSound = [["IceSound","Hit10"],["ComeHere"]]
     victoryLimit = 3
-    fatalityLimit = 20
+    fatalityLimit = [17,20] # frames de quem executa o fatality
+    fatalityHitLimit = [10,10] # frames de quem sofre o fatality
     dizzyLimit = 7
     deadLimit = 6
 
@@ -60,8 +61,8 @@ class Fighter:
     # dead
     dead = 18
     # fatality
-    fatal = 25 
-    fatalityHit = 26 # fatality hit
+    fatal = 24 # executa o fatality
+    fatalityHit = 25 # sofre o fatality
 
     def __init__(self, id, scenario):
         self.fighterId = id
@@ -141,6 +142,10 @@ class Fighter:
         # dizzy sprite ----------------------------------
         self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/dizzy.png', self.dizzyLimit)) # Dizzy
 
+        # fatality sprites ----------------------------------
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/fatality.png', self.fatalityLimit[self.fighterId])) # executa o golpe final
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/fatalityhit.png', self.fatalityHitLimit[self.fighterId])) # sofre o golpe final
+
         # o frame de hitSpecial (congelado/arpoado) pode ter altura diferente
         # dos demais; como os sprites são desenhados centralizados, alinha a
         # base (pés) com a dos outros sprites (ex.: Scorpion congelado é 30px
@@ -158,6 +163,8 @@ class Fighter:
         else:
             self.spriteWins = makeSprite('res/'+str("Sub-Zero")+'wins.png', 1) # wins
 
+        # banner FATALITY (mostrado abaixo do "<fighter> wins")
+        self.spriteFatality = makeSprite('res/fatality.png', 1)
 
         self.act()
 
@@ -281,6 +288,10 @@ class Fighter:
 
         # fatality vars
         self.fatality = False
+        self.frame_fatality = 0
+        self.frame_fatalityHit = 0
+        self.fatalityHitStart = 0 # instante em que o golpe final atinge a vítima
+        self.fatalityHitStarted = False
 
         # dead vars
         self.deading = False
@@ -347,6 +358,19 @@ class Fighter:
                         self.end_special = True
                         self.projectileFighter.endProjectile()
                     nextFrame += 1.2*frame_step
+            return nextFrame
+
+        # fatality em andamento: o vencedor executa o golpe final e ignora
+        # qualquer entrada de teclado; para no último frame
+        if self.fatality:
+            self.curr_sprite = self.spriteList[self.fatal]
+            moveSprite(self.spriteList[self.fatal], self.x, self.y, True)
+            self.setSprite(self.spriteList[self.fatal])
+            changeSpriteImage(self.spriteList[self.fatal], self.frame_fatality)
+            if time > nextFrame:
+                if self.frame_fatality < self.fatalityLimit[self.fighterId]-1:
+                    self.frame_fatality += 1
+                nextFrame += 1.2*frame_step
             return nextFrame
 
         if not self.jumping:
@@ -830,6 +854,40 @@ class Fighter:
                         self.hit_step = 1
                         self.hit = False
                     nextFrame += 1*frame_step
+            # fatality: o perdedor sofre o golpe final
+            elif self.hit and self.hitName == "fatality":
+                self.setState()
+                hideSprite(self.spriteFinish)
+                if time < self.fatalityHitStart:
+                    # o golpe ainda não chegou: continua tonto (dizzy)
+                    self.curr_sprite = self.spriteList[self.dizzy]
+                    moveSprite(self.spriteList[self.dizzy], self.x, self.y, True)
+                    self.setSprite(self.spriteList[self.dizzy])
+                    changeSpriteImage(self.spriteList[self.dizzy], self.frame_dizzy)
+                    if time > nextFrame:
+                        self.frame_dizzy = (self.frame_dizzy+1) % self.dizzyLimit
+                        nextFrame += 1.7*frame_step
+                else:
+                    if not self.fatalityHitStarted:
+                        self.fatalityHitStarted = True
+                        engine.Sound("HitFatality").play() # o golpe atinge a vítima
+                    self.curr_sprite = self.spriteList[self.fatalityHit]
+                    moveSprite(self.spriteList[self.fatalityHit], self.x, self.y, True)
+                    self.setSprite(self.spriteList[self.fatalityHit])
+                    changeSpriteImage(self.spriteList[self.fatalityHit], self.frame_fatalityHit)
+                    if time > nextFrame:
+                        if self.frame_fatalityHit < self.fatalityHitLimit[self.fighterId]-1:
+                            self.frame_fatalityHit += 1
+                            if self.frame_fatalityHit == self.fatalityHitLimit[self.fighterId]-1:
+                                # golpe consumado: anuncia, banner de vitória + FATALITY
+                                engine.Sound("Fatality").play()
+                                self.lostOnce = True
+                                moveSprite(self.spriteWins, 400, 120, True)
+                                showSprite(self.spriteWins)
+                                moveSprite(self.spriteFatality, 400, 160, True)
+                                showSprite(self.spriteFatality)
+                        nextFrame += 1.5*frame_step
+
             # dizzy
             elif self.hit and self.hitName == "dizzy":
                 self.curr_sprite = self.spriteList[self.dizzy]
@@ -926,6 +984,18 @@ class Fighter:
         # +1: olhando p/ direita; -1: p/ esquerda
         return 1 if (self.fighterId == 0) != self.reflected else -1
 
+    def isFatality(self):
+        return self.fatality
+
+    def startFatality(self):
+        # vencedor inicia o golpe final (janela do FINISH HIM)
+        self.setState()
+        self.setEndState()
+        self.fatality = True
+        self.frame_fatality = 0
+        self.attacking = False
+        self.curr_sprite = self.spriteList[self.fatal]
+
     def getY(self):
         return self.y
 
@@ -1006,6 +1076,7 @@ class Fighter:
 
         killSprite(self.spriteFinish)
         killSprite(self.spriteWins)
+        killSprite(self.spriteFatality)
 
     def currentSprite(self):
         return self.curr_sprite

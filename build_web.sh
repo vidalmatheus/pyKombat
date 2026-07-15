@@ -18,7 +18,7 @@ rsync -a --include='*/' --include='*.png' --include='*.ogg' --exclude='*' res/ "
 python3 - "$STAGE/res/Sound" <<'EOF'
 import os, sys
 keep = {'selection','back','start','options','Fight','block','IceSound','ComeHere',
-        'FinishHim','ScorpionWins','SubZeroWins'} | {f'Hit{i}' for i in range(13)}
+        'FinishHim','ScorpionWins','SubZeroWins','Fatality','HitFatality'} | {f'Hit{i}' for i in range(13)}
 d = sys.argv[1]
 for f in os.listdir(d):
     if f[:-4] not in keep:

@@ -75,19 +75,33 @@ class Scenario:
 
             if not player1.isAlive() or not player2.isAlive():
                 if not player1.isAlive(): # finish player1
-                    player1.takeHit("dizzy")    
-                    if (collide(player1.currentSprite(),player2.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite())):
-                        if player2.isAttacking() or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()):
-                            dizzyCounter = 100 # tempo de dizzy
-                    if dizzyCounter >= 100:
-                        player1.takeHit("dead") # player1 morreu
+                    if player2.isFatality() or player1.getHitName() == "fatality":
+                        pass # fatality em andamento: as animações cuidam do resto
+                    elif keyPressed(player2.combat[6]) and dizzyCounter < 100: # FATALITY! (P2: tecla 6 do numpad)
+                        player2.startFatality()
+                        player1.takeHit("fatality")
+                        player1.fatalityHitStart = clock() # golpe do scorpion é imediato
+                    else:
+                        player1.takeHit("dizzy")
+                        if (collide(player1.currentSprite(),player2.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite())):
+                            if player2.isAttacking() or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()):
+                                dizzyCounter = 100 # tempo de dizzy
+                        if dizzyCounter >= 100:
+                            player1.takeHit("dead") # player1 morreu
                 if not player2.isAlive(): # finish player 2
-                    player2.takeHit("dizzy")
-                    if (collide(player2.currentSprite(),player1.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite())):
-                        if player1.isAttacking() or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()):
-                            dizzyCounter = 100 # tempo de dizzy
-                    if dizzyCounter >= 100:
-                        player2.takeHit("dead") # player2 morreu
+                    if player1.isFatality() or player2.getHitName() == "fatality":
+                        pass # fatality em andamento
+                    elif keyPressed(player1.combat[6]) and dizzyCounter < 100: # FATALITY! (P1: tecla F)
+                        player1.startFatality()
+                        player2.takeHit("fatality")
+                        player2.fatalityHitStart = clock() + 1200 # golpe do subzero demora 1.2s p/ atingir
+                    else:
+                        player2.takeHit("dizzy")
+                        if (collide(player2.currentSprite(),player1.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite())):
+                            if player1.isAttacking() or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()):
+                                dizzyCounter = 100 # tempo de dizzy
+                        if dizzyCounter >= 100:
+                            player2.takeHit("dead") # player2 morreu
                 if dizzyCounter == 150:
                     # back button
                     moveSprite(self.back, 600, 486, True) 
