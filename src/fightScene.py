@@ -1,8 +1,8 @@
+import asyncio
 import pygame
 import os
 from pygame.locals import *
 import engine
-import menu
 from random import randint
 import _fighter
 from pygame_functions import *
@@ -19,21 +19,20 @@ class Scenario:
         music.play()
         music.volume(0.2)
         # buttons sprite
-        self.back = makeSprite('../res/back.png')
-        self.esc = makeSprite('../res/esc.png')
+        self.back = makeSprite('res/back.png')
+        self.esc = makeSprite('res/esc.png')
 
-    def setScenario(self, scenario):
+    async def run(self):
+        # retorna o próximo estado do MenuFacade: "scenario" (voltar) ou None (sair)
+        scenario = self.scenario
         if scenario == 9:
             scenario = randint(1, 8)
-        #self.scene = pygame.image.load('../res/Background/Scenario'+str(scenario)+'.png')
-        #self.game.getDisplay().blit(self.scene, (0, 0))
-        #pygame.display.update()
         #screenSize(800, 500,"pyKombat",None,None,True) # FullScreen
         screenSize(800, 500,"pyKombat") # Minimized
-        setBackgroundImage('../res/Background/Scenario'+str(scenario)+'.png')
-        self.judge(scenario)
-    
-    def judge(self,scenario):
+        setBackgroundImage('res/Background/Scenario'+str(scenario)+'.png')
+        return await self.judge(scenario)
+
+    async def judge(self,scenario):
         [player1,player2] = self.addFigther(scenario) 
         player1.act()
         player2.act()
@@ -226,14 +225,15 @@ class Scenario:
 
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    pygame.quit()
+                    return None
             if keyPressed("esc"):
-                pygame.quit()
+                return None
             if keyPressed("backspace"):
-                self.goBack(player1,player2)
+                return self.goBack(player1,player2)
 
             updateDisplay() # redesenha tudo uma única vez por frame
             tick(51) # 60*0.85: desacelera os movimentos por iteração (knockback etc.) em 15%
+            await asyncio.sleep(0) # cede o controle ao navegador (pygbag)
     
     def addFigther(self,scenario):
         player1 = _fighter.Fighter(0,scenario) # 0: subzero
@@ -248,17 +248,19 @@ class Scenario:
         killSprite(self.back)
         killSprite(self.esc)
         # kill players
+        killSprite(player1.getProjectile().getProjectileSprite())
+        killSprite(player2.getProjectile().getProjectileSprite())
         player1.killPlayer()
         player2.killPlayer()
         del(player1)
         del(player2)
-        sound = engine.Sound("back")  
+        sound = engine.Sound("back")
         sound.play()
         pygame.mixer.music.stop()
         music = engine.Music("intro")
-        music.play()     
+        music.play()
         music.volume(0.5)
-        menu.ScenarioMenu()
+        return "scenario" # devolve ao MenuFacade em vez de recursar no menu
        
                         
 def collide(sprite1,sprite2):

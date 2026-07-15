@@ -1,8 +1,6 @@
 
 from pygame_functions import *
-import fightScene
 import engine
-import menu
 import LifeBars
 import projectile
 
@@ -21,7 +19,7 @@ class Fighter:
     blockLimit = 3
     specialLimit = [12,7]
     hitSpecialLimit = [3,1]
-    specialSound = [["iceSound","Hit10"],["ComeHere"]]
+    specialSound = [["IceSound","Hit10"],["ComeHere"]]
     victoryLimit = 3
     fatalityLimit = 20
     dizzyLimit = 7
@@ -110,48 +108,48 @@ class Fighter:
         # Loading sprites
         self.spriteList = []
         # moves
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/dance.png', self.danceLimit)) 
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/walk.png', self.walkLimit))
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/jump.png', self.jumpLimit))
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/crouch.png', self.crouchLimit))
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/dance.png', self.danceLimit)) 
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/walk.png', self.walkLimit))
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/jump.png', self.jumpLimit))
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/crouch.png', self.crouchLimit))
         # Punch sprites
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Apunch.png', self.punchLimit[0]))
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Bpunch.png', self.punchLimit[1]))
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Cpunch.png', self.punchLimit[2]))
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Dpunch.png', self.punchLimit[3]))
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Apunch.png', self.punchLimit[0]))
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Bpunch.png', self.punchLimit[1]))
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Cpunch.png', self.punchLimit[2]))
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Dpunch.png', self.punchLimit[3]))
         # Kick sprites
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Akick.png', self.kickLimit[0]))
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Bkick.png', self.kickLimit[1]))
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Ckick.png', self.kickLimit[2]))
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Dkick.png', self.kickLimit[3]))
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Akick.png', self.kickLimit[0]))
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Bkick.png', self.kickLimit[1]))
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Ckick.png', self.kickLimit[2]))
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Dkick.png', self.kickLimit[3]))
         # Hit sprites
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Ahit.png', self.hitLimit[0])) # soco fraco
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Bhit.png', self.hitLimit[1])) # chute fraco
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Chit.png', self.hitLimit[2])) # soco forte
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Dhit.png', self.hitLimit[3])) # chute agrachado fraco
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Ehit.png', self.hitLimit[4])) # soco agachado fraco
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Fhit.png', self.hitLimit[5])) # chute forte e soco forte agachado (gancho)
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Ghit.png', self.hitLimit[6])) # chute agachado forte: banda
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/hitSpecial.png', self.hitSpecialLimit[self.fighterId])) # specialMove
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Ahit.png', self.hitLimit[0])) # soco fraco
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Bhit.png', self.hitLimit[1])) # chute fraco
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Chit.png', self.hitLimit[2])) # soco forte
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Dhit.png', self.hitLimit[3])) # chute agrachado fraco
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Ehit.png', self.hitLimit[4])) # soco agachado fraco
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Fhit.png', self.hitLimit[5])) # chute forte e soco forte agachado (gancho)
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Ghit.png', self.hitLimit[6])) # chute agachado forte: banda
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/hitSpecial.png', self.hitSpecialLimit[self.fighterId])) # specialMove
         # blocking sprites
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Ablock.png', self.blockLimit)) # defesa em pé
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Bblock.png', self.blockLimit)) # defesa agachado
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Ablock.png', self.blockLimit)) # defesa em pé
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Bblock.png', self.blockLimit)) # defesa agachado
 
         # special sprite ----------------------------------
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/Special.png', self.specialLimit[self.fighterId])) # Especial
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/Special.png', self.specialLimit[self.fighterId])) # Especial
 
         # dizzy sprite ----------------------------------
-        self.spriteList.append(makeSprite('../res/Char/'+str(self.name)+'/dizzy.png', self.dizzyLimit)) # Dizzy
+        self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/dizzy.png', self.dizzyLimit)) # Dizzy
 
         # finish him sprite ----------------------------------
-        self.spriteFinish = makeSprite('../res/finishhim.png', 1) # Dizzy
+        self.spriteFinish = makeSprite('res/finishhim.png', 1) # Dizzy
 
         # wins sprite ----------------------------------
         if self.fighterId == 0:
-            self.spriteWins = makeSprite('../res/'+str("Scorpion")+'wins.png', 1) # wins
+            self.spriteWins = makeSprite('res/'+str("Scorpion")+'wins.png', 1) # wins
 
         else:
-            self.spriteWins = makeSprite('../res/'+str("Sub-Zero")+'wins.png', 1) # wins
+            self.spriteWins = makeSprite('res/'+str("Sub-Zero")+'wins.png', 1) # wins
 
 
         self.act()

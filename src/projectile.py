@@ -11,7 +11,7 @@ class ProjectileModel: #Create standards of projectile model.
         self.projectileLimit = [12,6]
         self.name = ["Sub-Zero","Scorpion"]
         self.frame_projectile = 0
-        self.projectile = makeSprite('../res/Char/'+str(self.name[self.id])+'/projectile.png', self.projectileLimit[self.id])
+        self.projectile = makeSprite('res/Char/'+str(self.name[self.id])+'/projectile.png', self.projectileLimit[self.id])
         self.frame_step = 60/0.85 # +15%: acompanha o ritmo 15% mais lento do jogo
         self.end_Projectile = True
         self.reflected = False # espelhado quando o lutador está do lado trocado
@@ -94,7 +94,7 @@ class Projectile: #Controller
   #      self.projectileLimit = [12,6]
   #      self.name = ["Sub-Zero","Scorpion"]
   #      self.frame_projectile = 0
-  #      self.projectile = makeSprite('../res/Char/'+str(self.name[self.id])+'/projectile.png', self.projectileLimit[self.id])
+  #      self.projectile = makeSprite('res/Char/'+str(self.name[self.id])+'/projectile.png', self.projectileLimit[self.id])
   #      self.frame_step = 60
   #      self.end_Projectile = True
 

@@ -1,22 +1,10 @@
-import pygame
+# Entrada legada: o jogo agora vive em main.py na raiz do projeto
+# (estrutura exigida pelo pygbag para rodar no navegador).
+# Este wrapper mantém `python pykombat.py` funcionando a partir de src/.
 import os
-from pygame.locals import *
-import menu             # importa menu.py
-import engine           # importa engine.py
+import runpy
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 if __name__ == "__main__":
-    print('loading...')
-
-    pygame.init()
-    pygame.mixer.init()   # som
-    
-    game = engine.Game()
-    music = engine.Music()
-    music.play()
-    music.volume(0.5)
-    # Design Pattern Facade (ou Interface)
-    menu.MenuFacade() 
-    """--- Código Antigo: Sem Design Patterns---
-    menu = menu.MainMenu(game) 
-    """
-
+    runpy.run_path(os.path.join(ROOT, 'main.py'), run_name='__main__')

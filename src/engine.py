@@ -1,7 +1,5 @@
 import pygame,os
 from pygame.locals import *
-import numpy as np
-import delegates
 from random import randint
 
 class GameScene:
@@ -300,7 +298,7 @@ class Image:
 onde soma,subtração de 'vector2' são possiveis,chama-a 'vector(float,float)'"""
 class Vector2:
     def __init__(self,x = 0.0,y = 0.0):
-        self.vec = np.array((x,y))#usa numpy,pois ela possue operações de arrays e matrizes mais velozes
+        self.vec = (x,y) # tupla simples: numpy não está disponível no navegador (pygbag)
 
     def x(self):
         """retorna x"""
@@ -630,11 +628,11 @@ class GameScene:
 
 class Sound:
     def __init__(self, name = "selection"):
-        self.sound = pygame.mixer.Sound('../res/Sound/'+ name +'.ogg')  
+        self.sound = pygame.mixer.Sound('res/Sound/'+ name +'.ogg')  
     def getSound(self):
         return self.sound
     def setSound(self,name):
-        self.sound = pygame.mixer.Sound('../res/Sound/'+ name +'.ogg') 
+        self.sound = pygame.mixer.Sound('res/Sound/'+ name +'.ogg') 
         return self.sound
     def play(self):
         self.sound.play()
@@ -648,11 +646,11 @@ class Sound:
 
 class Music:
     def __init__(self, name = "intro"):
-        self.music = pygame.mixer.music.load('../res/Music/'+ name +'.ogg')  
+        self.music = pygame.mixer.music.load('res/Music/'+ name +'.ogg')  
     def getMusic(self):
         return self.music
     def setMusic(self,name):
-        self.music = pygame.mixer.music.load('../res/Music/'+ name +'.ogg') 
+        self.music = pygame.mixer.music.load('res/Music/'+ name +'.ogg') 
     def play(self,times = 1):
         pygame.mixer.music.play(times)
     def pause(self):

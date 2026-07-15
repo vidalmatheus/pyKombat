@@ -7,8 +7,8 @@ class LifeBar:
     def __init__(self,fighterName):
         self.hp = 100
         self.damage = 0
-        self.lifeBarImg = pygame.image.load('../res/' + fighterName + 'lifebar.png')
-        self.damageFull = pygame.image.load('../res/DamageFull.png')
+        self.lifeBarImg = pygame.image.load('res/' + fighterName + 'lifebar.png')
+        self.damageFull = pygame.image.load('res/DamageFull.png')
         self.shown = self.damage/100.0
         self.damageImage = pygame.transform.scale(self.damageFull,(0,self.damageFull.get_height()))
         self.pos = [0.0, 0.0]
