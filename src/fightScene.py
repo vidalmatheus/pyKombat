@@ -5,6 +5,7 @@ from pygame.locals import *
 import engine
 from random import randint
 import _fighter
+import pygame_functions # p/ globais reatribuídos (background) — o import * congela o binding
 from pygame_functions import *
 
 
@@ -236,13 +237,101 @@ class Scenario:
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return None
-            if keyPressed("esc") or keyPressed("backspace"): # voltar ao menu de cenários
+            if keyPressed("backspace"): # voltar ao menu de cenários
                 return self.goBack(player1,player2)
+            if keyPressed("esc"): # pausa
+                pausedAt = clock()
+                choice = await self.pauseMenu()
+                if choice is None:
+                    return None
+                if choice == "back":
+                    return self.goBack(player1,player2)
+                # resume: retoma a música e compensa o tempo parado (senão os
+                # relógios de animação ficariam atrasados e acelerariam a luta)
+                pygame.mixer.music.unpause()
+                # restaura o fundo inteiro (o véu escuro cobria a tela toda)
+                pygame.display.get_surface().blit(pygame_functions.background.surface, (0, 0))
+                delta = clock() - pausedAt
+                nextFrame1 += delta
+                nextFrame2 += delta
+                while pygame.key.get_pressed()[pygame.K_ESCAPE]: # espera soltar ESC p/ não repausar
+                    pygame.event.pump()
+                    await asyncio.sleep(0.02)
 
             updateDisplay() # redesenha tudo uma única vez por frame
             tick(51) # 60*0.85: desacelera os movimentos por iteração (knockback etc.) em 15%
             await asyncio.sleep(0) # cede o controle ao navegador (pygbag)
     
+    async def pauseMenu(self):
+        # pausa a luta: música parada, cena congelada com fade escuro e um
+        # menu RESUME/OPTIONS. Retorna "resume", "back" (menu de cenários)
+        # ou None (fechar o jogo).
+        pygame.mixer.music.pause()
+        surf = pygame.display.get_surface()
+        font = pygame.font.Font('res/mk2.ttf', 48) # fonte do menu do MK2 (mesma cara do menu principal)
+        backHint = pygame.image.load('res/back.png')
+        instructions = pygame.image.load('res/Background/Instrucoes.png')
+        overlay = pygame.Surface((800, 500))
+        overlay.fill((0, 0, 0))
+
+        def drawScene(alpha):
+            # luta congelada + véu escuro
+            surf.blit(pygame_functions.background.surface, (0, 0))
+            pygame_functions.spriteGroup.draw(surf)
+            overlay.set_alpha(alpha)
+            surf.blit(overlay, (0, 0))
+
+        def drawHint():
+            surf.blit(backHint, ((800 - backHint.get_width()) // 2, 500 - backHint.get_height() - 8))
+
+        def drawMenu(sel):
+            drawScene(150)
+            for i, label in enumerate(["RESUME", "OPTIONS"]):
+                colour = (196, 30, 30) if i == sel else (232, 232, 232)
+                text = font.render(label, True, colour)
+                surf.blit(text, (400 - text.get_width() // 2, 195 + i * 70))
+            drawHint()
+            pygame.display.update()
+
+        # fade progressivo
+        for alpha in (40, 80, 120):
+            drawScene(alpha)
+            pygame.display.update()
+            await asyncio.sleep(0.05)
+
+        sel = 0
+        drawMenu(sel)
+        showingOptions = False
+        while True:
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    return None
+                if event.type == pygame.KEYDOWN:
+                    if showingOptions:
+                        if event.key in (K_BACKSPACE, pygame.K_ESCAPE):
+                            engine.Sound("back").play()
+                            showingOptions = False
+                            drawMenu(sel)
+                        continue
+                    if event.key == pygame.K_ESCAPE:
+                        return "resume"
+                    if event.key == K_BACKSPACE:
+                        engine.Sound("back").play()
+                        return "back"
+                    if event.key in (pygame.K_UP, pygame.K_DOWN):
+                        engine.Sound().play()
+                        sel = 1 - sel
+                        drawMenu(sel)
+                    if event.key == 13:  # ENTER
+                        if sel == 0:
+                            return "resume"
+                        engine.Sound().play()
+                        showingOptions = True
+                        surf.blit(instructions, (0, 0))
+                        drawHint()
+                        pygame.display.update()
+            await asyncio.sleep(1/30)
+
     def addFigther(self,scenario):
         player1 = _fighter.Fighter(0,scenario) # 0: subzero
         player2 = _fighter.Fighter(1,scenario) # 1: scorpion
@@ -251,7 +340,10 @@ class Scenario:
         return player1,player2
     
     def goBack(self,player1,player2):
-        setAutoUpdate(True) # menus dependem do refresh automático
+        # remove os sprites SEM redesenhar a cada kill — senão cada killSprite
+        # faz um flip inteiro e "buracos" claros piscam na tela (visível
+        # principalmente saindo do menu de pausa, sobre a cena escurecida)
+        setAutoUpdate(False)
         # kill buttons
         killSprite(self.back)
         # kill players
@@ -261,6 +353,7 @@ class Scenario:
         player2.killPlayer()
         del(player1)
         del(player2)
+        setAutoUpdate(True) # menus dependem do refresh automático
         sound = engine.Sound("back")
         sound.play()
         pygame.mixer.music.stop()

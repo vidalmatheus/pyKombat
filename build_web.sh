@@ -12,7 +12,7 @@ mkdir -p "$STAGE/src"
 cp main.py "$STAGE/"
 cp src/menu.py src/engine.py src/fightScene.py src/_fighter.py \
    src/projectile.py src/LifeBars.py src/pygame_functions.py "$STAGE/src/"
-rsync -a --include='*/' --include='*.png' --include='*.ogg' --exclude='*' res/ "$STAGE/res/"
+rsync -a --include='*/' --include='*.png' --include='*.ogg' --include='*.ttf' --exclude='*' res/ "$STAGE/res/"
 
 # remove sons não referenciados pelo código
 python3 - "$STAGE/res/Sound" <<'EOF'
