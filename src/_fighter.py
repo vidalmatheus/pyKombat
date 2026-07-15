@@ -141,6 +141,13 @@ class Fighter:
         # dizzy sprite ----------------------------------
         self.spriteList.append(makeSprite('res/Char/'+str(self.name)+'/dizzy.png', self.dizzyLimit)) # Dizzy
 
+        # o frame de hitSpecial (congelado/arpoado) pode ter altura diferente
+        # dos demais; como os sprites são desenhados centralizados, alinha a
+        # base (pés) com a dos outros sprites (ex.: Scorpion congelado é 30px
+        # mais baixo e ficava flutuando 15px acima do chão)
+        self.hitSpecialYOff = (self.spriteList[self.dance].originalHeight
+                               - self.spriteList[self.Hhit].originalHeight) / 2
+
         # finish him sprite ----------------------------------
         self.spriteFinish = makeSprite('res/finishhim.png', 1) # Dizzy
 
@@ -796,7 +803,7 @@ class Fighter:
                 if (self.frame_Hhit == 0 and self.fighterId == 0): engine.Sound(self.specialSound[self.fighterId][1]).play()  
                 self.curr_sprite = self.spriteList[self.Hhit]
                 self.hitSpecial = self.setState()
-                moveSprite(self.spriteList[self.Hhit], self.x, self.y, True)
+                moveSprite(self.spriteList[self.Hhit], self.x, self.y + self.hitSpecialYOff, True)
                 if self.fighterId == 0: # subzero arrastado pelo arpão do scorpion
                     self.x += 25*self.facingDir() # puxado em direção ao oponente
                 self.setSprite(self.spriteList[self.Hhit])
