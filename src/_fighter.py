@@ -284,7 +284,7 @@ class Fighter:
         self.posFighter()
 
     def fight(self, time, nextFrame):
-        frame_step = 50
+        frame_step = 50/0.85 # intervalo entre ticks de animação/movimento (+15% = jogo 15% mais lento)
         """if self.isDead:
             if self.wait > 0:
                 self.wait = self.wait - 1

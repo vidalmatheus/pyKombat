@@ -233,7 +233,7 @@ class Scenario:
                 self.goBack(player1,player2)
 
             updateDisplay() # redesenha tudo uma única vez por frame
-            tick(60) # limita a 60 fps
+            tick(51) # 60*0.85: desacelera os movimentos por iteração (knockback etc.) em 15%
     
     def addFigther(self,scenario):
         player1 = _fighter.Fighter(0,scenario) # 0: subzero
