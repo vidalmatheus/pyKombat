@@ -270,7 +270,8 @@ class Scenario:
         surf = pygame.display.get_surface()
         font = pygame.font.Font('res/mk2.ttf', 48) # fonte do menu do MK2 (mesma cara do menu principal)
         backHint = pygame.image.load('res/back.png')
-        instructions = pygame.image.load('res/Background/Instrucoes.png')
+        instructions = pygame.transform.smoothscale(
+            pygame.image.load('res/Background/Instrucoes.png'), (800, 500)) # arte maior que a janela
         overlay = pygame.Surface((800, 500))
         overlay.fill((0, 0, 0))
 

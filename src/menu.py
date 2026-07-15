@@ -86,7 +86,9 @@ class OptionMenu:
         self.game = game
 
     async def run(self):
-        mainmenu = pygame.image.load('res/Background/Instrucoes.png')
+        # a arte é maior que a janela: redimensiona p/ 800x500 ao carregar
+        mainmenu = pygame.transform.smoothscale(
+            pygame.image.load('res/Background/Instrucoes.png'), (800, 500))
         self.game.getDisplay().blit(mainmenu, (0, 0))
         blitBackHint(self.game)
         pygame.display.update()
