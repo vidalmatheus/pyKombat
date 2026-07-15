@@ -8,8 +8,9 @@ MENU_FPS = 1/30  # pausa entre iterações dos menus (era clock.tick(10) bloquea
 
 
 def blitBackHint(game):
-    # dica "BACKSPACE: MENU" na base da tela
+    # dica "BACKSPACE: MENU" na base da tela (reduzida a 80% do tamanho)
     hint = pygame.image.load('res/back.png')
+    hint = pygame.transform.smoothscale(hint, (int(hint.get_width()*0.8), int(hint.get_height()*0.8)))
     game.getDisplay().blit(hint, ((800 - hint.get_width()) // 2, 500 - hint.get_height() - 8))
 
 

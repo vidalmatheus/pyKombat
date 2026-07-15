@@ -19,8 +19,12 @@ class Scenario:
         music = engine.Music("mkt")
         music.play()
         music.volume(0.2)
-        # button sprite
+        # button sprite (80% do tamanho); sem auto-refresh: na primeira luta
+        # a tela do pygame_functions ainda não existe (screenSize é no run())
+        setAutoUpdate(False)
         self.back = makeSprite('res/back.png')
+        transformSprite(self.back, 0, 0.8)
+        setAutoUpdate(True)
 
     async def run(self):
         # retorna o próximo estado do MenuFacade: "scenario" (voltar) ou None (sair)
@@ -270,6 +274,8 @@ class Scenario:
         surf = pygame.display.get_surface()
         font = pygame.font.Font('res/mk2.ttf', 48) # fonte do menu do MK2 (mesma cara do menu principal)
         backHint = pygame.image.load('res/back.png')
+        backHint = pygame.transform.smoothscale( # 80% do tamanho
+            backHint, (int(backHint.get_width()*0.8), int(backHint.get_height()*0.8)))
         instructions = pygame.transform.smoothscale(
             pygame.image.load('res/Background/Instrucoes.png'), (800, 500)) # arte maior que a janela
         overlay = pygame.Surface((800, 500))
