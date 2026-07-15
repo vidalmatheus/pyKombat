@@ -119,7 +119,7 @@ class ScenarioMenu:
         self.game = game
 
     async def run(self):
-        scenario = 1  # {1,2,3,4,5,6,7,8,9=random}
+        scenario = 9  # começa no aleatório {1..8, 9=random}
         self.setScenario(scenario)
         while True:
             for event in pygame.event.get():
