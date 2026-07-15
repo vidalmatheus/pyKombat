@@ -1,5 +1,6 @@
 #!/bin/bash
-# Gera a versão web (pygbag/WebAssembly) em docs/, servida pelo GitHub Pages.
+# Gera a versão web (pygbag/WebAssembly) em web/, publicada no GitHub Pages
+# pelo workflow .github/workflows/pages.yml.
 # Monta uma pasta temporária só com o necessário (código + png/ogg usados),
 # para o pacote não inflar com PDFs, PSDs, mp3 duplicados etc.
 set -euo pipefail
@@ -26,6 +27,6 @@ EOF
 
 python3 -m pygbag --build "$STAGE"
 
-mkdir -p docs
-cp "$STAGE/build/web/index.html" "$STAGE/build/web/pykombat.tar.gz" "$STAGE/build/web/favicon.png" docs/
-echo "OK: docs/ atualizado ($(du -sh docs | cut -f1))"
+mkdir -p web
+cp "$STAGE/build/web/index.html" "$STAGE/build/web/pykombat.tar.gz" "$STAGE/build/web/favicon.png" web/
+echo "OK: web/ atualizado ($(du -sh web | cut -f1))"

@@ -28,6 +28,6 @@ pip install pygbag
 ./build_web.sh
 ```
 
-This refreshes `docs/` (served by GitHub Pages).
+This refreshes `web/`, which is deployed to GitHub Pages automatically on push.
 
 Enjoy! :)
