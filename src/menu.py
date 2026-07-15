@@ -7,6 +7,12 @@ import fightScene
 MENU_FPS = 1/30  # pausa entre iterações dos menus (era clock.tick(10) bloqueante)
 
 
+def blitBackHint(game):
+    # dica "BACKSPACE: MENU" na base da tela
+    hint = pygame.image.load('res/back.png')
+    game.getDisplay().blit(hint, ((800 - hint.get_width()) // 2, 500 - hint.get_height() - 8))
+
+
 #---------------- Design Pattern Facade for Menus ---------------
 # O Facade virou uma máquina de estados assíncrona: cada tela roda seu
 # próprio loop (cedendo o controle com asyncio.sleep, exigência do
@@ -49,8 +55,7 @@ class MainMenu:
                 if event.type == pygame.KEYDOWN:
                     # carregar áudio
                     sound = engine.Sound()
-                    if event.key == pygame.K_ESCAPE:
-                        return None
+                    # ESC não faz nada aqui: não há tela anterior (fechar a janela sai)
                     if event.key == 13:  # 13 == ENTER
                         # coloca áudio "in"
                         sound.setSound(screen)
@@ -83,15 +88,14 @@ class OptionMenu:
     async def run(self):
         mainmenu = pygame.image.load('res/Background/Instrucoes.png')
         self.game.getDisplay().blit(mainmenu, (0, 0))
+        blitBackHint(self.game)
         pygame.display.update()
         while True:
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return None
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        return None
-                    if event.key == K_BACKSPACE:
+                    if event.key in (K_BACKSPACE, pygame.K_ESCAPE): # voltar
                         # colocar áudio "out"
                         sound = engine.Sound("back")
                         sound.play()
@@ -128,14 +132,12 @@ class ScenarioMenu:
                 if event.type == pygame.KEYDOWN:
                     # carregar áudio
                     sound = engine.Sound()
-                    if event.key == pygame.K_ESCAPE:
-                        return None
                     if event.key == 13:  # 13 == ENTER
                         # Entra no cenário escolhido
                         sound.setSound("Fight")
                         sound.play()
                         return ("fight", scenario)
-                    if event.key == pygame.K_BACKSPACE:
+                    if event.key in (pygame.K_BACKSPACE, pygame.K_ESCAPE): # voltar
                         # colocar áudio "out"
                         sound = engine.Sound("back")
                         sound.play()
@@ -151,4 +153,5 @@ class ScenarioMenu:
     def setScenario(self, scenario):
         self.mainmenu = pygame.image.load('res/Background/ChoosingScenario/ChooseScenario0'+str(scenario)+'.png')
         self.game.getDisplay().blit(self.mainmenu, (0, 0))
+        blitBackHint(self.game)
         pygame.display.update()

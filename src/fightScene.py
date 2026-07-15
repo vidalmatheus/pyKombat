@@ -18,9 +18,8 @@ class Scenario:
         music = engine.Music("mkt")
         music.play()
         music.volume(0.2)
-        # buttons sprite
+        # button sprite
         self.back = makeSprite('res/back.png')
-        self.esc = makeSprite('res/esc.png')
 
     async def run(self):
         # retorna o próximo estado do MenuFacade: "scenario" (voltar) ou None (sair)
@@ -103,13 +102,10 @@ class Scenario:
                         if dizzyCounter >= 100:
                             player2.takeHit("dead") # player2 morreu
                 if dizzyCounter == 150:
-                    # back button
-                    moveSprite(self.back, 600, 486, True) 
+                    # dica "BACKSPACE: MENU" (ESC também volta)
+                    moveSprite(self.back, 400, 486, True)
                     showSprite(self.back)
-                    # esc button
-                    moveSprite(self.esc, 200, 486, True) 
-                    showSprite(self.esc)                    
-                dizzyCounter += 1  
+                dizzyCounter += 1
                 
             elif (collide(player1.currentSprite(),player2.currentSprite())):
                 # caso só encostem
@@ -240,9 +236,7 @@ class Scenario:
             for event in pygame.event.get():
                 if event.type == QUIT:
                     return None
-            if keyPressed("esc"):
-                return None
-            if keyPressed("backspace"):
+            if keyPressed("esc") or keyPressed("backspace"): # voltar ao menu de cenários
                 return self.goBack(player1,player2)
 
             updateDisplay() # redesenha tudo uma única vez por frame
@@ -260,7 +254,6 @@ class Scenario:
         setAutoUpdate(True) # menus dependem do refresh automático
         # kill buttons
         killSprite(self.back)
-        killSprite(self.esc)
         # kill players
         killSprite(player1.getProjectile().getProjectileSprite())
         killSprite(player2.getProjectile().getProjectileSprite())

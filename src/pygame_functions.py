@@ -671,14 +671,7 @@ def clock():
 
 
 def tick(fps):
-    pygame.event.clear()
-    keys = pygame.key.get_pressed()
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-    if (keys[pygame.K_ESCAPE]):
-        pygame.quit()
-        sys.exit()
+    # ESC não encerra mais o jogo aqui: cada tela trata ESC como "voltar"
     gameClock.tick(fps)
     return gameClock.get_fps()
 
@@ -712,10 +705,6 @@ def updateDisplay():
     spriteRects = spriteGroup.draw(screen)
     textboxRects = textboxGroup.draw(screen)
     pygame.display.update()
-    keys = pygame.key.get_pressed()
-    if (keys[pygame.K_ESCAPE]):
-        pygame.quit()
-        sys.exit()
     spriteGroup.clear(screen, background.surface)
     textboxGroup.clear(screen, background.surface)
 
