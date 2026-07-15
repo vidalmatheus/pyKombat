@@ -30,4 +30,14 @@ pip install pygbag
 
 This refreshes `web/`, which is deployed to GitHub Pages automatically on push.
 
+## Run the web version locally:
+
+```
+cd web
+python3 -m http.server 8000
+```
+
+Then open http://localhost:8000 — the same static files served by GitHub Pages.
+After a rebuild, just hard-refresh the browser (the game bundle is cached aggressively).
+
 Enjoy! :)

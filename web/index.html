@@ -23,7 +23,7 @@ from pathlib import Path
 # do not rename
 async def custom_site():
     import embed
-    platform.document.body.style.background = "#7f7f7f"
+    # mantém o splash definido no CSS (não sobrescreve o background do body)
 
     platform.window.transfer.hidden = true
     platform.window.canvas.style.visibility = "visible"
@@ -63,6 +63,8 @@ async def custom_site():
     # before a gesture is recorded ( touch or click )
 
     # test/wait user media interaction
+    # (com --ume_block 0 no build, MM.UME já nasce liberado e o jogo começa
+    #  direto, sem prompt de clique)
     if not platform.window.MM.UME:
 
         # now that apk is mounted we have access to font cache
@@ -70,7 +72,7 @@ async def custom_site():
         __import__(__name__).__file__ = main
 
         # now make a prompt
-        msg  = "Ready to start ! Please click/touch page"
+        msg  = "Click / touch to FIGHT !"
         platform.window.infobox.innerText = msg
         print("\n"*4, f"    * Waiting for media user engagement. {msg} *" , "\n"*4)
 
@@ -94,6 +96,7 @@ async def custom_site():
     # your main.py has an infinite sync loop somewhere !
 
     platform.window.infobox.style.display = "none"
+    platform.window.canvas.focus() # garante teclado ativo assim que o jogo começa
     platform.window.config.gui_divider = 1
     platform.window.window_resize()
     print("default.tmpl: done")
@@ -149,7 +152,7 @@ config = {
     user_canvas : 0,
     user_canvas_managed : 0,
     gui_divider : 2,
-    ume_block : 1,
+    ume_block : 0,
     can_close : 0,
     archive : "pykombat",
     gui_debug : 2,
@@ -160,6 +163,15 @@ config = {
     fb_width : "1280",
     fb_height : "720"
 }
+
+// sem o prompt de clique, o canvas precisa receber foco explicitamente
+// para o teclado funcionar (antes era o clique obrigatório que focava)
+function focus_canvas() {
+    const c = document.getElementById('canvas');
+    if (c) c.focus({preventScroll: true});
+}
+window.addEventListener('load', focus_canvas);
+document.addEventListener('mousedown', () => setTimeout(focus_canvas, 0));
 
 function show_infobox() {
     infobox.style.display = "block";
@@ -190,28 +202,54 @@ function show_infobox() {
     <link rel="icon" type="image/png" href="favicon.png" sizes="16x16">
 
     <style>
+        /* tela de carregamento com o clima de Mortal Kombat:
+           fundo preto + arte do menu (splash.png), dourado e vermelho-sangue */
         #status {
-            display: inline-block;
-            vertical-align: top;
-            margin-top: 20px;
-            margin-left: 30px;
             font-weight: bold;
-            color: rgb(120, 120, 120);
+            color: #e8b923;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 8px #000;
+            margin-bottom: 12px;
         }
 
         #progress {
-            height: 20px;
-            width: 300px;
+            height: 14px;
+            width: min(360px, 70vw);
+            accent-color: #b00000;
         }
 
+        #transfer {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            padding-bottom: 12vh;
+            background: radial-gradient(ellipse at center, rgba(0,0,0,.2) 0%, rgba(0,0,0,.85) 100%);
+            z-index: 10;
+        }
+        #transfer[hidden] { display: none; } /* o loader esconde via atributo hidden */
+
         #infobox {
-            position: fixed; /* center relative to viewport */
-            background: green;
-            color: blue;
+            position: fixed; /* show_infobox() centraliza via style.left/top */
+            background: linear-gradient(#7a0000, #300000);
+            color: #e8b923;
             font-weight: bold;
-            padding: 12px 24px;
- /*           display: none; */
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            padding: 14px 32px;
+            border: 2px solid #e8b923;
+            border-radius: 4px;
+            cursor: pointer;
+            animation: mkpulse 1.2s ease-in-out infinite;
             z-index: 999999;
+        }
+
+        @keyframes mkpulse {
+            0%, 100% { box-shadow: 0 0 12px rgba(232,185,35,.25); }
+            50%      { box-shadow: 0 0 32px rgba(232,185,35,.65); }
         }
         div.emscripten { text-align: center; }
         div.emscripten_border { border: 1px solid black; }
@@ -237,10 +275,10 @@ function show_infobox() {
         }
 
         body {
-            font-family: arial;
+            font-family: 'Trebuchet MS', arial, sans-serif;
             margin: 0;
             padding: none;
-            background-color:powderblue;
+            background: #000 url('splash.png') center / contain no-repeat fixed;
         }
 
         .topright{
@@ -312,7 +350,7 @@ height="720px"
     oncontextmenu="event.preventDefault()" tabindex=1 hidden>
     </canvas>
 
-    <div id="infobox">Loading, please wait ...</div>
+    <div id="infobox">Loading ...</div>
 
     <div id=html></div>
 

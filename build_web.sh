@@ -25,8 +25,10 @@ for f in os.listdir(d):
         os.remove(os.path.join(d, f))
 EOF
 
-python3 -m pygbag --build "$STAGE"
+# --ume_block 0: começa o jogo direto, sem esperar clique/toque na página
+python3 -m pygbag --template "$PWD/web.tmpl" --ume_block 0 --build "$STAGE"
 
 mkdir -p web
 cp "$STAGE/build/web/index.html" "$STAGE/build/web/pykombat.tar.gz" "$STAGE/build/web/favicon.png" web/
+cp res/Background/MainMenu01.png web/splash.png # arte da tela de carregamento (ver web.tmpl)
 echo "OK: web/ atualizado ($(du -sh web | cut -f1))"
