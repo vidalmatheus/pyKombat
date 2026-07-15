@@ -22,6 +22,7 @@ class Game:
         self.scale = 1.0
         self.ppm = 70 #pixel por metros
         os.environ['SDL_VIDEO_CENTERED'] = '1'
+        pygame.display.set_icon(pygame.image.load('res/icon.png')) # ícone da janela/dock
         #self.display = pygame.display.set_mode((self.width,self.height),pygame.FULLSCREEN)
         self.display = pygame.display.set_mode((self.width,self.height))
         pygame.mouse.set_visible(False)

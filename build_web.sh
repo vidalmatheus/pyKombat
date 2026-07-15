@@ -29,6 +29,7 @@ EOF
 python3 -m pygbag --template "$PWD/web.tmpl" --ume_block 0 --build "$STAGE"
 
 mkdir -p web
-cp "$STAGE/build/web/index.html" "$STAGE/build/web/pykombat.tar.gz" "$STAGE/build/web/favicon.png" web/
+cp "$STAGE/build/web/index.html" "$STAGE/build/web/pykombat.tar.gz" web/
+cp res/icon.png web/favicon.png # favicon = logo do jogo (não o padrão do pygbag)
 cp res/Background/MainMenu01.png web/splash.png # arte da tela de carregamento (ver web.tmpl)
 echo "OK: web/ atualizado ($(du -sh web | cut -f1))"
