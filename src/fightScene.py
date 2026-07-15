@@ -77,10 +77,10 @@ class Scenario:
                 if not player1.isAlive(): # finish player1
                     if player2.isFatality() or player1.getHitName() == "fatality":
                         pass # fatality em andamento: as animações cuidam do resto
-                    elif keyPressed(player2.combat[6]) and dizzyCounter < 100: # FATALITY! (P2: tecla 6 do numpad)
+                    elif keyPressed(player2.combat[6]) and dizzyCounter < 100: # FATALITY! (P2: numpad 6 ou P)
                         player2.startFatality()
                         player1.takeHit("fatality")
-                        player1.fatalityHitStart = clock() # golpe do scorpion é imediato
+                        player1.fatalityHitStart = clock() + 1000 # golpe do scorpion demora 1s p/ atingir
                     else:
                         player1.takeHit("dizzy")
                         if (collide(player1.currentSprite(),player2.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite())):
@@ -94,7 +94,7 @@ class Scenario:
                     elif keyPressed(player1.combat[6]) and dizzyCounter < 100: # FATALITY! (P1: tecla F)
                         player1.startFatality()
                         player2.takeHit("fatality")
-                        player2.fatalityHitStart = clock() + 1200 # golpe do subzero demora 1.2s p/ atingir
+                        player2.fatalityHitStart = clock() + 1000 # golpe do subzero demora 1s p/ atingir
                     else:
                         player2.takeHit("dizzy")
                         if (collide(player2.currentSprite(),player1.currentSprite()) or collide(player2.getProjectile().getProjectileSprite(), player1.currentSprite()) or collide(player1.getProjectile().getProjectileSprite(), player2.currentSprite())):

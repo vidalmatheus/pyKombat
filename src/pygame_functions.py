@@ -51,6 +51,16 @@ keydict = {"space": pygame.K_SPACE, "esc": pygame.K_ESCAPE, "up": pygame.K_UP, "
            "9": pygame.K_KP9,
            "0": pygame.K_KP0,
            "backspace": pygame.K_BACKSPACE}
+
+# teclas alternativas (aliases): o numpad continua funcionando, mas o P2
+# (Scorpion) também pode jogar num teclado de notebook sem numpad
+keyaliases = {"1": [pygame.K_SEMICOLON], # soco fraco  -> ;
+              "4": [pygame.K_PERIOD],    # soco forte  -> .
+              "2": [pygame.K_QUOTE],     # chute fraco -> '
+              "5": [pygame.K_SLASH],     # chute forte -> /
+              "3": [pygame.K_COMMA],     # especial    -> ,
+              "0": [pygame.K_o],         # bloqueio    -> o
+              "6": [pygame.K_p]}         # fatality    -> p
 screen = ""
 
 
@@ -581,6 +591,9 @@ def keyPressed(keyCheck=""):
     if sum(keys)>0:
         if keyCheck=="" or keys[keydict[keyCheck.lower()]]:
             return True
+        for alt in keyaliases.get(keyCheck.lower(), []):
+            if keys[alt]:
+                return True
     return False
 
 def keyPress(keyCheck=""):
