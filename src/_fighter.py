@@ -170,7 +170,10 @@ class Fighter:
         self.attacking = False
 
         # Control reflection var
-        reflection = False
+        # sprites originais: Sub-Zero (id 0) olha p/ direita, Scorpion (id 1) p/ esquerda
+        self.reflected = False
+        for sprite in self.spriteList:
+            reflectSprite(sprite, False)
 
         # Dance vars
         self.dancing = True
@@ -319,6 +322,7 @@ class Fighter:
             else:
                 self.curr_sprite = self.spriteList[self.special]
                 self.projectileFighter.startProjectile()
+                self.projectileFighter.setReflection(self.reflected)
                 self.projectileFighter.setPos([self.getX(),self.getY()])
                 self.specialMove = self.setState()
                 self.attacking = True
@@ -638,8 +642,9 @@ class Fighter:
                     if (self.frame_special == 0): engine.Sound(self.specialSound[self.fighterId][0]).play()
                     self.curr_sprite = self.spriteList[self.special]
                     self.projectileFighter.startProjectile()
+                    self.projectileFighter.setReflection(self.reflected)
                     self.projectileFighter.setPos([self.getX(),self.getY()])
-                        
+
                     self.specialMove = self.setState()
                     self.setEndState()
                     if self.end_special and self.fighterId == 1:
@@ -713,9 +718,7 @@ class Fighter:
             elif self.hit and self.hitName == "Akicking":
                 self.curr_sprite = self.spriteList[self.Bhit]
                 self.Bhitting = self.setState()
-                if self.fighterId == 0:
-                    self.x -=0.8
-                else: self.x +=0.8
+                self.x -= 0.8*self.facingDir() # empurrado p/ trás
                 moveSprite(self.spriteList[self.Bhit], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.Bhit])
                 changeSpriteImage(self.spriteList[self.Bhit], self.frame_Bhit)
@@ -733,9 +736,7 @@ class Fighter:
             elif self.hit and self.hitName == "Bpunching":
                 self.curr_sprite = self.spriteList[self.Chit]
                 self.Chitting = self.setState()
-                if self.fighterId == 0:
-                    self.x -=2
-                else: self.x +=2
+                self.x -= 2*self.facingDir() # empurrado p/ trás
                 moveSprite(self.spriteList[self.Chit], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.Chit])
                 changeSpriteImage(self.spriteList[self.Chit], self.frame_Chit)
@@ -769,9 +770,7 @@ class Fighter:
                 self.curr_sprite = self.spriteList[self.Fhit]
                 self.Fhitting = self.setState()
                 if self.frame_Fhit <= 6:
-                    if self.fighterId == 0:
-                        self.x -=5
-                    else: self.x +=5
+                    self.x -= 5*self.facingDir() # empurrado p/ trás
                 moveSprite(self.spriteList[self.Fhit], self.x, self.y, True)
                 self.setSprite(self.spriteList[self.Fhit])
                 changeSpriteImage(self.spriteList[self.Fhit], self.frame_Fhit)
@@ -800,8 +799,8 @@ class Fighter:
                 self.curr_sprite = self.spriteList[self.Hhit]
                 self.hitSpecial = self.setState()
                 moveSprite(self.spriteList[self.Hhit], self.x, self.y, True)
-                if self.fighterId == 0: # subzero
-                    self.x += 25
+                if self.fighterId == 0: # subzero arrastado pelo arpão do scorpion
+                    self.x += 25*self.facingDir() # puxado em direção ao oponente
                 self.setSprite(self.spriteList[self.Hhit])
                 changeSpriteImage(self.spriteList[self.Hhit], self.frame_Hhit)
                 if time > nextFrame:
@@ -906,6 +905,21 @@ class Fighter:
 
     def getX(self):
         return self.x
+
+    def faceOpponent(self, opponentX):
+        # espelha os sprites quando o lutador está do lado "errado" do oponente
+        if self.fighterId == 0:
+            reflected = self.x > opponentX # Sub-Zero originalmente olha p/ direita
+        else:
+            reflected = self.x < opponentX # Scorpion originalmente olha p/ esquerda
+        if reflected != self.reflected:
+            self.reflected = reflected
+            for sprite in self.spriteList:
+                reflectSprite(sprite, reflected)
+
+    def facingDir(self):
+        # +1: olhando p/ direita; -1: p/ esquerda
+        return 1 if (self.fighterId == 0) != self.reflected else -1
 
     def getY(self):
         return self.y

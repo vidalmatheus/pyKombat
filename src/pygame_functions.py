@@ -117,9 +117,21 @@ class newSprite(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.angle = 0
         self.scale = 1
+        self.reflected = False
 
     def addImage(self, filename):
         self.images.append(loadImage(filename))
+
+    def setReflection(self, reflected):
+        # troca os frames por versões espelhadas horizontalmente (cache preguiçoso)
+        if self.reflected == reflected:
+            return
+        if not hasattr(self, 'flippedImages'):
+            self.normalImages = self.images
+            self.flippedImages = [pygame.transform.flip(img, True, False) for img in self.images]
+        self.reflected = reflected
+        self.images = self.flippedImages if reflected else self.normalImages
+        self.changeImage(self.currentImage)
 
     def move(self, xpos, ypos, centre=False):
         if centre:
@@ -391,6 +403,10 @@ def addSpriteImage(sprite, image):
 
 def changeSpriteImage(sprite, index):
     sprite.changeImage(index)
+
+
+def reflectSprite(sprite, reflected):
+    sprite.setReflection(reflected)
 
 
 def nextSpriteImage(sprite):

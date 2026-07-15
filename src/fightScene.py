@@ -56,6 +56,11 @@ class Scenario:
             x1 = player1.getX()
             x2 = player2.getX()
 
+            # lutadores sempre de frente um para o outro
+            player1.faceOpponent(x2)
+            player2.faceOpponent(x1)
+            sep = 1 if x1 <= x2 else -1 # sentido p/ separar os lutadores (lados podem estar trocados)
+
             # caso encostem na tela
             if player1.getX() < 20:
                 player1.setX(20) 
@@ -96,8 +101,8 @@ class Scenario:
             elif (collide(player1.currentSprite(),player2.currentSprite())):
                 # caso só encostem
                 if ( (player1.isWalking() or player1.isJumping()) and (player2.isDancing() or player2.isCrouching() or player2.isWalking() or player2.isDizzing() or player2.ishitSpecial() ) ) or ((player2.isWalking() or player2.isJumping()) and (player1.isDancing() or player1.isCrouching() or player1.isWalking() or player1.isDizzing() or player1.ishitSpecial()) ) or (player1.isWalking() and player2.isWalking()) or (player1.isJumping() and player2.isJumping()) or (player1.isDancing() and player2.isDancing()) or (player1.isSpecialMove() and player2.ishitSpecial()):
-                    player1.setX(x1-6)
-                    if not player2.isSpecialMove() :player2.setX(x2+6) 
+                    player1.setX(x1-6*sep)
+                    if not player2.isSpecialMove() :player2.setX(x2+6*sep)
                 # caso houve soco fraco:
                 if ( player1.isApunching() and (player2.isWalking() or player2.isDancing() or player2.isApunching() or player2.ishitSpecial()) ) or ( player2.isApunching() and (player1.isWalking() or player1.isDancing() or player1.isApunching()) ):
                     if player1.isApunching():                        
@@ -145,8 +150,8 @@ class Scenario:
                     if player2.isAblocking():                        
                         player2.takeHit("Ablocking")
                     engine.Sound("block").play()
-                    player1.setX(x1-12)
-                    player2.setX(x2+12) 
+                    player1.setX(x1-12*sep)
+                    player2.setX(x2+12*sep)
                 # caso houve soco ou chute agachado fraco em alguém em pé:
                 if ( ((player1.isCpunching() or player1.isCkicking() ) and not player2.isCrouching() and not player2.isBblocking() ) or ((player2.isCpunching() or player2.isCkicking() ) and not player1.isCrouching() and not player1.isBblocking() ) ): # falta adicionar o Bblock
                     if player1.isCpunching() or player1.isCkicking():                        
@@ -193,8 +198,8 @@ class Scenario:
                     if player2.isBblocking():                        
                         player2.takeDownHit("Bblocking")
                     engine.Sound("block").play()
-                    player1.setX(x1-12)
-                    player2.setX(x2+12) 
+                    player1.setX(x1-12*sep)
+                    player2.setX(x2+12*sep)
 
             # caso houve special
             if ( player1.isSpecialMove() and (player2.isWalking() or player2.isDancing() or player2.isAblocking() or player2.isBblocking() or player2.ishitSpecial()) ) or ( player2.isSpecialMove() and (player1.isWalking() or player1.isDancing() or player1.isAblocking() or player1.ishitSpecial()) ):

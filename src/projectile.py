@@ -14,6 +14,7 @@ class ProjectileModel: #Create standards of projectile model.
         self.projectile = makeSprite('../res/Char/'+str(self.name[self.id])+'/projectile.png', self.projectileLimit[self.id])
         self.frame_step = 60
         self.end_Projectile = True
+        self.reflected = False # espelhado quando o lutador está do lado trocado
 #------------------------------------------------------------------------------------------------------------------------------
 class ProjectileView: #Create standards of projectile views.
 
@@ -49,8 +50,15 @@ class Projectile: #Controller
 
     
     def setPos(self,pos = [0,0]):
-        self.projectileModel.position = [pos[0] + self.projectileModel.relativePos[self.projectileModel.id][0],pos[1] 
+        relX = self.projectileModel.relativePos[self.projectileModel.id][0]
+        if self.projectileModel.reflected: relX = -relX # projétil sai pelo outro lado
+        self.projectileModel.position = [pos[0] + relX,pos[1]
             + self.projectileModel.relativePos[self.projectileModel.id][1]]
+
+    def setReflection(self,reflected):
+        # espelha os frames (a trajetória do projétil está embutida no spritesheet)
+        self.projectileModel.reflected = reflected
+        reflectSprite(self.projectileModel.projectile, reflected)
 
     def moveProjectile(self):
         if self.projectileModel.id == 0:
