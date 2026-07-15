@@ -292,6 +292,8 @@ class Fighter:
         self.frame_fatalityHit = 0
         self.fatalityHitStart = 0 # instante em que o golpe final atinge a vítima
         self.fatalityHitStarted = False
+        self.fatalityAnnounceAt = None # sequência de áudio: voz de vitória -> 400ms -> "Fatality"
+        self.fatalityAnnounced = False
 
         # dead vars
         self.deading = False
@@ -879,14 +881,22 @@ class Fighter:
                         if self.frame_fatalityHit < self.fatalityHitLimit[self.fighterId]-1:
                             self.frame_fatalityHit += 1
                             if self.frame_fatalityHit == self.fatalityHitLimit[self.fighterId]-1:
-                                # golpe consumado: anuncia, banner de vitória + FATALITY
-                                engine.Sound("Fatality").play()
+                                # golpe consumado: voz de vitória + banners
+                                engine.Sound("ScorpionWins" if self.fighterId == 0 else "SubZeroWins").play()
+                                self.fatalityAnnounceAt = time + 2500 # teto caso get_busy não baixe
                                 self.lostOnce = True
                                 moveSprite(self.spriteWins, 400, 120, True)
                                 showSprite(self.spriteWins)
                                 moveSprite(self.spriteFatality, 400, 160, True)
                                 showSprite(self.spriteFatality)
                         nextFrame += 1.5*frame_step
+                    # depois da voz de vitória terminar, espera 400ms e anuncia FATALITY
+                    if self.lostOnce and not self.fatalityAnnounced and self.fatalityAnnounceAt is not None:
+                        if not pygame.mixer.get_busy():
+                            self.fatalityAnnounceAt = min(self.fatalityAnnounceAt, time + 400)
+                        if time >= self.fatalityAnnounceAt:
+                            engine.Sound("Fatality").play()
+                            self.fatalityAnnounced = True
 
             # dizzy
             elif self.hit and self.hitName == "dizzy":
