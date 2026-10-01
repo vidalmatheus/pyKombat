@@ -278,6 +278,29 @@ def build_fx(sheet, frames):
     return cw * len(frames), ch, img
 
 
+def build_toasty():
+    """Toasty! do MK2: rosto do Dan Forden + o texto, sem fundo (res/sprites/toasty.png).
+    Vem da folha de menus do MK2 (res/Char/MK2/menu.png)."""
+    w, h, px = pngio.read(os.path.join(SRC, 'MK2', 'menu.png'))
+    bg = Counter(c for row in px[:5] for c in row[600:]).most_common(1)[0][0]
+
+    def cut(x0, y0, x1, y1, k):
+        return [[None if px[y0 + y // k][x0 + x // k] == bg else px[y0 + y // k][x0 + x // k]
+                 for x in range((x1 - x0) * k)] for y in range((y1 - y0) * k)]
+    face = cut(1053, 628, 1095, 684, 2)     # 84 x 112
+    text = cut(841, 770, 898, 784, 2)       # "TOASTY!!" (laranja), 114 x 28
+    W = max(len(face[0]), len(text[0]))
+    img = [[None] * W for _ in range(len(face) + 4 + len(text))]
+    for y, row in enumerate(face):
+        for x, c in enumerate(row):
+            img[y][(W - len(face[0])) // 2 + x] = c
+    for y, row in enumerate(text):
+        for x, c in enumerate(row):
+            img[len(face) + 4 + y][(W - len(text[0])) // 2 + x] = c
+    save_indexed(os.path.join(DST, 'toasty.png'), W, len(img), img)
+    print('ok toasty', W, 'x', len(img))
+
+
 def save_indexed(path, w, h, img):
     colors = Counter(c for row in img for c in row if c is not None)
     pal = [c for c, _ in colors.most_common()]
@@ -313,3 +336,5 @@ def build(base):
 if __name__ == '__main__':
     for base in (sys.argv[1:] or FRAMES_MK2):
         build(base)
+    if not sys.argv[1:]:
+        build_toasty()

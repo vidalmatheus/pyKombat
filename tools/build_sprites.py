@@ -75,6 +75,37 @@ def build_sheet(base, name, frames):
     p.save(os.path.join(DST, base, name + '.png'), optimize=True, transparency=0)
 
 
+# Na fatality original os frames 9-15 foram desenhados de costas: o lutador
+# virava para trás e golpeava o vazio, como se trocasse de lado com a vítima.
+# Esses frames são espelhados em torno do próprio quadril (o corpo fica onde
+# está e o golpe passa a ir na direção da vítima). Feito depois da paleta, só
+# com pngio (sem Pillow).
+REFACE = {('Sub-Zero', 'fatality'): range(9, 16), ('Scorpion', 'fatality'): range(9, 16)}
+
+
+def reface(base, name, frames, count):
+    import pngio
+    from mk2_sprites import save_indexed
+    path = os.path.join(DST, base, name + '.png')
+    w, h, px = pngio.read(path)
+    fw = w // count
+    for k in frames:
+        cell = [row[k * fw:(k + 1) * fw] for row in px]
+        band = sorted(x for y in range(h - 75, h - 60) for x in range(fw) if cell[y][x])
+        hip = band[len(band) // 2]
+        xs = [x for row in cell for x, c in enumerate(row) if c is not None]
+        # espelho em torno do quadril; se o golpe passar da borda, recua o corpo
+        shift = min(0, (fw - 1) - (2 * hip - min(xs)))
+        for y in range(h):
+            row = [None] * fw
+            for x, c in enumerate(cell[y]):
+                nx = 2 * hip - x + shift
+                if c is not None and 0 <= nx < fw:
+                    row[nx] = c
+            px[y][k * fw:(k + 1) * fw] = row
+    save_indexed(path, w, h, px)
+
+
 def build_spear_head():
     # ponta do arpão do Scorpion (a corda é desenhada no código), já virada p/ direita
     img = Image.open(os.path.join(SRC, 'Scorpion', 'projectile.png')).convert('RGBA')
@@ -113,8 +144,11 @@ if __name__ == '__main__':
         for name, frames in sheets.items():
             build_sheet(base, name, frames)
             print('ok', base, name)
+    for (base, name), frames in REFACE.items():
+        reface(base, name, frames, SHEETS[base][name])
     build_spear_head()
     build_ice_fx()
     import mk2_sprites  # lutadores do MK2 (SNES)
     for base in mk2_sprites.FRAMES_MK2:
         mk2_sprites.build(base)
+    mk2_sprites.build_toasty()

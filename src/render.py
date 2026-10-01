@@ -390,10 +390,11 @@ class Renderer:
         self._banners(snap)
         if self.toasty > 0:
             self.toasty = max(0, self.toasty - self.steps)
+            # rosto do Dan Forden (sprite do MK2, sem fundo) entra pelo canto inferior direito
+            img = assets.image('res/sprites/toasty.png')
             k = min(1.0, (70 - self.toasty) / 8, self.toasty / 8)
-            x = int(800 - 150 * k)
-            pygame.draw.rect(s, (0, 0, 0), (x, 400, 150, 70))
-            ui.text(s, 'TOASTY!', 26, (x + 75, 420), (255, 120, 20), outline=True)
+            x = int(800 - (img.get_width() + 12) * k)
+            s.blit(img, (x, 500 - 8 - img.get_height()))
 
     def _banners(self, snap):
         s = self.screen
