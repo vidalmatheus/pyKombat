@@ -177,20 +177,28 @@ def draw(screen, kind, t, victimSurf, left, top, ground, seed, winnerX):
                 pygame.draw.line(screen, (255, 255, 255), (x1, top + cutY), (x2, top + cutY - 6), 1)
         else:
             tau = t - 40
+            dirx = 1 if cx > winnerX else -1   # para longe do atacante
             upper = victimSurf.subsurface((0, 0, w, cutY))
             lower = victimSurf.subsurface((0, cutY, w, h - cutY))
-            # metade de cima escorrega e cai girando
-            dirx = 1 if cx > winnerX else -1
-            ux = left + dirx * min(tau, 45) * 2.2
-            uy = top + min(0.5 * G * tau * tau * 0.6, (h - cutY) - 18)
-            ang = min(85, tau * 3) * -dirx
-            img = pygame.transform.rotate(upper, ang)
-            screen.blit(img, (int(ux), int(uy)))
+            # posiciona pelo centro do pedaço (rotate muda o tamanho da
+            # surface; ancorar pelo canto deslocava tudo quando dirx = -1)
+            ux0 = left + upper.get_bounding_rect().centerx
+            lx0 = left + lower.get_bounding_rect().centerx
+            # metade de cima escorrega, gira e cai
+            img = pygame.transform.rotate(upper, min(85, tau * 3) * -dirx)
+            br = img.get_bounding_rect()
+            bottom = min(ground, top + cutY + 0.5 * G * tau * tau * 0.6)
+            ux = ux0 + dirx * min(tau, 45) * 1.6
+            screen.blit(img, (int(ux - br.centerx), int(bottom - br.bottom)))
+            # metade de baixo fica em pé e depois tomba para trás
             if tau < 50:
                 screen.blit(lower, (left, top + cutY))
             else:
-                img = pygame.transform.rotate(lower, min(90, (tau - 50) * 6) * dirx)
-                screen.blit(img, (left + (w - img.get_width()) // 2, ground - img.get_height()))
+                k = min(90, (tau - 50) * 6)
+                img = pygame.transform.rotate(lower, k * -dirx)
+                br = img.get_bounding_rect()
+                lx = lx0 + dirx * k / 90 * 25
+                screen.blit(img, (int(lx - br.centerx), int(ground - br.bottom)))
             _blood(screen, cx, top + cutY, ground, tau, seed, 70, 4, 11)
 
     elif kind == 'slam':

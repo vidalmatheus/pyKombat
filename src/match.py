@@ -31,6 +31,7 @@ PROJ = {
 PROJ_SOUND = {'ice': 'IceSound', 'shard': 'IceSound2', 'spear': 'GetOverHere', 'acid': 'HitLongo',
               'shadow': 'HitLongo', 'soul': 'HitLongo', 'bolt': 'IceSound2', 'rock': 'HitLongo'}
 PROJ_HEIGHT = 98
+ICE_LAUNCH = 15     # ticks em que a rajada de gelo se forma na mão (ver render.py)
 SPEAR_RANGE = 440
 
 FATALITY_LEN = {'melt': 230, 'bomb': 200, 'slice': 200, 'slam': 230, 'thunder': 230,
@@ -160,6 +161,9 @@ class Match:
         if self.phase == 'fatality':
             self._fatalityStep()
         else:
+            for f in fs:
+                if f.state in NEUTRAL and self.phase in ('intro', 'fight', 'finish'):
+                    f.faceTowards(self.other(f))
             for f, held, pressed in zip(fs, helds, presses):
                 f.update(held, pressed, self)
             self._projectiles()
@@ -233,9 +237,12 @@ class Match:
             l = self.loser
             if l.state == 'idle':  # perdedor livre -> tonto
                 l.setState('dizzy', 'dizzy')
+            if l.state == 'dizzy':  # tonto, mas sempre de frente para o vencedor
+                l.faceTowards(self.winner)
 
     def _winPose(self, w):
         if w.state in NEUTRAL or w.state == 'attack':
+            w.faceTowards(self.other(w))
             w.move = None
             w.setState('win', 'win')
 
@@ -384,7 +391,10 @@ class Match:
                     if p.length >= SPEAR_RANGE:
                         p.retract = True
             else:
-                p.x += p.facing * p.cfg['speed']
+                speed = p.cfg['speed']
+                if p.kind == 'ice' and p.t <= ICE_LAUNCH:
+                    speed = 3.0   # a rajada se forma na mão antes de disparar
+                p.x += p.facing * speed
                 if p.x < -40 or p.x > 840:
                     p.alive = False
             if p.alive and not p.retract and not p.hooked:
@@ -393,6 +403,7 @@ class Match:
                         p.retract = True
                     else:
                         p.alive = False
+                        self.event('pfx', p.kind, int(p.headX()), int(self.ground - p.y), p.facing)
             if not p.alive:
                 self.projectiles.remove(p)
                 if owner.projectile is p:
@@ -408,6 +419,7 @@ class Match:
                         p.alive = False
                         self.projectiles.remove(p)
                         p.owner.projectile = None
+                        self.event('pfx', p.kind, int(p.headX()), int(self.ground - p.y), p.facing)
                 self.event('spark', int(a.headX()), int(self.ground - PROJ_HEIGHT), 1)
                 self.sound('block')
 
@@ -446,6 +458,7 @@ class Match:
             elif effect == 'pull':
                 d.setState('pulled', 'pulled')
                 d.puller = a
+                d.faceTowards(a)
                 d.push = 0
                 p.hooked = True
                 p.retract = True
@@ -525,6 +538,7 @@ class Match:
                 self._checkKO(d)
                 return False
         d.combo += 1
+        d.facing = -dirX   # quem apanha encara quem bateu (golpe por trás, cross-up, teleporte)
         scale = max(0.5, 1.0 - 0.12 * (d.combo - 1))
         dmg = dmg * scale
         if d.state == 'frozen':

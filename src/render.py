@@ -8,6 +8,9 @@ import fatalfx
 import ui
 
 W, H = 800, 500
+ICE_LAUNCH_TICKS = 3   # ticks por frame da rajada saindo da mão (frames 0-4)
+ICE_BURST = 7          # primeiro frame do estilhaço (7-11)
+ICE_BURST_TICKS = 4
 ATTACK_SHEETS = {'Apunch', 'Bpunch', 'Cpunch', 'Dpunch', 'Akick', 'Bkick', 'Ckick', 'Dkick',
                  'Ekick', 'Epunch', 'Special', 'fatality'}
 
@@ -35,6 +38,7 @@ class Renderer:
         self._glows = {}
         self.label = None  # texto extra no HUD (ex.: "ONLINE")
         self.steps = 1
+        self.bursts = []   # estilhaços da rajada de gelo: [x, y, facing, t]
 
     # ------------------------------------------------------------ eventos
     def handleEvents(self, events, ground):
@@ -69,6 +73,17 @@ class Renderer:
                         26, 14 if kind == 'tele' else 10, (150, 150, 160) if kind == 'tele' else (150, 120, 90), 'puff'))
             elif kind == 'toasty':
                 self.toasty = 70
+            elif kind == 'pfx':  # projétil explodiu (acertou, foi defendido ou trombou)
+                _, pk, x, y, facing = ev
+                if pk == 'ice':
+                    self.bursts.append([x, y, facing, 0])
+                else:
+                    import match as M
+                    col = M.PROJ.get(pk, {}).get('color', (255, 240, 150))
+                    for i in range(14):
+                        a = i / 14 * 6.283
+                        self.particles.append(Particle(x, y, math.cos(a) * 3.5, math.sin(a) * 3.5,
+                                                       14, 2, col, 'spark'))
         if len(self.particles) > 500:
             self.particles = self.particles[-500:]
 
@@ -138,6 +153,9 @@ class Renderer:
         self.steps = steps
         for _ in range(steps):
             self._updateParticles(ground)
+            for b in self.bursts:
+                b[3] += 1
+        self.bursts = [b for b in self.bursts if b[3] < ICE_BURST_TICKS * 5]
         world = self.world
         world.blit(self.bg, (0, 0))
 
@@ -164,6 +182,8 @@ class Renderer:
             fatalfx.draw(world, kind, t, surf, left, top, ground, seed, fighters[wi][4])
         for p in snap['p']:
             self._drawProjectile(world, p, fighters, ground, snap['t'])
+        for x, y, facing, t in self.bursts:
+            self._drawIce(world, ICE_BURST + min(4, t // ICE_BURST_TICKS), x, y, facing)
         self._drawParticles(world)
 
         shake = snap.get('sh', 0)
@@ -231,6 +251,13 @@ class Renderer:
                 head = pygame.transform.flip(head, True, False)
             surf.blit(head, (x - (head.get_width() if facing > 0 else 0), sy - head.get_height() // 2))
             return
+        if kind == 'ice':
+            if age < ICE_LAUNCH_TICKS * 5:   # saindo da mão
+                frame = age // ICE_LAUNCH_TICKS
+            else:                            # voando (alterna os dois rastros)
+                frame = 5 + (age // 5) % 2
+            self._drawIce(surf, frame, x, sy, facing)
+            return
         import match as M
         cfg = M.PROJ[kind]
         r = cfg['r']
@@ -266,6 +293,11 @@ class Renderer:
             rng = random.Random(age // 2)
             for _ in range(4):
                 pygame.draw.rect(surf, (255, 255, 255), (x + rng.randint(-r, r), sy + rng.randint(-r, r), 2, 2))
+
+    def _drawIce(self, surf, frame, x, y, facing):
+        # icefx: frames 240x100 com o ponto de referência em (200, 50)
+        sh = assets.fxSheet('icefx', 12, 200)
+        surf.blit(sh.frame(frame, facing), (x - sh.anchor(facing), y - sh.h // 2))
 
     # ------------------------------------------------------------ HUD
     def _hud(self, snap):

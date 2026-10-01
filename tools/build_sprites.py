@@ -78,9 +78,36 @@ def build_spear_head():
     palettize(head).save(os.path.join(DST, 'spearhead.png'), optimize=True, transparency=0)
 
 
+# rajada de gelo original do Sub-Zero. A tira original desenha a trajetória
+# inteira (12 "fotos" do gelo avançando); cada foto é recortada para um frame
+# de 240x100 com o ponto de referência em x=200: a frente do gelo (saída e voo)
+# ou o centro do estilhaço (impacto). Frames: 0-4 saindo, 5-6 voando, 7-11 impacto.
+ICE_FX_W = 240
+ICE_FX_ANCHOR = 200
+ICE_FX = [  # (x0, x1, âncora) na tira original; âncora None = borda da frente
+    (0, 40, None), (255, 320, None), (510, 610, None), (765, 890, None), (1010, 1150, None),
+    (1280, 1465, None), (1500, 1720, None),
+    (1845, 1980, 1950), (2125, 2228, 2201), (2395, 2490, 2452), (2655, 2750, 2700), (2895, 3000, 2955),
+]
+
+
+def build_ice_fx():
+    img = Image.open(os.path.join(SRC, 'Sub-Zero', 'projectile.png')).convert('RGBA')
+    out = Image.new('RGBA', (ICE_FX_W * len(ICE_FX), img.height))
+    for i, (x0, x1, anchor) in enumerate(ICE_FX):
+        piece = img.crop((x0, 0, x1, img.height))
+        bbox = piece.getchannel('A').getbbox()
+        ref = (x0 + bbox[2]) if anchor is None else anchor
+        dx = i * ICE_FX_W + ICE_FX_ANCHOR - (ref - x0)
+        out.alpha_composite(piece, (max(i * ICE_FX_W, dx), 0),
+                            (max(0, i * ICE_FX_W - dx), 0))
+    palettize(out).save(os.path.join(DST, 'icefx.png'), optimize=True, transparency=0)
+
+
 if __name__ == '__main__':
     for base, sheets in SHEETS.items():
         for name, frames in sheets.items():
             build_sheet(base, name, frames)
             print('ok', base, name)
     build_spear_head()
+    build_ice_fx()

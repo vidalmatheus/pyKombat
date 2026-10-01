@@ -178,6 +178,19 @@ def _synthSpin(char, alt):
     return Sheet(strip, 8, CELL_W // 2)
 
 
+def fxSheet(name, frames, anchorX):
+    """Sheet de efeito (sem troca de paleta), ex.: a rajada de gelo original."""
+    key = ('fx', name)
+    s = _sheets.get(key)
+    if s is None:
+        raw = pygame.image.load(SPRITE_DIR + name + '.png')
+        if raw.get_bitsize() == 8 and raw.get_colorkey() is None:
+            raw.set_colorkey(0)
+        s = Sheet(raw.convert_alpha(), frames, anchorX)
+        _sheets[key] = s
+    return s
+
+
 def hasSheet(char, name):
     return name in FRAMES[char.base]
 

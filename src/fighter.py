@@ -143,6 +143,7 @@ class Fighter:
         self.tele = 0
         self.frozenFrame = None
         self.spawned = False
+        self.flipBack = False
         self.lastFall = 'fall'
         self.jumpDir = 0
         self.blockState = 'block'
@@ -175,7 +176,9 @@ class Fighter:
         a = self.animDef
         if self.animName == 'flip':  # cambalhota: frame pela fase do pulo
             prog = max(0.0, min(0.999, self.t / (2 * JUMP_VY / GRAVITY)))
-            return a['sheet'], 1 + int(prog * 7)
+            step = int(prog * 7)
+            # pulo para trás: a cambalhota gira no sentido contrário
+            return a['sheet'], (7 - step) if self.flipBack else (1 + step)
         if self.animName == 'jump':  # sobe/desce esticado; encolhido no alto
             return a['sheet'], 2 if abs(self.vy) < 3.2 else 1
         return a['sheet'], a['seq'][self.ai]
@@ -368,11 +371,13 @@ class Fighter:
                 self.vy = JUMP_VY
                 self.vx = self.jumpDir * JUMP_VX
                 self.flip = self.jumpDir != 0
+                self.flipBack = self.jumpDir == -self.facing
                 self.airAttack = False
                 self.setState('jump', 'flip' if self.flip else 'jump')
                 self.move = None
         elif st == 'jump':
             if not self.airAttack and pressed & (LP | HP | LK | HK):
+                self.faceTowards(match.other(self))
                 self.airAttack = True
                 self.move = 'jk' if pressed & (LK | HK) else 'jp'
                 self.hitDone = False
