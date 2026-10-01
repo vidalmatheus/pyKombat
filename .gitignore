@@ -1,3 +1,6 @@
 .DS_Store
 __pycache__/
 build/
+# build web (gerado por build_web.sh / CI) — só web/.nojekyll é versionado
+web/*
+!web/.nojekyll

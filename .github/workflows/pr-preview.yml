@@ -1,0 +1,44 @@
+# Prévia jogável de cada Pull Request, separada do site principal:
+#   https://<usuário>.github.io/pyKombat/pr-preview/pr-<N>/
+# O jogo é recompilado (pygbag) a partir do código do PR e publicado numa
+# subpasta do branch gh-pages; o link é comentado no PR automaticamente e a
+# prévia é apagada quando o PR é fechado/mergeado.
+#
+# Requer (uma vez): Settings -> Pages -> Source: "Deploy from a branch" ->
+# gh-pages / (root). PRs vindos de forks não têm permissão de escrita, então
+# não geram prévia.
+name: PR preview (playable build)
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency: preview-${{ github.ref }}
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        if: github.event.action != 'closed'
+        with:
+          python-version: '3.12'
+
+      - name: Build the web version (pygbag)
+        if: github.event.action != 'closed'
+        run: |
+          pip install pygbag==0.9.3
+          ./build_web.sh
+
+      - uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: web
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: auto
