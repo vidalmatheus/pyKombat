@@ -55,7 +55,7 @@ class CPU:
 
         # perigo: golpe vindo ou projétil chegando -> defende
         threat = None
-        if oState in ('attack', 'slide') and dist < 170:
+        if oState in ('attack', 'slide', 'dash') and dist < 170:
             threat = 'low' if oMove in ('sweep', 'clk', 'slide') else 'high'
         for p in match.projectiles:
             if p.owner is opp and not p.retract and (p.headX() - me.x) * p.facing < 0 and abs(p.headX() - me.x) < 230:
@@ -110,7 +110,7 @@ class CPU:
                 self.plan = [UP | fwd] * 3 + [fwd] * 14 + [HK] * 2 + [0] * 20
         elif dist > 120:
             if canSpecial and r < cfg['special']:
-                if me.char.special2 in ('slide', 'teleport') and rng.random() < 0.5:
+                if rng.random() < 0.5:   # especial 2 (slide, teleporte, voadora, fan lift...)
                     self.plan = [back | SPECIAL] * 2 + [0] * 26
                 else:
                     self.plan = self._tap(SPECIAL, 2, 30)

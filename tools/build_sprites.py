@@ -9,6 +9,10 @@ swap, exatamente como o MK fazia com Reptile, Smoke, Noob Saibot...): em tempo
 de execução só os ~255 índices da paleta são recoloridos, sem tocar pixel a
 pixel (o que seria lento demais no navegador/pygbag).
 
+Os lutadores do Mortal Kombat II (Liu Kang, Kitana, Raiden) saem das folhas do
+SNES em res/Char/<base>/sheet.png, recortadas por tools/mk2_sprites.py (chamado
+no fim deste script; também roda sozinho, sem Pillow).
+
 Uso: python3 tools/build_sprites.py   (requer Pillow)
 """
 import os
@@ -111,3 +115,6 @@ if __name__ == '__main__':
             print('ok', base, name)
     build_spear_head()
     build_ice_fx()
+    import mk2_sprites  # lutadores do MK2 (SNES)
+    for base in mk2_sprites.FRAMES_MK2:
+        mk2_sprites.build(base)

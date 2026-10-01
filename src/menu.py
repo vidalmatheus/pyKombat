@@ -11,14 +11,15 @@ import ai
 import assets
 import characters
 import fight
+import fighter
 import inputs
 import net
 import ui
 from inputs import Player, KEYMAP_P1, KEYMAP_P2
 
-MENU_DT = 1 / 30
+MENU_DT = 1 / 60   # menus a 60 quadros/s (seletores deslizam sem engasgar)
 ROSTER = characters.ROSTER
-COLS = 5
+COLS = 7   # 13 lutadores: duas linhas (7 + 6)
 
 
 class MenuFacade:
@@ -114,7 +115,11 @@ class Screen:
 
     async def frame(self):
         pygame.display.flip()
-        await asyncio.sleep(MENU_DT)
+        # dorme só o que falta para o próximo quadro (o desenho já gastou parte dele)
+        now = time.perf_counter()
+        last = getattr(self, '_lastFrame', now - MENU_DT)
+        await asyncio.sleep(max(0.0, MENU_DT - (now - last)))
+        self._lastFrame = time.perf_counter()
 
 
 class TitleMenu(Screen):
@@ -349,7 +354,12 @@ class CharacterSelect(Screen):
             y = y0 + (i // COLS) * (size + gap)
             pygame.draw.rect(s, (30, 10, 10), (x - 2, y - 2, size + 4, size + 4))
             s.blit(assets.portrait(c, size=(size, size)), (x, y))
-        # seletores: deslizam até o lutador escolhido e "respiram" devagar (sem piscar)
+        # seletores: deslizam até o lutador escolhido e "respiram" devagar (sem piscar).
+        # A suavização usa o tempo real, então o movimento é igual a 30 ou 60 quadros/s.
+        now = time.perf_counter()
+        dt = min(0.1, now - getattr(self, '_easeT', now))
+        self._easeT = now
+        ease = 1 - math.exp(-dt * 14)
         for p, base in ((0, (220, 40, 40)), (1, (60, 120, 255))):
             if mode == 'cpu' and p == 1 and not ready[0]:
                 continue  # o da CPU só aparece depois que você escolhe o seu
@@ -358,8 +368,8 @@ class CharacterSelect(Screen):
             pos = self.selPos[p]
             if pos is None:
                 pos = [float(tx), float(ty)]
-            pos[0] += (tx - pos[0]) * 0.45
-            pos[1] += (ty - pos[1]) * 0.45
+            pos[0] += (tx - pos[0]) * ease
+            pos[1] += (ty - pos[1]) * ease
             self.selPos[p] = pos
             if ready[p]:
                 col = tuple(min(255, v + 60) for v in base)
@@ -389,7 +399,8 @@ class CharacterSelect(Screen):
                 ax = sh.anchor(facing)
             else:
                 sh = assets.sheet(c, 'dance', alt)
-                img = sh.frame([0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1][(tick // 6) % 12], facing)
+                seq = fighter.anim(c.base, 'idle')['seq']
+                img = sh.frame(seq[(tick // 6) % len(seq)], facing)
                 ax = sh.anchor(facing)
             if c.ghost:
                 img = assets.tinted(img, 'ghost', (0, 0, 0, 0), pygame.BLEND_RGBA_ADD)

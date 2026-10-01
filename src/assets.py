@@ -11,25 +11,38 @@ SPRITE_DIR = 'res/sprites/'
 CELL_W = 200
 CELL_H = 164
 
-# nº de frames de cada sheet (mesma tabela de tools/build_sprites.py)
+# nº de frames de cada sheet (mesma tabela de tools/build_sprites.py e
+# tools/mk2_sprites.py)
+_MK1 = {'dance': 7, 'walk': 9, 'jump': 3, 'crouch': 3, 'Apunch': 3, 'Bpunch': 11,
+        'Cpunch': 3, 'Dpunch': 5, 'Akick': 7, 'Bkick': 9, 'Ckick': 7, 'Dkick': 6,
+        'Ekick': 3, 'Epunch': 3, 'Ahit': 3, 'Bhit': 3, 'Chit': 6, 'Dhit': 2, 'Ehit': 3,
+        'Fhit': 14, 'Ghit': 11, 'Ablock': 3, 'Bblock': 3, 'dizzy': 7, 'fatalityhit': 10}
+# lutadores do MK2 (SNES): mesmas tiras comuns, com a quantidade de frames de cada um
+_MK2 = {'jump': 3, 'spin': 8, 'crouch': 3, 'Apunch': 3, 'Bpunch': 11, 'Cpunch': 3, 'Dpunch': 5,
+        'Akick': 7, 'Bkick': 9, 'Ckick': 7, 'Dkick': 6, 'Ekick': 3, 'Epunch': 3, 'Ahit': 3,
+        'Bhit': 3, 'Chit': 6, 'Ehit': 3, 'Fhit': 14, 'Ghit': 11, 'Ablock': 3, 'Bblock': 3,
+        'fatalityhit': 10}
 FRAMES = {
-    'Sub-Zero': {'dance': 7, 'walk': 9, 'jump': 3, 'crouch': 3, 'Apunch': 3, 'Bpunch': 11,
-                 'Cpunch': 3, 'Dpunch': 5, 'Akick': 7, 'Bkick': 9, 'Ckick': 7, 'Dkick': 6,
-                 'Ekick': 3, 'Epunch': 3, 'Ahit': 3, 'Bhit': 3, 'Chit': 6, 'Dhit': 2, 'Ehit': 3,
-                 'Fhit': 14, 'Ghit': 11, 'hitSpecial': 3, 'Ablock': 3, 'Bblock': 3,
-                 'Special': 12, 'dizzy': 7, 'fatality': 17, 'fatalityhit': 10, 'spin': 8, 'win': 3},
-    'Scorpion': {'dance': 7, 'walk': 9, 'jump': 3, 'crouch': 3, 'Apunch': 3, 'Bpunch': 11,
-                 'Cpunch': 3, 'Dpunch': 5, 'Akick': 7, 'Bkick': 9, 'Ckick': 7, 'Dkick': 6,
-                 'Ekick': 3, 'Epunch': 3, 'Ahit': 3, 'Bhit': 3, 'Chit': 6, 'Dhit': 2, 'Ehit': 3,
-                 'Fhit': 14, 'Ghit': 11, 'Ablock': 3, 'Bblock': 3,
-                 'Special': 7, 'dizzy': 7, 'fatality': 20, 'fatalityhit': 10},
+    'Sub-Zero': dict(_MK1, hitSpecial=3, Special=12, fatality=17, spin=8, win=3),
+    'Scorpion': dict(_MK1, Special=7, fatality=20),
+    'LiuKang': dict(_MK2, dance=6, walk=9, dizzy=6, win=4, Special=6, Fkick=2, fatality=12),
+    'Kitana': dict(_MK2, dance=5, walk=8, dizzy=5, win=4, Special=6, Special2=6, fatality=8),
+    'Raiden': dict(_MK2, dance=8, walk=8, dizzy=7, win=5, Special=6, Fkick=2, fatality=3),
 }
 # ponto de ancoragem (centro do corpo) dentro do frame, para sheets onde o
 # corpo não está no meio do frame
-ANCHOR_X = {'fatality': 64}
+ANCHOR_X = {('Sub-Zero', 'fatality'): 64, ('Scorpion', 'fatality'): 64}
 
-# matizes da roupa de cada corpo-base (graus) — o resto (pele, preto, sangue) fica
-COSTUME_HUE = {'Sub-Zero': (150, 250, 0.12, 0.0), 'Scorpion': (29, 66, 0.08, 0.30)}
+# matizes da roupa de cada corpo-base (graus mín., máx., saturação mín., brilho mín.)
+# — o resto (pele, preto, sangue) fica
+COSTUME_HUE = {'Sub-Zero': (150, 250, 0.12, 0.0), 'Scorpion': (29, 66, 0.08, 0.30),
+               'LiuKang': (350, 8, 0.55, 0.25), 'Kitana': (205, 250, 0.35, 0.0),
+               'Raiden': (180, 205, 0.35, 0.0)}
+# roupa do "espelho" (mesmo lutador dos dois lados) quando o personagem não troca a paleta
+ALT_COSTUME = {'Sub-Zero': (228, 1.0, 0.75), 'Scorpion': (30, 1.0, 0.88),
+               'LiuKang': (222, 0.9, 0.85),     # calça azul (como a 2ª cor do MK2)
+               'Kitana': (300, 0.85, 0.85),     # roxo da Mileena
+               'Raiden': (28, 0.9, 0.9)}
 SKIN_HUE = (0, 29, 0.15, 0.25)
 
 
@@ -47,7 +60,9 @@ def _transform(rgb, spec):
 def _inRange(rgb, rng):
     lo, hi, smin, vmin = rng
     h, s, v = colorsys.rgb_to_hsv(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255)
-    return lo <= h * 360 <= hi and s > smin and v > vmin
+    h *= 360
+    inHue = lo <= h <= hi if lo <= hi else (h >= lo or h <= hi)  # lo > hi: faixa que passa do 360 (vermelho)
+    return inHue and s > smin and v > vmin
 
 
 def recolorPalette(palette, char, alt):
@@ -56,7 +71,7 @@ def recolorPalette(palette, char, alt):
     skin = char.skin
     if alt:  # espelho (mesmo lutador nos dois lados): roupa mais escura/deslocada
         if costume is None:
-            costume = {'Sub-Zero': (228, 1.0, 0.75), 'Scorpion': (30, 1.0, 0.88)}[char.base]
+            costume = ALT_COSTUME[char.base]
         else:
             costume = (costume[0] + 25, costume[1], costume[2] * 0.8)
     if costume is None and skin is None:
@@ -161,7 +176,7 @@ def sheet(char, name, alt=False):
         if raw.get_colorkey() is None:
             raw.set_colorkey(0)  # índice 0 = transparente (tools/build_sprites.py)
     surf = raw.convert_alpha()
-    s = Sheet(surf, frames, ANCHOR_X.get(name, CELL_W // 2))
+    s = Sheet(surf, frames, ANCHOR_X.get((char.base, name), surf.get_width() // frames // 2))
     _sheets[key] = s
     return s
 
@@ -178,14 +193,17 @@ def _synthSpin(char, alt):
     return Sheet(strip, 8, CELL_W // 2)
 
 
-def fxSheet(name, frames, anchorX):
-    """Sheet de efeito (sem troca de paleta), ex.: a rajada de gelo original."""
+def fxSheet(name, frames, anchorX=None):
+    """Sheet de efeito (sem troca de paleta), ex.: a rajada de gelo original.
+    anchorX None = frente do efeito (borda direita do frame, tools/mk2_sprites.py)."""
     key = ('fx', name)
     s = _sheets.get(key)
     if s is None:
         raw = pygame.image.load(SPRITE_DIR + name + '.png')
         if raw.get_bitsize() == 8 and raw.get_colorkey() is None:
             raw.set_colorkey(0)
+        if anchorX is None:
+            anchorX = raw.get_width() // frames - 2
         s = Sheet(raw.convert_alpha(), frames, anchorX)
         _sheets[key] = s
     return s
@@ -236,8 +254,10 @@ def portrait(char, alt=False, size=(100, 100)):
     key = ('portrait', char.name, alt, size)
     s = _images.get(key)
     if s is None:
-        f = sheet(char, 'dance', alt).frame(0, 1)
-        crop = f.subsurface(pygame.Rect(55, 0, 90, 90)).copy()
+        sh = sheet(char, 'dance', alt)
+        f = sh.frame(0, 1)
+        top = max(0, f.get_bounding_rect().y - 6)   # enquadra a partir do topo da cabeça
+        crop = f.subsurface(pygame.Rect(sh.anchorX - 45, top, 90, 90)).copy()
         s = pygame.transform.scale(crop, size)
         if char.ghost:
             s.set_alpha(200)

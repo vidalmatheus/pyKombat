@@ -35,6 +35,10 @@ python3 -m pygbag --template "$PWD/web.tmpl" --ume_block 0 --no_opt --build "$ST
 
 mkdir -p web
 cp "$STAGE/build/web/index.html" "$STAGE/build/web/pykombat.tar.gz" web/
+# carimbo do build nas URLs (pacote e net.js): depois de um deploy novo o
+# navegador baixa a versão nova sem precisar limpar o cache
+BUILD=$(git rev-parse --short HEAD 2>/dev/null || echo dev)-$(date +%s)
+sed -i "s/__BUILD__/$BUILD/g" web/index.html
 cp webjs/net.js webjs/peerjs.min.js web/   # salas online + controles (ver web.tmpl)
 cp res/icon.png web/favicon.png # favicon = logo do jogo (não o padrão do pygbag)
 cp res/Background/MainMenu01.png web/splash.png # arte da tela de carregamento (ver web.tmpl)

@@ -36,6 +36,14 @@ jobs:
           pip install pygbag==0.9.3
           ./build_web.sh
 
+      # lutas CPU x CPU sem janela até a fatality, com screenshots publicados
+      # junto da prévia em .../pr-preview/pr-<N>/shots/
+      - name: Headless test (CPU vs CPU) + screenshots
+        if: github.event.action != 'closed'
+        run: |
+          pip install pygame==2.6.1
+          SDL_VIDEODRIVER=dummy SDL_AUDIODRIVER=dummy python3 tools/headless_test.py web/shots
+
       - uses: rossjrw/pr-preview-action@v1
         with:
           source-dir: web

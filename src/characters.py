@@ -1,15 +1,19 @@
 # Elenco de lutadores.
 #
-# Só existem spritesheets de dois ninjas (Sub-Zero e Scorpion). Os outros oito
-# são feitos como o próprio Mortal Kombat fazia: troca de paleta (palette swap)
-# sobre um dos dois corpos-base + golpes especiais e fatalities próprios.
+# Sub-Zero e Scorpion usam as spritesheets originais do jogo (MK1). Os outros
+# oito ninjas são feitos como o próprio Mortal Kombat fazia: troca de paleta
+# (palette swap) sobre um dos dois corpos-base + golpes especiais e fatalities
+# próprios. Liu Kang, Kitana e Raiden têm sprites próprios, tirados das folhas
+# do Mortal Kombat II de SNES (tools/mk2_sprites.py).
 #
 #   base       -> qual conjunto de sprites usar (res/sprites/<base>/)
 #   costume    -> (matiz, mult. saturação, mult. brilho) aplicados à roupa
 #   skin       -> idem para a pele (None = mantém)
-#   special    -> especial 1 (projétil)  : ice | spear | acid | shadow | soul | bolt | rock | shard | mimic
-#   special2   -> especial 2             : slide | teleport
-#   fatality   -> anim (animação original da sheet) | melt | bomb | slice | slam | thunder | quake | shatter | random
+#   special    -> especial 1 (projétil)  : ice | spear | acid | shadow | soul | bolt | rock | shard |
+#                                          fireball | fan | lightning | mimic
+#   special2   -> especial 2             : slide | teleport | flykick | torpedo | fanlift
+#   fatality   -> anim (animação original da sheet) | melt | bomb | slice | slam | thunder | quake |
+#                 shatter | electro | random
 #   color      -> cor de destaque na interface
 #   voice      -> som de vitória (res/Sound/<voice>.ogg)
 
@@ -67,16 +71,22 @@ ROSTER = [
     Character('CHAMELEON', 'Scorpion', 'mimic', 'teleport', 'random', (230, 120, 230),
               costume=(300, 0.85, 0.95), ghost=True, specialName='MIMIC',
               special2Name='TELEPORT PUNCH', fatalityName='ANY OF THEM'),
+    Character('LIU KANG', 'LiuKang', 'fireball', 'flykick', 'anim', (235, 70, 40),
+              specialName='FIREBALL', special2Name='FLYING KICK', fatalityName='DRAGON BITE'),
+    Character('KITANA', 'Kitana', 'fan', 'fanlift', 'anim', (80, 130, 255),
+              specialName='FAN THROW', special2Name='FAN LIFT', fatalityName='FAN DECAPITATION'),
+    Character('RAIDEN', 'Raiden', 'lightning', 'torpedo', 'electro', (130, 220, 255),
+              specialName='LIGHTNING', special2Name='TORPEDO', fatalityName='ELECTROCUTION'),
 ]
 
 # fatalities "procedurais" (sorteio do Chameleon)
-PROCEDURAL_FATALITIES = ['melt', 'bomb', 'slice', 'slam', 'thunder', 'quake', 'shatter']
+PROCEDURAL_FATALITIES = ['melt', 'bomb', 'slice', 'slam', 'thunder', 'quake', 'shatter', 'electro']
 FATALITY_TITLES = {
     'melt': 'ACID BATH', 'bomb': 'SMOKE BOMB', 'slice': 'SHADOW SLICE',
     'slam': 'TELEKINETIC SLAM', 'thunder': 'THUNDERSTRIKE', 'quake': 'EARTHQUAKE',
-    'shatter': 'DEEP FREEZE',
+    'shatter': 'DEEP FREEZE', 'electro': 'ELECTROCUTION',
 }
-MIMIC_SPECIALS = ['ice', 'acid', 'shadow', 'soul', 'bolt', 'rock', 'shard']
+MIMIC_SPECIALS = ['ice', 'acid', 'shadow', 'soul', 'bolt', 'rock', 'shard', 'fireball', 'fan', 'lightning']
 
 
 def byName(name):

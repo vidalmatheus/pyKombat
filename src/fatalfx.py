@@ -112,7 +112,10 @@ def draw(screen, kind, t, victimSurf, left, top, ground, seed, winnerX):
     body = victimSurf.get_bounding_rect()
     bodyTop = top + body.y
 
-    if kind == 'melt':
+    if kind == 'electro':
+        drawElectro(screen, t, victimSurf, left, top, ground, seed)
+
+    elif kind == 'melt':
         if t < 40:
             k = min(3, t // 10)
             img = assets.tinted(victimSurf, ('melt', k), (255 - 50 * k, 255, 255 - 60 * k), pygame.BLEND_RGB_MULT) if k else victimSurf
@@ -292,3 +295,60 @@ def draw(screen, kind, t, victimSurf, left, top, ground, seed, winnerX):
             _drawChunks(screen, ice, left, top, ground, tau, seed, power=1.6, upward=0.6, fade=50)
             if tau < 12:
                 _glow(screen, cx, bodyTop + 60, 30 + tau * 5, (220, 250, 255), 200 - tau * 15)
+
+
+def _skyBolt(screen, x, ground, frame):
+    """Raio do Raiden (sprite do MK2) caindo do céu até o chão em x."""
+    sh = assets.fxSheet('raidenbolt', 2, None)
+    img = sh.frame(frame, 1)
+    key = ('bolt', frame, ground)
+    tall = _tiles.get(key)
+    if tall is None:
+        tall = pygame.transform.scale(img, (img.get_width(), ground))
+        _tiles[key] = tall
+    screen.blit(tall, (x - sh.w // 2, 0))
+
+
+def drawElectro(screen, t, victimSurf, left, top, ground, seed):
+    """Electrocution (Raiden): três raios na vítima, que fica branca e explode."""
+    w, h = victimSurf.get_size()
+    cx = left + w // 2
+    body = victimSurf.get_bounding_rect()
+    strikes = (40, 75, 110)
+    if t < 150:
+        dark = pygame.Surface(screen.get_size())
+        dark.fill((5, 5, 30))
+        dark.set_alpha(min(140, t * 4))
+        screen.blit(dark, (0, 0))
+        img = victimSurf
+        shocked = t >= strikes[0]
+        if shocked and (t // 3) % 2 == 0:  # pisca em silhueta branca (como no MK2)
+            img = assets.tinted(victimSurf, 'electro', (255, 255, 255), pygame.BLEND_RGB_ADD)
+        elif shocked:
+            img = assets.tinted(victimSurf, 'electro2', (60, 110, 160), pygame.BLEND_RGB_ADD)
+        screen.blit(img, (left + ((t % 3) - 1 if shocked else 0), top))
+        if shocked:
+            rng = random.Random(seed + t // 2)
+            for _ in range(3):  # faíscas pelo corpo
+                x0 = left + body.x + rng.randint(0, body.w)
+                y0 = top + body.y + rng.randint(0, body.h)
+                pygame.draw.line(screen, (200, 240, 255), (x0, y0),
+                                 (x0 + rng.randint(-14, 14), y0 + rng.randint(-14, 14)), 2)
+        for b in strikes:
+            if b <= t < b + 9:
+                _skyBolt(screen, cx, ground, 0 if t < b + 5 else 1)
+                flash = pygame.Surface(screen.get_size())
+                flash.fill((220, 240, 255))
+                flash.set_alpha(130 - (t - b) * 14)
+                screen.blit(flash, (0, 0))
+    else:
+        tau = t - 150
+        white = assets.tinted(victimSurf, 'electro', (255, 255, 255), pygame.BLEND_RGB_ADD)
+        _drawChunks(screen, victimSurf if tau > 6 else white, left, top, ground, tau, seed, power=1.4)
+        _blood(screen, cx, top + body.y + 50, ground, tau, seed, 80, 8, 11)
+        if tau < 8:
+            flash = pygame.Surface(screen.get_size())
+            flash.fill((235, 245, 255))
+            flash.set_alpha(220 - tau * 25)
+            screen.blit(flash, (0, 0))
+            _glow(screen, cx, top + body.y + 50, 40 + tau * 6, (180, 230, 255), 220 - tau * 20)

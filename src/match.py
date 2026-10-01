@@ -27,16 +27,27 @@ PROJ = {
     'bolt':   dict(speed=9.5, dmg=9, effect='launch', r=12, color=(170, 110, 255), core=(255, 245, 255)),
     'rock':   dict(speed=7.0, dmg=11, effect='heavy', r=15, color=(150, 112, 74), core=(215, 180, 130)),
     'spear':  dict(speed=17.0, dmg=6, effect='pull', r=6, color=(200, 200, 200), core=(255, 255, 255)),
+    # MK2: desenhados com os sprites do jogo (render.py)
+    'fireball':  dict(speed=9.0, dmg=9, effect='heavy', r=13, color=(255, 140, 30), core=(255, 240, 160)),
+    'fan':       dict(speed=10.0, dmg=7, effect='mid', r=13, color=(220, 220, 230), core=(255, 255, 255)),
+    'fanlift':   dict(speed=7.0, dmg=4, effect='lift', r=16, color=(220, 130, 255), core=(255, 230, 255)),
+    'lightning': dict(speed=10.5, dmg=8, effect='launch', r=13, color=(120, 220, 255), core=(240, 255, 255)),
 }
 PROJ_SOUND = {'ice': 'IceSound', 'shard': 'IceSound2', 'spear': 'GetOverHere', 'acid': 'HitLongo',
-              'shadow': 'HitLongo', 'soul': 'HitLongo', 'bolt': 'IceSound2', 'rock': 'HitLongo'}
-PROJ_HEIGHT = 98
+              'shadow': 'HitLongo', 'soul': 'HitLongo', 'bolt': 'IceSound2', 'rock': 'HitLongo',
+              'fireball': 'HitLongo', 'fan': 'block', 'fanlift': 'HitLongo', 'lightning': 'IceSound2'}
+PROJ_HEIGHT = 98    # altura padrão (o projétil sai da altura das mãos; ver handPoint)
+PROJ_FIXED_HEIGHT = {'fanlift': 62}   # sai rente ao chão, não da mão
 ICE_LAUNCH = 15     # ticks em que a rajada de gelo se forma na mão (ver render.py)
+ICE_FORM_W = (40, 65, 100, 125, 140)  # largura dos frames 0-4 da rajada se formando (icefx)
 SPEAR_RANGE = 440
 
 FATALITY_LEN = {'melt': 230, 'bomb': 200, 'slice': 200, 'slam': 230, 'thunder': 230,
-                'quake': 230, 'shatter': 200}
+                'quake': 230, 'shatter': 200, 'electro': 230}
 FATAL_GAP = 112      # distância entre os lutadores na fatality original (arpão)
+FATAL_GAP_BASE = {'LiuKang': 150, 'Kitana': 92}   # boca do dragão / alcance do leque
+# som da fatality 'anim' (animação da própria sheet) de cada corpo-base
+FATAL_SOUND = {'Sub-Zero': 'IceSound', 'Scorpion': 'GetOverHere', 'LiuKang': 'HitLongo', 'Kitana': 'block'}
 
 
 class Projectile:
@@ -49,6 +60,7 @@ class Projectile:
         self.y = PROJ_HEIGHT
         self.t = 0
         self.alive = True
+        self.x0 = float(x)       # onde saiu (a rajada de gelo cresce a partir daqui)
         self.length = 0.0        # arpão: comprimento da corda
         self.retract = False
         self.hooked = False
@@ -308,13 +320,14 @@ class Match:
             kind = self.rng.choice(characters.PROCEDURAL_FATALITIES)
         d = 1 if l.x > w.x else -1
         # reposiciona para o efeito caber na tela (e o arpão alcançar a vítima)
-        gap = FATAL_GAP if kind == 'anim' else max(110, min(190, abs(l.x - w.x)))
+        gap = FATAL_GAP_BASE.get(w.base, FATAL_GAP) if kind == 'anim' else max(110, min(190, abs(l.x - w.x)))
         mid = max(130 + gap / 2, min(670 - gap / 2, (w.x + l.x) / 2))
         w.x = mid - d * gap / 2
         l.x = mid + d * gap / 2
         w.facing, l.facing = d, -d
         w.move = None
-        w.setState('fatal', 'fatal' if kind == 'anim' else 'cast')
+        ownAnim = kind == 'anim' or (kind == 'electro' and w.base == 'Raiden')
+        w.setState('fatal', 'fatal' if ownAnim else 'cast')
         l.setState('fatal_victim', 'dizzy')
         sheetName, frame = l.sheetFrame()
         self.fatal = {'kind': kind, 't': 0, 'seed': self.rng.randrange(1 << 20),
@@ -323,9 +336,10 @@ class Match:
         self.pt = 0
         self.projectiles = []
         self.event('fatal', kind)
-        self.sound({'anim': 'GetOverHere' if w.char.special == 'spear' else 'IceSound',
+        self.sound({'anim': FATAL_SOUND.get(w.base, 'HitLongo'),
                     'melt': 'HitLongo', 'bomb': 'BeforeFinish', 'slice': 'HitLongo', 'slam': 'HitLongo',
-                    'thunder': 'IceSound2', 'quake': 'HitLongo', 'shatter': 'IceSound'}[kind])
+                    'thunder': 'IceSound2', 'quake': 'HitLongo', 'shatter': 'IceSound',
+                    'electro': 'IceSound2'}[kind])
 
     def _fatalityStep(self):
         fz = self.fatal
@@ -338,6 +352,11 @@ class Match:
             if l.animName != 'victim_split':
                 l.stepAnim()
                 if w.ai >= F.FATAL_SPLIT_FRAME[w.base]:
+                    # a cabeça voa (leque da Kitana): o render recorta do frame atual
+                    if w.base == 'Kitana':
+                        sheetName, frame = l.sheetFrame()
+                        self.event('head', self.charIdx[l.idx],
+                                   1 if l.alt else 0, sheetName, frame, int(l.x), l.facing, w.facing, t)
                     l.setAnim('victim_split')
                     self.sound('HitFatality')
                     self.event('blood', int(l.x), int(self.ground - 90), -l.facing, 40, t)
@@ -352,7 +371,10 @@ class Match:
                     self._endFatality()
         else:
             hits = {'melt': (40,), 'bomb': (70,), 'slice': (40,), 'slam': (70, 120, 165),
-                    'thunder': (40, 70, 100), 'quake': (30,), 'shatter': (90,)}[fz['kind']]
+                    'thunder': (40, 70, 100), 'quake': (30,), 'shatter': (90,),
+                    'electro': (40, 75, 110, 150)}[fz['kind']]
+            if fz['kind'] == 'electro' and t in (40, 75, 110):
+                self.sound('IceSound2')
             if t in hits:
                 self.sound('HitFatality')
                 self.shakeScreen(12 if fz['kind'] != 'quake' else 120)
@@ -368,8 +390,28 @@ class Match:
         self.sound(w.char.voice)
 
     # ------------------------------------------------------------ projéteis
+    def handPoint(self, f):
+        """(x, altura) da mão do lutador no frame atual: a ponta do sprite à frente,
+        acima da linha da cintura (de onde os projéteis saem)."""
+        sh, frame, left, top = self.frameInfo(f)
+        m = sh.mask(frame, f.facing)
+        w, h = m.get_size()
+        rows = range(0, max(1, h - 55))
+        for x in (range(w - 1, -1, -1) if f.facing > 0 else range(w)):
+            ys = [y for y in rows if m.get_at((x, y))]
+            if ys:
+                return left + x, self.ground - (top + ys[len(ys) // 2])
+        return f.x + f.facing * 62, PROJ_HEIGHT
+
     def spawnProjectile(self, f, kind):
-        p = Projectile(kind, f, f.x + f.facing * 62)
+        if kind == 'spear':  # a corda sai do corpo (render.py)
+            x, y = f.x + f.facing * 62, PROJ_HEIGHT
+        else:
+            x, y = self.handPoint(f)
+        if kind == 'ice':  # a rajada se forma a partir da mão (a frente é a referência)
+            x += f.facing * ICE_FORM_W[0]
+        p = Projectile(kind, f, x)
+        p.y = PROJ_FIXED_HEIGHT.get(kind, y)
         f.projectile = p
         self.projectiles.append(p)
         self.sound(PROJ_SOUND.get(kind, 'HitLongo'))
@@ -393,8 +435,12 @@ class Match:
             else:
                 speed = p.cfg['speed']
                 if p.kind == 'ice' and p.t <= ICE_LAUNCH:
-                    speed = 3.0   # a rajada se forma na mão antes de disparar
-                p.x += p.facing * speed
+                    # a rajada se forma na mão antes de disparar: a traseira fica na mão
+                    # e a frente cresce junto com o frame (ver render.py)
+                    w0 = ICE_FORM_W[min(4, p.t // 3)]
+                    p.x = p.x0 + p.facing * (w0 - ICE_FORM_W[0])
+                else:
+                    p.x += p.facing * speed
                 if p.x < -40 or p.x > 840:
                     p.alive = False
             if p.alive and not p.retract and not p.hooked:
@@ -405,7 +451,8 @@ class Match:
                         p.alive = False
                         self.event('pfx', p.kind, int(p.headX()), int(self.ground - p.y), p.facing)
             if not p.alive:
-                self.projectiles.remove(p)
+                if p in self.projectiles:  # um KO no meio do laço já esvaziou a lista
+                    self.projectiles.remove(p)
                 if owner.projectile is p:
                     owner.projectile = None
         # projétil contra projétil
@@ -449,9 +496,13 @@ class Match:
             self._freeze(a, cfg['freeze'])
             self.event('spark', hx, hy, 2)
             return True
-        react = {'freeze': 'mid', 'pull': 'mid', 'heavy': 'heavy', 'mid': 'mid', 'launch': 'launch'}[effect]
+        react = {'freeze': 'mid', 'pull': 'mid', 'heavy': 'heavy', 'mid': 'mid', 'launch': 'launch',
+                 'lift': 'launch'}[effect]
         landed = self._applyHit(a, d, cfg['dmg'], 'mid', react, 18, 5.0, (hx, hy), special=True,
                                 dirX=p.facing)
+        if landed and effect == 'lift' and d.state == 'fall':
+            d.vy = 11.5   # fan lift: a vítima sobe girando antes de cair
+            d.vx *= 0.5
         if landed and d.life > 0 and self.phase == 'fight':
             if effect == 'freeze':
                 self._freeze(d, cfg['freeze'])
@@ -479,7 +530,7 @@ class Match:
         results = []
         for a in self.fighters:
             d = self.other(a)
-            if a.state not in ('attack', 'slide') or a.hitDone or a.move is None:
+            if a.state not in ('attack', 'slide', 'dash') or a.hitDone or a.move is None:
                 continue
             mv = MOVES[a.move]
             lo, hi = mv['active']
@@ -487,6 +538,8 @@ class Match:
                 active = a.ai >= lo
             elif a.state == 'slide':
                 active = a.t < 22
+            elif a.state == 'dash':
+                active = 4 <= a.t < 30
             else:
                 active = lo <= a.ai <= hi
             if not active:
@@ -563,6 +616,8 @@ class Match:
         else:
             if d.crouching():
                 name = 'hit_crouch'
+            elif level == 'low' and react in ('hi', 'mid'):
+                name = 'hit_low'
             else:
                 name = {'hi': 'hit_hi', 'mid': 'hit_mid', 'heavy': 'hit_heavy'}.get(react, 'hit_mid')
             d.setState('hitstun', name)

@@ -12,7 +12,16 @@ ICE_LAUNCH_TICKS = 3   # ticks por frame da rajada saindo da mão (frames 0-4)
 ICE_BURST = 7          # primeiro frame do estilhaço (7-11)
 ICE_BURST_TICKS = 4
 ATTACK_SHEETS = {'Apunch', 'Bpunch', 'Cpunch', 'Dpunch', 'Akick', 'Bkick', 'Ckick', 'Dkick',
-                 'Ekick', 'Epunch', 'Special', 'fatality'}
+                 'Ekick', 'Epunch', 'Special', 'Special2', 'Fkick', 'fatality'}
+# projéteis do MK2 desenhados com os sprites do jogo (tools/mk2_sprites.py):
+# kind -> (sheet de efeito, nº de frames, frames saindo, frames voando, frames do impacto)
+FX = {
+    'fireball': ('fireball', 8, (0, 1), (2, 3), (4, 5, 6, 7)),
+    'fan': ('fan', 10, (), tuple(range(10)), ()),
+    'fanlift': ('fanwind', 8, (0, 1, 2), (3, 4, 5, 6, 7), ()),
+    'lightning': ('lightning', 10, (0, 1, 2), (3, 4, 5, 6), (7, 8, 9)),
+}
+FX_TICKS = 4         # ticks por frame dos efeitos acima
 
 
 class Particle:
@@ -39,6 +48,8 @@ class Renderer:
         self.label = None  # texto extra no HUD (ex.: "ONLINE")
         self.steps = 1
         self.bursts = []   # estilhaços da rajada de gelo: [x, y, facing, t]
+        self.impacts = []  # explosões dos projéteis do MK2: [kind, x, y, facing, t]
+        self.heads = []    # cabeça voando (fatality da Kitana): [surf, x, y, vx, vy, t]
 
     # ------------------------------------------------------------ eventos
     def handleEvents(self, events, ground):
@@ -73,10 +84,21 @@ class Renderer:
                         26, 14 if kind == 'tele' else 10, (150, 150, 160) if kind == 'tele' else (150, 120, 90), 'puff'))
             elif kind == 'toasty':
                 self.toasty = 70
+            elif kind == 'head':  # recorta a cabeça do frame da vítima e a joga para longe do golpe
+                _, ci, alt, sheetName, frame, x, facing, dirX, seed = ev
+                sh = assets.sheet(characters.ROSTER[ci], sheetName, bool(alt))
+                img = sh.frame(frame, facing)
+                body = img.get_bounding_rect()
+                cut = pygame.Rect(body.x, body.y, body.w, min(body.h, 30))
+                left = x - sh.anchor(facing)
+                self.heads.append([img.subsurface(cut).copy(), left + cut.x, ground - sh.h + cut.y,
+                                   dirX * 3.2, -8.5, 0])
             elif kind == 'pfx':  # projétil explodiu (acertou, foi defendido ou trombou)
                 _, pk, x, y, facing = ev
                 if pk == 'ice':
                     self.bursts.append([x, y, facing, 0])
+                elif pk in FX and FX[pk][4]:
+                    self.impacts.append([pk, x, y, facing, 0])
                 else:
                     import match as M
                     col = M.PROJ.get(pk, {}).get('color', (255, 240, 150))
@@ -149,6 +171,9 @@ class Renderer:
         (partículas e animações do HUD andam no ritmo da luta, não do monitor)."""
         self.setStage(snap['st'])
         ground = snap['g']
+        self.ground = ground
+        if snap['ph'] == 'intro' and snap['pt'] <= 2:
+            self.heads = []
         self.handleEvents(snap.get('ev', ()), ground)
         self.steps = steps
         for _ in range(steps):
@@ -156,6 +181,16 @@ class Renderer:
             for b in self.bursts:
                 b[3] += 1
         self.bursts = [b for b in self.bursts if b[3] < ICE_BURST_TICKS * 5]
+        for _ in range(steps):
+            for b in self.impacts:
+                b[4] += 1
+            for hd in self.heads:
+                hd[5] += 1
+                if hd[2] < ground - hd[0].get_height():
+                    hd[1] += hd[3]
+                    hd[2] = min(ground - hd[0].get_height(), hd[2] + hd[4])
+                    hd[4] += 0.45
+        self.impacts = [b for b in self.impacts if b[4] < FX_TICKS * len(FX[b[0]][4])]
         world = self.world
         world.blit(self.bg, (0, 0))
 
@@ -184,6 +219,12 @@ class Renderer:
             self._drawProjectile(world, p, fighters, ground, snap['t'])
         for x, y, facing, t in self.bursts:
             self._drawIce(world, ICE_BURST + min(4, t // ICE_BURST_TICKS), x, y, facing)
+        for kind, x, y, facing, t in self.impacts:
+            frames = FX[kind][4]
+            self._drawFx(world, kind, frames[min(len(frames) - 1, t // FX_TICKS)], x, y, facing, center=True)
+        for img, x, y, vx, vy, t in self.heads:
+            rot = img if y >= self.ground - img.get_height() else pygame.transform.rotate(img, -t * 14 * (1 if vx > 0 else -1))
+            world.blit(rot, (int(x), int(y)))
         self._drawParticles(world)
 
         shake = snap.get('sh', 0)
@@ -251,6 +292,12 @@ class Renderer:
                 head = pygame.transform.flip(head, True, False)
             surf.blit(head, (x - (head.get_width() if facing > 0 else 0), sy - head.get_height() // 2))
             return
+        if kind in FX:
+            _, n, launch, fly, _ = FX[kind]
+            k = age // FX_TICKS
+            frame = launch[k] if k < len(launch) else fly[(k - len(launch)) % len(fly)]
+            self._drawFx(surf, kind, frame, x, sy, facing)
+            return
         if kind == 'ice':
             if age < ICE_LAUNCH_TICKS * 5:   # saindo da mão
                 frame = age // ICE_LAUNCH_TICKS
@@ -293,6 +340,13 @@ class Renderer:
             rng = random.Random(age // 2)
             for _ in range(4):
                 pygame.draw.rect(surf, (255, 255, 255), (x + rng.randint(-r, r), sy + rng.randint(-r, r), 2, 2))
+
+    def _drawFx(self, surf, kind, frame, x, y, facing, center=False):
+        # frames alinhados pela frente (borda direita) e centrados na vertical
+        sh = assets.fxSheet(FX[kind][0], FX[kind][1])
+        img = sh.frame(frame, facing)
+        ax = sh.w // 2 if center else sh.anchor(facing)
+        surf.blit(img, (x - ax, y - sh.h // 2))
 
     def _drawIce(self, surf, frame, x, y, facing):
         # icefx: frames 240x100 com o ponto de referência em (200, 50)

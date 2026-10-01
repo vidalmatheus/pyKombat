@@ -35,6 +35,7 @@ COMMON_ANIMS = {
     'land': A('jump', [0], 4),
     'lp': A('Apunch', [0, 1, 2, 2, 1, 0], [2, 2, 5, 2, 2, 2]),
     'hp': A('Bpunch', [6, 7, 8, 8, 7, 6], [3, 3, 5, 3, 3, 3]),
+    'hp2': A('Bpunch', [3, 4, 5, 5, 4, 3], [3, 3, 5, 3, 3, 3]),   # soco forte com o outro braço (alterna)
     'lk': A('Akick', [1, 2, 3, 4, 5, 6, 6, 5, 3, 1], [2, 2, 2, 2, 2, 5, 3, 2, 2, 2]),
     'hk': A('Bkick', range(9), [2, 2, 2, 3, 3, 6, 3, 3, 3]),
     'clp': A('Cpunch', [0, 1, 2, 2, 1, 0], [2, 2, 5, 2, 2, 2]),
@@ -47,6 +48,7 @@ COMMON_ANIMS = {
     'hit_mid': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
     'hit_heavy': A('Chit', range(6), [3, 3, 4, 4, 4, 4]),
     'hit_crouch': A('Ehit', [0, 1, 2, 1, 0], [2, 3, 5, 3, 2]),
+    'hit_low': A('Dhit', [0, 1, 1, 0], [2, 4, 5, 3]),   # chute baixo em quem está em pé
     'fall': A('Fhit', range(7), [3, 4, 4, 4, 4, 4, HOLD]),
     'getup': A('Fhit', range(7, 14), 4),
     'sweepfall': A('Ghit', range(6), [3, 4, 4, 4, 4, HOLD]),
@@ -75,14 +77,59 @@ BASE_ANIMS = {
         'cast': A('Special', [0, 1, 2, 3], [4, 4, 4, HOLD]),
         'fatal': A('fatality', range(20), [6] * 19 + [HOLD]),
     },
+    # --- MK2 (SNES): tiras de tools/mk2_sprites.py; o projétil sai no índice 3
+    'LiuKang': {
+        'idle': A('dance', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 6, True),
+        'dizzy': A('dizzy', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 7, True),
+        'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
+        'dash': A('Fkick', [0, 1], [5, HOLD]),
+        'pulled': A('Chit', [0, 1, 2, 1], 5, True),
+        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
+        'win': A('win', [0, 1, 2, 3], [8, 8, 8, HOLD]),
+        'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
+        # vira dragão (0-11), morde no 11 e volta a ser o Liu Kang
+        'fatal': A('fatality', list(range(12)) + list(range(10, -1, -1)),
+                   [8, 8, 7, 7, 6, 6, 6, 6, 6, 6, 5, 30] + [5] * 10 + [HOLD]),
+    },
+    'Kitana': {
+        'idle': A('dance', [0, 1, 2, 3, 4, 3, 2, 1], 7, True),
+        'walk': A('walk', range(8), 5, True),
+        'walkb': A('walk', range(7, -1, -1), 5, True),
+        'dizzy': A('dizzy', [0, 1, 2, 3, 4, 3, 2, 1], 7, True),
+        'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
+        'special2': A('Special2', range(6), [3, 4, 4, 10, 5, 4]),
+        'pulled': A('Chit', [0, 1, 2, 1], 5, True),
+        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
+        'win': A('win', [0, 1, 2, 3], [8, 8, 8, HOLD]),
+        'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
+        # gira o leque e corta no índice 6
+        'fatal': A('fatality', range(8), [8, 7, 6, 6, 5, 4, 30, HOLD]),
+    },
+    'Raiden': {
+        'idle': A('dance', [0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1], 5, True),
+        'walk': A('walk', range(8), 5, True),
+        'walkb': A('walk', range(7, -1, -1), 5, True),
+        'dizzy': A('dizzy', [0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1], 6, True),
+        'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
+        'dash': A('Fkick', [0, 1], [5, HOLD]),
+        'pulled': A('Chit', [0, 1, 2, 1], 5, True),
+        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
+        'win': A('win', [0, 1, 2, 3, 4], [7, 7, 7, 8, HOLD]),
+        'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
+        'fatal': A('fatality', [0, 1, 2], [8, 8, HOLD]),   # braços para o céu: o raio cai (fatalfx)
+    },
 }
 SPECIAL_SPAWN = 3                  # índice da sequência em que o projétil sai
-FATAL_SPLIT_FRAME = {'Sub-Zero': 13, 'Scorpion': 13}  # quando a vítima se parte
+# quando a vítima se parte (fatality 'anim'): índice da sequência do vencedor
+FATAL_SPLIT_FRAME = {'Sub-Zero': 13, 'Scorpion': 13, 'LiuKang': 11, 'Kitana': 6}
+DASH_KINDS = ('flykick', 'torpedo')   # especiais em que o lutador voa reto para a frente
+DASH_HEIGHT = 34                      # altura do voo (o sprite é desenhado acima do chão)
 
 # golpes normais: anim, dano, altura (high/mid/low), reação, janela ativa (índices da seq)
 MOVES = {
     'lp': dict(dmg=4, level='high', react='hi', active=(2, 3), stun=14, push=1.2),
     'hp': dict(dmg=7, level='high', react='mid', active=(2, 3), stun=17, push=5.0),
+    'hp2': dict(dmg=7, level='high', react='mid', active=(2, 3), stun=17, push=5.0),
     'lk': dict(dmg=6, level='high', react='mid', active=(5, 6), stun=16, push=5.0),
     'hk': dict(dmg=9, level='high', react='heavy', active=(5, 6), stun=22, push=6.5),
     'clp': dict(dmg=3, level='mid', react='hi', active=(2, 3), stun=12, push=1.5),
@@ -93,6 +140,7 @@ MOVES = {
     'jp': dict(dmg=7, level='high', react='mid', active=(2, 2), stun=17, push=4.0, air=True),
     'slide': dict(dmg=9, level='low', react='sweep', active=(1, 1), stun=0, push=3.0, special=True),
     'tele_punch': dict(dmg=10, level='high', react='launch', active=(1, 2), stun=0, push=4.0, special=True),
+    'dash': dict(dmg=10, level='high', react='launch', active=(1, 1), stun=0, push=4.0, special=True),
 }
 CROUCH_MOVES = {'clp', 'clk', 'upper', 'sweep'}
 
@@ -147,6 +195,7 @@ class Fighter:
         self.lastFall = 'fall'
         self.jumpDir = 0
         self.blockState = 'block'
+        self.hpAlt = True        # o próximo soco forte usa o braço da frente
         self.setAnim('idle')
 
     # ------------------------------------------------------------ animação
@@ -191,7 +240,7 @@ class Fighter:
 
     # ------------------------------------------------------------ helpers
     def grounded(self):
-        return self.y <= 0 and self.state not in ('jump', 'prejump', 'fall', 'tele')
+        return self.y <= 0 and self.state not in ('jump', 'prejump', 'fall', 'tele', 'dash')
 
     def crouching(self):
         return self.state in ('crouch', 'cblock') or (self.state == 'attack' and self.move in CROUCH_MOVES) \
@@ -321,6 +370,10 @@ class Fighter:
             self.setState('idle', 'idle')
 
     def startAttack(self, mv):
+        if mv == 'hp':  # socos fortes seguidos alternam os braços (como no MK1)
+            self.hpAlt = not self.hpAlt
+            if self.hpAlt:
+                mv = 'hp2'
         self.move = mv
         self.hitDone = False
         self.setState('attack', mv)
@@ -336,12 +389,19 @@ class Fighter:
             self.setState('tele', 'stand')
             self.invuln = True
             match.event('tele', int(self.x), int(self.y), self.idx)
+        elif kind in DASH_KINDS:
+            self.move = 'dash'
+            self.hitDone = False
+            self.setState('dash', 'dash')
+            match.sound('block', 0.5)
         else:
             if kind == 'mimic':
                 kind = match.rng.choice(match.mimicSpecials)
             self.specialKind = kind
             self.spawned = False
-            self.setState('special', 'special')
+            # especial 2 com animação própria (leque da Kitana); senão a mesma do 1
+            two = which == 2 and 'special2' in BASE_ANIMS.get(self.base, {})
+            self.setState('special', 'special2' if two else 'special')
 
     # ------------------------------------------------------------ estados
     def _advance(self, held, pressed, match):
@@ -452,6 +512,18 @@ class Fighter:
                 self.move = None
                 self.setState('crouch', 'crouch')
                 self.ai = 2
+        elif st == 'dash':
+            # voadora / torpedo: sobe um pouco, cruza a tela reto e cai em pé
+            if self.t < 6:
+                self.y = DASH_HEIGHT * self.t / 6
+            elif self.t < 30 and not self.hitDone:
+                self.x += self.facing * 11.0
+                self.y = DASH_HEIGHT
+            else:
+                self.y = max(0.0, self.y - 6)
+                if self.y <= 0:
+                    self.move = None
+                    self.setState('land', 'land')
         elif st == 'tele':
             # some, reaparece do outro lado do oponente e soca
             if self.t == 6:
