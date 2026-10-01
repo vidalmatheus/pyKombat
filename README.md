@@ -33,17 +33,19 @@ press the fatality button (or ↓ → + HP) for your fighter's fatality.
 |---|---|---|---|
 | Sub-Zero | Ice blast (freezes) | Slide | Spine splitter |
 | Scorpion | Spear ("Get over here!") | Teleport punch | Spear splitter |
-| Reptile | Acid spit | Slide | Acid bath |
-| Smoke | Harpoon | Teleport punch | Smoke bomb |
-| Noob Saibot | Shadow disc | Shadow teleport | Shadow slice |
-| Ermac | Soul ball | Teleport punch | Telekinetic slam |
-| Rain | Lightning orb | Slide | Thunderstrike |
-| Tremor | Rock throw | Slide | Earthquake |
-| Frost | Ice shard (freezes) | Slide | Deep freeze |
-| Chameleon | Mimic (random) | Teleport punch | Any of them |
+| Liu Kang | Fireball | Flying kick | Dragon bite |
+| Kitana | Fan throw | Fan lift | Fan decapitation |
+| Raiden | Lightning | Torpedo | Electrocution |
+| Kung Lao | Hat throw | Teleport | Hat slice |
+| Johnny Cage | Green bolt | Shadow kick | Uppercut decapitation |
+| Baraka | Blade spark | Blade fury | Blade decapitation |
+| Mileena | Sai throw | Roll | Sai frenzy |
+| Jax | Energy wave | Ground smash | Arm rip |
+| Shang Tsung | Flaming skull | Ground fire | Soul steal |
 
-The eight new ninjas are palette swaps of the Sub-Zero/Scorpion sprites — the same trick the
-original Mortal Kombat used. Freezing an already frozen opponent backfires, just like in MK.
+Sub-Zero and Scorpion use the original sprites of the game; the other nine come from the
+Mortal Kombat II (SNES) sprite sheets. Freezing an already frozen opponent backfires, just like
+in MK.
 
 
 ## Controls
@@ -104,7 +106,14 @@ After a rebuild, just hard-refresh the browser (the game bundle is cached aggres
 
 `res/Char/` holds the original sprite sheets. `tools/build_sprites.py` turns them into the
 palettized, right-facing sheets in `res/sprites/` that the game loads (re-run it after editing
-the originals; requires Pillow). New fighters are defined in `src/characters.py`.
+the originals; requires Pillow). The MK2 fighters are cut from the SNES sheets
+(`res/Char/<name>/sheet.png`, from spriters-resource.com) by `tools/mk2_sprites.py`, which maps
+each animation to sprite indices of the sheet (no Pillow needed). Fighters are defined in
+`src/characters.py`.
+
+`tools/headless_test.py` plays CPU vs CPU fights with every fighter on both sides of the screen
+until the fatality (no window, `SDL_VIDEODRIVER=dummy`) and saves screenshots; the PR preview
+workflow runs it and publishes the screenshots under `pr-preview/pr-<N>/shots/`.
 
 ## Code map
 
@@ -112,7 +121,7 @@ the originals; requires Pillow). New fighters are defined in `src/characters.py`
 |---|---|
 | `src/fighter.py` | fighter state machine, moves, animations (fixed 60 Hz step) |
 | `src/match.py` | rounds, hit/hurt boxes (pixel masks), projectiles, FINISH HIM, fatalities, snapshots |
-| `src/render.py`, `src/fatalfx.py` | drawing (fighters, HUD, blood) and the procedural fatalities |
+| `src/render.py`, `src/fatalfx.py` | drawing (fighters, HUD, blood) and the drawn fatalities (electrocution, hat slice, soul steal) |
 | `src/ai.py` | CPU opponent |
 | `src/inputs.py` | keyboard + gamepads (SDL GameController on desktop, Gamepad API in the browser) |
 | `src/net.py`, `webjs/net.js` | online rooms (TCP on desktop, WebRTC/PeerJS in the browser) |

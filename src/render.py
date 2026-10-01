@@ -20,7 +20,15 @@ FX = {
     'fan': ('fan', 10, (), tuple(range(10)), ()),
     'fanlift': ('fanwind', 8, (0, 1, 2), (3, 4, 5, 6, 7), ()),
     'lightning': ('lightning', 10, (0, 1, 2), (3, 4, 5, 6), (7, 8, 9)),
+    'hat': ('hat', 3, (), (0, 1, 2), ()),
+    'greenball': ('greenball', 9, (0, 1, 2), (3, 4, 5, 6), (7, 8)),
+    'spark': ('spark', 11, (0, 1, 2, 3), (4, 5), (6, 7, 8, 9, 10)),
+    'sai': ('sai', 9, (0, 1), (2, 3), (4, 5, 6, 7, 8)),
+    'skull': ('skull', 11, (0, 1, 2, 3), (4, 5, 6), (7, 8, 9, 10)),
+    'wave': ('wave', 5, (0, 1), (2,), (3, 4)),
 }
+GROUND_FX = {'firerise': ('firerise', 6, 7)}   # efeitos que saem do chão: (sheet, frames, ticks/frame)
+SHADOW_KICK = (90, 230, 60)   # rastro verde da shadow kick do Johnny Cage
 FX_TICKS = 4         # ticks por frame dos efeitos acima
 
 
@@ -263,9 +271,13 @@ class Renderer:
             img = assets.tinted(img, 'frozen2', (70, 110, 140), pygame.BLEND_RGB_ADD)
         elif flags & 4:  # piscada branca do impacto
             img = assets.tinted(img, 'flash', (110, 110, 110), pygame.BLEND_RGB_ADD)
+        if sheetName == 'Fkick' and char.special2 == 'shadowkick':  # sombras verdes atrás do chute
+            ghost = assets.tinted(img, 'shadowkick', SHADOW_KICK, pygame.BLEND_RGB_MULT)
+            for k, a in ((3, 70), (2, 110), (1, 150)):
+                g = assets.tinted(ghost, ('sk', k), (0, 0, 0, 0), pygame.BLEND_RGBA_ADD)
+                g.set_alpha(a)
+                surf.blit(g, (x - anchor - facing * 26 * k, ground - y - sh.h))
         alpha = None
-        if char.ghost:
-            alpha = 120 + int(60 * math.sin(tick * 0.15))
         if flags & 8:
             alpha = 90 if tick % 4 < 2 else 200
         if alpha is not None:
@@ -292,6 +304,14 @@ class Renderer:
                 head = pygame.transform.flip(head, True, False)
             surf.blit(head, (x - (head.get_width() if facing > 0 else 0), sy - head.get_height() // 2))
             return
+        if kind in GROUND_FX:
+            name, n, step = GROUND_FX[kind]
+            self._drawGroundFx(surf, name, n, min(n - 1, age // step), x, ground, facing)
+            return
+        if kind == 'quake':  # onda roxa correndo rente ao chão
+            for k in range(5):
+                self._glow(surf, x - facing * k * 12, ground - 6 - (k % 2) * 4, 12 - k * 2, (190, 90, 255), 180 - k * 30)
+            return
         if kind in FX:
             _, n, launch, fly, _ = FX[kind]
             k = age // FX_TICKS
@@ -305,41 +325,23 @@ class Renderer:
                 frame = 5 + (age // 5) % 2
             self._drawIce(surf, frame, x, sy, facing)
             return
-        import match as M
+        import match as M   # projétil sem sprite: bola de luz na cor dele
         cfg = M.PROJ[kind]
         r = cfg['r']
         col, core = cfg['color'], cfg['core']
         for k in range(1, 5):  # rastro
             self._glow(surf, x - facing * k * 9, sy, r - k * 2, col, 110 - k * 22)
-        if kind == 'rock':
-            ang = age * 0.3
-            pts = [(x + math.cos(ang + a) * r * (0.8 + 0.2 * ((a * 7) % 1)), sy + math.sin(ang + a) * r)
-                   for a in (0, 1.1, 2.0, 3.0, 4.1, 5.2)]
-            pygame.draw.polygon(surf, col, pts)
-            pygame.draw.polygon(surf, core, pts, 2)
-            return
-        if kind == 'shard':
-            pts = [(x + facing * r * 2, sy), (x, sy - r * 0.6), (x - facing * r * 1.2, sy), (x, sy + r * 0.6)]
-            self._glow(surf, x, sy, r + 6, col, 90)
-            pygame.draw.polygon(surf, core, pts)
-            pygame.draw.polygon(surf, col, pts, 2)
-            return
         pulse = 2 * math.sin(age * 0.5)
         self._glow(surf, x, sy, r + 7 + pulse, col, 90)
         self._glow(surf, x, sy, r, col, 230)
         self._glow(surf, x, sy, max(3, r // 2), core, 255)
-        if kind == 'bolt':
-            rng = random.Random(age)
-            for _ in range(3):
-                a = rng.uniform(0, 6.28)
-                pygame.draw.line(surf, (240, 230, 255), (x, sy), (x + math.cos(a) * (r + 10), sy + math.sin(a) * (r + 10)), 2)
-        elif kind == 'shadow':
-            a = age * 0.6
-            pygame.draw.arc(surf, (190, 150, 255), (x - r - 3, sy - r - 3, 2 * r + 6, 2 * r + 6), a, a + 2.5, 3)
-        elif kind == 'ice':
-            rng = random.Random(age // 2)
-            for _ in range(4):
-                pygame.draw.rect(surf, (255, 255, 255), (x + rng.randint(-r, r), sy + rng.randint(-r, r), 2, 2))
+
+    def _drawGroundFx(self, surf, name, n, frame, cx, ground, facing):
+        # pelo contorno do desenho: centrado em x, com a base no chão
+        sh = assets.fxSheet(name, n)
+        img = sh.frame(frame, facing)
+        br = img.get_bounding_rect()
+        surf.blit(img, (int(cx - br.centerx), int(ground - br.bottom)))
 
     def _drawFx(self, surf, kind, frame, x, y, facing, center=False):
         # frames alinhados pela frente (borda direita) e centrados na vertical
@@ -430,8 +432,7 @@ class Renderer:
                 img = assets.image('res/fatality.png')
                 img = pygame.transform.scale(img, (img.get_width() * 2, img.get_height() * 2))
                 s.blit(img, (400 - img.get_width() // 2, 190))
-                fn = snap.get('fn', '')
-                title = characters.FATALITY_TITLES.get(fn) or characters.ROSTER[fs[w][0]].fatalityName
+                title = characters.ROSTER[fs[w][0]].fatalityName
                 ui.text(s, title, 20, (400, 245), (255, 200, 60), outline=True)
             elif pt >= 60:
                 ui.text(s, '%s WINS' % name(w), 44, (400, 150), (255, 255, 255), outline=True)

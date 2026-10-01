@@ -118,12 +118,87 @@ BASE_ANIMS = {
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         'fatal': A('fatality', [0, 1, 2], [8, 8, HOLD]),   # braços para o céu: o raio cai (fatalfx)
     },
+    'KungLao': {
+        'idle': A('dance', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 6, True),
+        'dizzy': A('dizzy', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 7, True),
+        'special': A('Special', range(6), [3, 4, 5, 8, 5, 4]),
+        'pulled': A('Chit', [0, 1, 2, 1], 5, True),
+        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
+        'win': A('win', range(6), [7, 7, 7, 7, 8, HOLD]),
+        'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
+        # tira o chapéu e arremessa; segura o braço esticado enquanto o chapéu corta (fatalfx)
+        'fatal': A('fatality', range(10), [6, 6, 6, 6, 6, 6, 6, 6, 6, HOLD]),
+    },
+    'JohnnyCage': {
+        'idle': A('dance', [0, 1, 2, 3, 4, 3, 2, 1], 6, True),
+        'walk': A('walk', range(8), 5, True),
+        'walkb': A('walk', range(7, -1, -1), 5, True),
+        'dizzy': A('dizzy', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 7, True),
+        'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
+        'dash': A('Fkick', [0, 1], [5, HOLD]),
+        'pulled': A('Chit', [0, 1, 2, 1], 5, True),
+        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
+        'win': A('win', range(5), [8, 8, 8, 8, HOLD]),
+        'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
+        # agacha e solta o uppercut: a cabeça voa no índice 4
+        'fatal': A('fatality', range(7), [10, 8, 6, 5, 30, 20, HOLD]),
+    },
+    'Baraka': {
+        'idle': A('dance', range(6), 7, True),
+        'dizzy': A('dizzy', [0, 1, 2, 3, 4, 3, 2, 1], 7, True),
+        'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
+        'dash': A('Fkick', [0, 1, 2, 3, 2, 1, 2, 3, 2, 1], 3, True),   # lâminas girando
+        'pulled': A('Chit', [0, 1, 2, 1], 5, True),
+        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
+        'win': A('win', range(4), [8, 8, 8, HOLD]),
+        'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
+        'fatal': A('fatality', range(11), [10, 8, 5, 4, 30, 4, 4, 4, 5, 8, HOLD]),
+    },
+    'Mileena': {
+        'idle': A('dance', list(range(10)) + list(range(8, 0, -1)), 4, True),
+        'walk': A('walk', range(8), 5, True),
+        'walkb': A('walk', range(7, -1, -1), 5, True),
+        'dizzy': A('dizzy', [0, 1, 2, 3, 4, 3, 2, 1], 7, True),
+        'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
+        'dash': A('Fkick', [0] + [1, 2, 3, 4, 5, 6, 7] * 4, 2, True),   # rola pelo chão
+        'pulled': A('Chit', [0, 1, 2, 1], 5, True),
+        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
+        'win': A('win', range(6), [8, 8, 8, 8, 8, HOLD]),
+        'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
+        'fatal': A('fatality', range(14), [8, 5, 5, 5, 5, 5, 5, 5, 6, 10, 8, 8, 20, HOLD]),
+    },
+    'ShangTsung': {
+        'idle': A('dance', [0, 1, 2, 3, 4, 3, 2, 1], 7, True),
+        'dizzy': A('dizzy', [0, 1, 2, 3, 4, 3, 2, 1], 7, True),
+        'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
+        'special2': A('Special2', range(6), [3, 5, 5, 14, 6, 4]),
+        'pulled': A('Chit', [0, 1, 2, 1], 5, True),
+        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
+        'win': A('win', range(4), [7, 7, 8, HOLD]),
+        'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
+        # guarda, estende a mão (segura enquanto a alma sai), puxa, ergue os braços
+        'fatal': A('fatality', range(5), [12, 90, 10, 10, HOLD]),
+    },
+    'Jax': {
+        'idle': A('dance', [0, 1, 2, 3, 4, 3, 2, 1], 7, True),
+        'dizzy': A('dizzy', [0, 1, 2, 3, 4, 3, 2, 1], 7, True),
+        'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
+        'special2': A('Special2', range(6), [4, 4, 4, 8, 8, 5]),
+        'pulled': A('Chit', [0, 1, 2, 1], 5, True),
+        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
+        'win': A('win', range(6), [7, 7, 7, 7, 8, HOLD]),
+        'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
+        # agarra (1), puxa os braços (2-5): o sangue espirra no índice 5
+        'fatal': A('fatality', range(10), [10, 12, 8, 8, 8, 25, 10, 10, 10, HOLD]),
+    },
 }
 SPECIAL_SPAWN = 3                  # índice da sequência em que o projétil sai
 # quando a vítima se parte (fatality 'anim'): índice da sequência do vencedor
-FATAL_SPLIT_FRAME = {'Sub-Zero': 13, 'Scorpion': 13, 'LiuKang': 11, 'Kitana': 6}
-DASH_KINDS = ('flykick', 'torpedo')   # especiais em que o lutador voa reto para a frente
-DASH_HEIGHT = 34                      # altura do voo (o sprite é desenhado acima do chão)
+FATAL_SPLIT_FRAME = {'Sub-Zero': 13, 'Scorpion': 13, 'LiuKang': 11, 'Kitana': 6, 'JohnnyCage': 4,
+                     'Baraka': 4, 'Mileena': 2, 'Jax': 5}
+# especiais em que o lutador avança reto para a frente -> altura do voo
+# (o sprite é desenhado acima do chão; 0 = vai pelo chão)
+DASH_KINDS = {'flykick': 34, 'torpedo': 34, 'shadowkick': 20, 'bladefury': 0, 'roll': 0}
 
 # golpes normais: anim, dano, altura (high/mid/low), reação, janela ativa (índices da seq)
 MOVES = {
@@ -196,6 +271,7 @@ class Fighter:
         self.jumpDir = 0
         self.blockState = 'block'
         self.hpAlt = True        # o próximo soco forte usa o braço da frente
+        self.dashKind = None
         self.setAnim('idle')
 
     # ------------------------------------------------------------ animação
@@ -390,13 +466,12 @@ class Fighter:
             self.invuln = True
             match.event('tele', int(self.x), int(self.y), self.idx)
         elif kind in DASH_KINDS:
+            self.dashKind = kind
             self.move = 'dash'
             self.hitDone = False
             self.setState('dash', 'dash')
             match.sound('block', 0.5)
         else:
-            if kind == 'mimic':
-                kind = match.rng.choice(match.mimicSpecials)
             self.specialKind = kind
             self.spawned = False
             # especial 2 com animação própria (leque da Kitana); senão a mesma do 1
@@ -514,11 +589,12 @@ class Fighter:
                 self.ai = 2
         elif st == 'dash':
             # voadora / torpedo: sobe um pouco, cruza a tela reto e cai em pé
+            height = DASH_KINDS[self.dashKind]
             if self.t < 6:
-                self.y = DASH_HEIGHT * self.t / 6
+                self.y = height * self.t / 6
             elif self.t < 30 and not self.hitDone:
-                self.x += self.facing * 11.0
-                self.y = DASH_HEIGHT
+                self.x += self.facing * (11.0 if height else 7.0)
+                self.y = height
             else:
                 self.y = max(0.0, self.y - 6)
                 if self.y <= 0:

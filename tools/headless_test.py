@@ -40,7 +40,7 @@ from match import Match  # noqa: E402
 from render import Renderer  # noqa: E402
 
 OUT = sys.argv[1] if len(sys.argv) > 1 else 'shots'
-NAMES = [a.upper().replace('_', ' ') for a in sys.argv[2:]] or ['LIU KANG', 'KITANA', 'RAIDEN']
+NAMES = [a.upper().replace('_', ' ') for a in sys.argv[2:]] or [c.name for c in characters.ROSTER]
 FAILS = []
 
 
@@ -56,26 +56,29 @@ def shot(renderer, snap, name):
 
 
 def faces_right(char):
-    """As tiras olham para a direita: no frame ativo do soco forte e do chute forte
-    há muito mais corpo à frente da âncora (braço/perna esticados) do que atrás.
-    Confere também o desenho espelhado (lutador do lado direito, olhando para a esquerda)."""
-    for sheetName, frame in (('Bpunch', 8), ('Bkick', 5)):
-        sh = assets.sheet(char, sheetName)
-        for facing in (1, -1):
+    """As tiras olham para a direita: somando os frames ativos de três golpes, o
+    braço/perna esticado vai mais longe à frente da âncora do que o corpo vai
+    para trás (um golpe sozinho pode enganar: o Jax estica o braço para trás no
+    chute, as lâminas do Baraka saem pelas costas). Confere também o desenho
+    espelhado (lado direito da tela)."""
+    for facing in (1, -1):
+        ahead = behind = 0
+        for sheetName, frame in (('Bpunch', 8), ('Apunch', 2), ('Bkick', 5)):
+            sh = assets.sheet(char, sheetName)
             m = sh.mask(frame, facing)
             ax = sh.anchor(facing)
             w, h = m.get_size()
-            ahead = behind = 0
+            fa = fb = 0   # alcance: pixel mais distante à frente / atrás da âncora
             for y in range(0, h, 2):
                 for x in range(0, w, 2):
                     if m.get_at((x, y)):
                         d = (x - ax) * facing
-                        if d > 35:
-                            ahead += 1
-                        elif d < -35:
-                            behind += 1
-            check(ahead > 2 * behind, '%s: %s olha para %s (%d px à frente, %d atrás)' % (
-                char.name, sheetName, 'a direita' if facing > 0 else 'a esquerda', ahead, behind))
+                        fa = max(fa, d)
+                        fb = max(fb, -d)
+            ahead += fa
+            behind += fb
+        check(ahead > behind + 20, '%s: olha para %s (golpes alcançam %d px à frente, %d atrás)' % (
+            char.name, 'a direita' if facing > 0 else 'a esquerda', ahead, behind))
 
 
 def fight(char, side, opponent, stage):
@@ -176,8 +179,7 @@ def select_screen():
 def main():
     os.makedirs(OUT, exist_ok=True)
     for c in characters.ROSTER:
-        if c.base not in ('Sub-Zero', 'Scorpion') or c.name in ('SUB-ZERO', 'SCORPION'):
-            faces_right(c)   # (os ninjas de troca de paleta usam as tiras desses dois)
+        faces_right(c)
     select_screen()
     byName = {c.name: c for c in characters.ROSTER}
     for i, name in enumerate(NAMES):

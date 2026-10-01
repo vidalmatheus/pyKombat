@@ -20,34 +20,45 @@ STAGE_GROUND = {1: 432, 2: 452, 3: 482, 4: 452, 5: 462, 6: 462, 7: 442, 8: 477}
 
 PROJ = {
     'ice':    dict(speed=8.5, dmg=6, effect='freeze', freeze=100, r=13, color=(140, 210, 255), core=(240, 252, 255)),
-    'shard':  dict(speed=10.5, dmg=5, effect='freeze', freeze=65, r=10, color=(200, 245, 255), core=(255, 255, 255)),
-    'acid':   dict(speed=6.0, dmg=11, effect='heavy', r=12, color=(100, 240, 50), core=(220, 255, 170)),
-    'shadow': dict(speed=12.5, dmg=7, effect='mid', r=12, color=(50, 35, 80), core=(150, 130, 210)),
-    'soul':   dict(speed=7.5, dmg=9, effect='launch', r=15, color=(60, 230, 90), core=(220, 255, 210)),
-    'bolt':   dict(speed=9.5, dmg=9, effect='launch', r=12, color=(170, 110, 255), core=(255, 245, 255)),
-    'rock':   dict(speed=7.0, dmg=11, effect='heavy', r=15, color=(150, 112, 74), core=(215, 180, 130)),
     'spear':  dict(speed=17.0, dmg=6, effect='pull', r=6, color=(200, 200, 200), core=(255, 255, 255)),
     # MK2: desenhados com os sprites do jogo (render.py)
     'fireball':  dict(speed=9.0, dmg=9, effect='heavy', r=13, color=(255, 140, 30), core=(255, 240, 160)),
     'fan':       dict(speed=10.0, dmg=7, effect='mid', r=13, color=(220, 220, 230), core=(255, 255, 255)),
     'fanlift':   dict(speed=7.0, dmg=4, effect='lift', r=16, color=(220, 130, 255), core=(255, 230, 255)),
     'lightning': dict(speed=10.5, dmg=8, effect='launch', r=13, color=(120, 220, 255), core=(240, 255, 255)),
+    'hat':       dict(speed=9.5, dmg=8, effect='mid', r=12, color=(230, 230, 240), core=(255, 255, 255)),
+    'greenball': dict(speed=8.0, dmg=8, effect='heavy', r=11, color=(90, 230, 60), core=(230, 255, 200)),
+    'spark':     dict(speed=11.0, dmg=7, effect='mid', r=11, color=(200, 220, 255), core=(255, 255, 255)),
+    'sai':       dict(speed=12.0, dmg=7, effect='mid', r=9, color=(120, 160, 255), core=(240, 250, 255)),
+    'skull':     dict(speed=8.5, dmg=9, effect='heavy', r=13, color=(255, 120, 30), core=(255, 230, 140)),
+    'wave':      dict(speed=10.0, dmg=8, effect='mid', r=13, color=(255, 120, 220), core=(255, 230, 250)),
+    # parados no lugar: 'life' = ticks na tela, 'active' = ticks em que acertam
+    'firerise':  dict(speed=0.0, dmg=10, effect='launch', r=24, life=44, active=(10, 30),
+                      color=(255, 140, 30), core=(255, 230, 140)),
+    'quake':     dict(speed=13.0, dmg=8, effect='trip', r=14, color=(190, 90, 255), core=(240, 210, 255)),
 }
-PROJ_SOUND = {'ice': 'IceSound', 'shard': 'IceSound2', 'spear': 'GetOverHere', 'acid': 'HitLongo',
-              'shadow': 'HitLongo', 'soul': 'HitLongo', 'bolt': 'IceSound2', 'rock': 'HitLongo',
-              'fireball': 'HitLongo', 'fan': 'block', 'fanlift': 'HitLongo', 'lightning': 'IceSound2'}
+PROJ_SOUND = {'ice': 'IceSound', 'spear': 'GetOverHere', 'fireball': 'HitLongo', 'fan': 'block',
+              'fanlift': 'HitLongo', 'lightning': 'IceSound2', 'hat': 'block', 'greenball': 'HitLongo',
+              'spark': 'IceSound2', 'sai': 'block', 'skull': 'HitLongo', 'wave': 'IceSound2',
+              'firerise': 'HitLongo', 'quake': 'HitLongo'}
 PROJ_HEIGHT = 98    # altura padrão (o projétil sai da altura das mãos; ver handPoint)
-PROJ_FIXED_HEIGHT = {'fanlift': 62}   # sai rente ao chão, não da mão
+PROJ_FIXED_HEIGHT = {'fanlift': 62, 'firerise': 60, 'quake': 14, 'wave': 64}   # altura fixa, não da mão
+AT_TARGET = ('firerise',)      # nasce embaixo do oponente (fogo do chão do Shang Tsung)
 ICE_LAUNCH = 15     # ticks em que a rajada de gelo se forma na mão (ver render.py)
 ICE_FORM_W = (40, 65, 100, 125, 140)  # largura dos frames 0-4 da rajada se formando (icefx)
 SPEAR_RANGE = 440
 
-FATALITY_LEN = {'melt': 230, 'bomb': 200, 'slice': 200, 'slam': 230, 'thunder': 230,
-                'quake': 230, 'shatter': 200, 'electro': 230}
+# fatalities desenhadas por fatalfx.py (duração em ticks e quando o golpe acerta)
+FATALITY_LEN = {'electro': 230, 'hatsplit': 200, 'soulsteal': 230}
+FATALITY_HITS = {'electro': (40, 75, 110, 150), 'hatsplit': (60,), 'soulsteal': (150,)}
 FATAL_GAP = 112      # distância entre os lutadores na fatality original (arpão)
-FATAL_GAP_BASE = {'LiuKang': 150, 'Kitana': 92}   # boca do dragão / alcance do leque
+FATAL_GAP_BASE = {'LiuKang': 150, 'Kitana': 92, 'JohnnyCage': 70, 'Baraka': 95,
+                  'Mileena': 75, 'Jax': 80}   # boca do dragão / alcance do golpe
 # som da fatality 'anim' (animação da própria sheet) de cada corpo-base
-FATAL_SOUND = {'Sub-Zero': 'IceSound', 'Scorpion': 'GetOverHere', 'LiuKang': 'HitLongo', 'Kitana': 'block'}
+FATAL_SOUND = {'Sub-Zero': 'IceSound', 'Scorpion': 'GetOverHere', 'LiuKang': 'HitLongo', 'Kitana': 'block',
+               'JohnnyCage': 'Hit0', 'Baraka': 'HitLongo', 'Mileena': 'HitLongo',
+               'Jax': 'HitLongo'}
+HEAD_FATALITY = ('Kitana', 'JohnnyCage', 'Baraka')   # fatality 'anim' em que a cabeça da vítima voa
 
 
 class Projectile:
@@ -94,7 +105,6 @@ class Match:
         self.ground = STAGE_GROUND.get(stage, 450)
         self.seed = seed if seed is not None else random.randrange(1 << 30)
         self.rng = random.Random(self.seed)
-        self.mimicSpecials = characters.MIMIC_SPECIALS
         self.fighters = [Fighter(0, c1, False, 250, 1), Fighter(1, c2, alt2, 550, -1)]
         for f in self.fighters:
             assets.preload(f.char, f.alt)
@@ -316,8 +326,6 @@ class Match:
     def _startFatality(self):
         w, l = self.winner, self.loser
         kind = w.char.fatality
-        if kind == 'random':
-            kind = self.rng.choice(characters.PROCEDURAL_FATALITIES)
         d = 1 if l.x > w.x else -1
         # reposiciona para o efeito caber na tela (e o arpão alcançar a vítima)
         gap = FATAL_GAP_BASE.get(w.base, FATAL_GAP) if kind == 'anim' else max(110, min(190, abs(l.x - w.x)))
@@ -326,7 +334,8 @@ class Match:
         l.x = mid + d * gap / 2
         w.facing, l.facing = d, -d
         w.move = None
-        ownAnim = kind == 'anim' or (kind == 'electro' and w.base == 'Raiden')
+        # fatality com animação própria do vencedor (a sheet 'fatality'); senão a pose de lançar
+        ownAnim = kind == 'anim' or 'fatal' in F.BASE_ANIMS.get(w.base, {})
         w.setState('fatal', 'fatal' if ownAnim else 'cast')
         l.setState('fatal_victim', 'dizzy')
         sheetName, frame = l.sheetFrame()
@@ -336,10 +345,8 @@ class Match:
         self.pt = 0
         self.projectiles = []
         self.event('fatal', kind)
-        self.sound({'anim': FATAL_SOUND.get(w.base, 'HitLongo'),
-                    'melt': 'HitLongo', 'bomb': 'BeforeFinish', 'slice': 'HitLongo', 'slam': 'HitLongo',
-                    'thunder': 'IceSound2', 'quake': 'HitLongo', 'shatter': 'IceSound',
-                    'electro': 'IceSound2'}[kind])
+        self.sound({'anim': FATAL_SOUND.get(w.base, 'HitLongo'), 'electro': 'IceSound2',
+                    'hatsplit': 'block', 'soulsteal': 'HitLongo'}[kind])
 
     def _fatalityStep(self):
         fz = self.fatal
@@ -352,8 +359,8 @@ class Match:
             if l.animName != 'victim_split':
                 l.stepAnim()
                 if w.ai >= F.FATAL_SPLIT_FRAME[w.base]:
-                    # a cabeça voa (leque da Kitana): o render recorta do frame atual
-                    if w.base == 'Kitana':
+                    # a cabeça voa (leque da Kitana, uppercut do Johnny Cage): o render recorta do frame atual
+                    if w.base in HEAD_FATALITY:
                         sheetName, frame = l.sheetFrame()
                         self.event('head', self.charIdx[l.idx],
                                    1 if l.alt else 0, sheetName, frame, int(l.x), l.facing, w.facing, t)
@@ -370,14 +377,11 @@ class Match:
                 if t >= fz.get('endAt', 1 << 30):
                     self._endFatality()
         else:
-            hits = {'melt': (40,), 'bomb': (70,), 'slice': (40,), 'slam': (70, 120, 165),
-                    'thunder': (40, 70, 100), 'quake': (30,), 'shatter': (90,),
-                    'electro': (40, 75, 110, 150)}[fz['kind']]
             if fz['kind'] == 'electro' and t in (40, 75, 110):
                 self.sound('IceSound2')
-            if t in hits:
+            if t in FATALITY_HITS[fz['kind']]:
                 self.sound('HitFatality')
-                self.shakeScreen(12 if fz['kind'] != 'quake' else 120)
+                self.shakeScreen(12)
             if t >= FATALITY_LEN[fz['kind']]:
                 self._endFatality()
 
@@ -410,6 +414,8 @@ class Match:
             x, y = self.handPoint(f)
         if kind == 'ice':  # a rajada se forma a partir da mão (a frente é a referência)
             x += f.facing * ICE_FORM_W[0]
+        if kind in AT_TARGET:
+            x = self.other(f).x
         p = Projectile(kind, f, x)
         p.y = PROJ_FIXED_HEIGHT.get(kind, y)
         f.projectile = p
@@ -441,9 +447,12 @@ class Match:
                     p.x = p.x0 + p.facing * (w0 - ICE_FORM_W[0])
                 else:
                     p.x += p.facing * speed
-                if p.x < -40 or p.x > 840:
+                if p.x < -40 or p.x > 840 or p.t > p.cfg.get('life', 1 << 30):
                     p.alive = False
-            if p.alive and not p.retract and not p.hooked:
+            active = p.cfg.get('active')
+            if active and not active[0] <= p.t <= active[1]:
+                pass  # fogo do chão: só queima no meio da labareda
+            elif p.alive and not p.retract and not p.hooked:
                 if self._projectileHits(p, target):
                     if p.kind == 'spear':
                         p.retract = True
@@ -497,8 +506,9 @@ class Match:
             self.event('spark', hx, hy, 2)
             return True
         react = {'freeze': 'mid', 'pull': 'mid', 'heavy': 'heavy', 'mid': 'mid', 'launch': 'launch',
-                 'lift': 'launch'}[effect]
-        landed = self._applyHit(a, d, cfg['dmg'], 'mid', react, 18, 5.0, (hx, hy), special=True,
+                 'lift': 'launch', 'trip': 'sweep'}[effect]
+        level = 'low' if effect == 'trip' else 'mid'   # a onda do soco no chão é defendida agachado
+        landed = self._applyHit(a, d, cfg['dmg'], level, react, 18, 5.0, (hx, hy), special=True,
                                 dirX=p.facing)
         if landed and effect == 'lift' and d.state == 'fall':
             d.vy = 11.5   # fan lift: a vítima sobe girando antes de cair

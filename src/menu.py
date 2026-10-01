@@ -19,7 +19,7 @@ from inputs import Player, KEYMAP_P1, KEYMAP_P2
 
 MENU_DT = 1 / 60   # menus a 60 quadros/s (seletores deslizam sem engasgar)
 ROSTER = characters.ROSTER
-COLS = 7   # 13 lutadores: duas linhas (7 + 6)
+COLS = 6   # duas linhas de lutadores
 
 
 class MenuFacade:
@@ -402,9 +402,6 @@ class CharacterSelect(Screen):
                 seq = fighter.anim(c.base, 'idle')['seq']
                 img = sh.frame(seq[(tick // 6) % len(seq)], facing)
                 ax = sh.anchor(facing)
-            if c.ghost:
-                img = assets.tinted(img, 'ghost', (0, 0, 0, 0), pygame.BLEND_RGBA_ADD)
-                img.set_alpha(170)
             cx = 105 if p == 0 else 695
             s.blit(img, (cx - ax, 470 - sh.h))
             col = (230, 60, 60) if p == 0 else (90, 140, 255)

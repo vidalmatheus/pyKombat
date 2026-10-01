@@ -1,8 +1,9 @@
 # Carregamento e cache de imagens/sons.
 #
 # As spritesheets em res/sprites são PNGs paletizados (ver tools/build_sprites.py)
-# já virados para a direita. Recolorir um lutador = trocar a paleta (≤256
-# cores), o que é instantâneo até no navegador.
+# já virados para a direita. A segunda cor de um lutador (os dois lados com o
+# mesmo personagem) é só uma troca de paleta (≤256 cores), instantânea até no
+# navegador.
 import colorsys
 import pygame
 import characters
@@ -28,6 +29,12 @@ FRAMES = {
     'LiuKang': dict(_MK2, dance=6, walk=9, dizzy=6, win=4, Special=6, Fkick=2, fatality=12),
     'Kitana': dict(_MK2, dance=5, walk=8, dizzy=5, win=4, Special=6, Special2=6, fatality=8),
     'Raiden': dict(_MK2, dance=8, walk=8, dizzy=7, win=5, Special=6, Fkick=2, fatality=3),
+    'KungLao': dict(_MK2, dance=6, walk=9, dizzy=6, win=6, Special=6, fatality=10),
+    'JohnnyCage': dict(_MK2, dance=5, walk=8, dizzy=6, win=5, Special=6, Fkick=2, fatality=7),
+    'Baraka': dict(_MK2, dance=6, walk=9, dizzy=5, win=4, Special=6, Fkick=4, fatality=11),
+    'Mileena': dict(_MK2, dance=10, walk=8, dizzy=5, win=6, Special=6, Fkick=8, fatality=14),
+    'ShangTsung': dict(_MK2, dance=5, walk=9, dizzy=5, win=4, Special=6, Special2=6, fatality=5),
+    'Jax': dict(_MK2, dance=5, walk=9, dizzy=5, win=6, Special=6, Special2=6, fatality=10),
 }
 # ponto de ancoragem (centro do corpo) dentro do frame, para sheets onde o
 # corpo não está no meio do frame
@@ -37,13 +44,21 @@ ANCHOR_X = {('Sub-Zero', 'fatality'): 64, ('Scorpion', 'fatality'): 64}
 # — o resto (pele, preto, sangue) fica
 COSTUME_HUE = {'Sub-Zero': (150, 250, 0.12, 0.0), 'Scorpion': (29, 66, 0.08, 0.30),
                'LiuKang': (350, 8, 0.55, 0.25), 'Kitana': (205, 250, 0.35, 0.0),
-               'Raiden': (180, 205, 0.35, 0.0)}
+               'Raiden': (180, 205, 0.35, 0.0), 'KungLao': (180, 210, 0.30, 0.0),
+               'JohnnyCage': (345, 10, 0.45, 0.15), 'Baraka': (345, 12, 0.45, 0.2),
+               'Mileena': (265, 320, 0.30, 0.0), 'ShangTsung': (40, 65, 0.40, 0.2),
+               'Jax': (350, 12, 0.45, 0.2)}
 # roupa do "espelho" (mesmo lutador dos dois lados) quando o personagem não troca a paleta
 ALT_COSTUME = {'Sub-Zero': (228, 1.0, 0.75), 'Scorpion': (30, 1.0, 0.88),
                'LiuKang': (222, 0.9, 0.85),     # calça azul (como a 2ª cor do MK2)
                'Kitana': (300, 0.85, 0.85),     # roxo da Mileena
-               'Raiden': (28, 0.9, 0.9)}
-SKIN_HUE = (0, 29, 0.15, 0.25)
+               'Raiden': (28, 0.9, 0.9),
+               'KungLao': (350, 0.85, 0.8),     # roupa vermelha
+               'JohnnyCage': (215, 0.9, 0.9),   # faixa e calça azuis
+               'Baraka': (110, 0.8, 0.8),       # detalhes verdes
+               'Mileena': (140, 0.8, 0.75),     # verde da Jade
+               'ShangTsung': (270, 0.8, 0.8),   # manto roxo
+               'Jax': (210, 0.8, 0.8)}          # calça azul
 
 
 def _clamp(v):
@@ -66,27 +81,17 @@ def _inRange(rgb, rng):
 
 
 def recolorPalette(palette, char, alt):
-    """Aplica o palette swap de um personagem a uma paleta (lista de cores)."""
-    costume = char.costume
-    skin = char.skin
-    if alt:  # espelho (mesmo lutador nos dois lados): roupa mais escura/deslocada
-        if costume is None:
-            costume = ALT_COSTUME[char.base]
-        else:
-            costume = (costume[0] + 25, costume[1], costume[2] * 0.8)
-    if costume is None and skin is None:
+    """Cores do "espelho" (mesmo lutador dos dois lados): troca a cor da roupa."""
+    costume = ALT_COSTUME.get(char.base) if alt else None
+    if costume is None:
         return palette
     out = []
     for i, c in enumerate(palette):
         c = tuple(c[:3])
         if i == 0:
             out.append(c)  # índice transparente
-        elif costume is not None and _inRange(c, COSTUME_HUE[char.base]):
+        elif _inRange(c, COSTUME_HUE[char.base]):
             out.append(_transform(c, costume))
-        elif skin is not None and _inRange(c, SKIN_HUE):
-            out.append(_transform(c, skin))
-        elif skin is not None:  # tons neutros (preto/cinza) acompanham a sombra
-            out.append(_transform(c, (skin[0], 0.2, min(1.0, skin[2] + 0.5))))
         else:
             out.append(c)
     return out
@@ -259,8 +264,6 @@ def portrait(char, alt=False, size=(100, 100)):
         top = max(0, f.get_bounding_rect().y - 6)   # enquadra a partir do topo da cabeça
         crop = f.subsurface(pygame.Rect(sh.anchorX - 45, top, 90, 90)).copy()
         s = pygame.transform.scale(crop, size)
-        if char.ghost:
-            s.set_alpha(200)
         _images[key] = s
     return s
 

@@ -136,10 +136,201 @@ FRAMES_MK2 = {
         'fatality': [1, 204, 205],                 # chama o raio do céu
         'fatalityhit': [226, 227, 228, 229, 230, 231, 232, 233, 234, 234],
     },
+    'KungLao': {
+        'dance': list(range(1, 7)),
+        'walk': list(range(16, 25)),
+        'jump': [11, 25, 26],
+        'spin': [27] + list(range(28, 35)),
+        'crouch': [11, 12, 12],
+        'Apunch': [1, 42, 43],
+        'Bpunch': [44, 44, 44, 47, 48, 49, 44, 45, 46, 45, 44],
+        'Cpunch': [91, 91, 92],
+        'Dpunch': [86, 87, 88, 89, 89],
+        'Akick': [69, 69, 70, 70, 71, 71, 72],
+        'Bkick': [65, 65, 66, 66, 67, 68, 68, 67, 66],
+        'Ckick': [11, 11, 96, 96, 97, 98, 98],
+        'Dkick': [80, 81, 82, 83, 82, 80],
+        'Ekick': [27, 101, 101],
+        'Epunch': [27, 99, 99],
+        'Ahit': [104, 104, 105],
+        'Bhit': [108, 109, 110],
+        'Chit': [104, 106, 107, 107, 106, 104],
+        'Ehit': [116, 117, 117],
+        # queda + levanta pelo mesmo caminho da rasteira (deitado -> agachado -> em pé)
+        'Fhit': [126, 127, 128, 129, 130, 131, 131, 122, 123, 123, 124, 124, 125, 1],
+        'Ghit': [118, 119, 120, 121, 122, 122, 123, 124, 124, 125, 1],
+        'Ablock': [7, 8, 8],
+        'Bblock': [13, 14, 14],
+        'dizzy': list(range(142, 148)),
+        'win': [35, 36, 37, 38, 39, 40],
+        'Special': [1, 148, 149, 150, 151, 157],     # arremesso do chapéu
+        'fatality': [148, 149, 150, 151, 152, 153, 154, 155, 156, 157],  # o chapéu corta a vítima
+        'fatalityhit': [208, 209, 210, 211, 212, 213, 214, 215, 215, 215],
+    },
+    'JohnnyCage': {
+        'dance': list(range(1, 6)),
+        'walk': list(range(16, 24)),
+        'jump': [11, 26, 25],
+        'spin': [26] + list(range(27, 34)),
+        'crouch': [11, 12, 12],
+        'Apunch': [44, 45, 46],
+        'Bpunch': [44, 44, 44, 47, 48, 49, 44, 55, 57, 55, 44],
+        'Cpunch': [90, 90, 91],
+        'Dpunch': [85, 86, 87, 88, 88],
+        'Akick': [67, 67, 68, 68, 69, 69, 70],
+        'Bkick': [63, 63, 64, 64, 65, 66, 66, 65, 64],
+        'Ckick': [11, 11, 97, 97, 98, 98, 98],
+        'Dkick': [80, 81, 82, 82, 81, 80],
+        'Ekick': [26, 100, 100],
+        'Epunch': [26, 99, 99],
+        'Ahit': [104, 104, 105],
+        'Bhit': [108, 109, 110],
+        'Chit': [104, 106, 107, 107, 106, 104],
+        'Ehit': [115, 116, 116],
+        'Fhit': [126, 127, 128, 129, 130, 131, 131, 138, 139, 140, 141, 141, 142, 1],
+        'Ghit': [118, 119, 120, 121, 121, 121, 122, 123, 124, 125, 1],
+        'Ablock': [6, 7, 7],
+        'Bblock': [13, 14, 14],
+        'dizzy': list(range(144, 150)),
+        'win': [34, 37, 38, 39, 40],
+        'Special': [1, 150, 151, 151, 152, 1],       # bola de fogo verde (baixa)
+        'Fkick': [174, 179],                       # shadow kick
+        'fatality': [1, 189, 190, 191, 192, 193, 193],   # uppercut que arranca a cabeça
+        'fatalityhit': [240, 241, 242, 243, 244, 245, 246, 247, 248, 248],
+    },
+    'Baraka': {
+        'dance': [0, 1, 2, 3, 2, 1],
+        'walk': list(range(4, 13)),
+        'jump': [71, 70, 74],
+        'spin': [70] + list(range(74, 81)),
+        'crouch': [13, 14, 14],
+        'Apunch': [0, 63, 64],
+        'Bpunch': [55, 55, 55, 55, 56, 57, 58, 59, 60, 59, 55],
+        'Cpunch': [25, 25, 26],
+        'Dpunch': [14, 22, 22, 23, 23],
+        'Akick': [43, 43, 44, 44, 46, 46, 45],
+        'Bkick': [39, 39, 40, 40, 42, 41, 41, 42, 40],
+        'Ckick': [14, 14, 30, 30, 31, 32, 32],
+        'Dkick': [34, 35, 36, 36, 35, 38],
+        'Ekick': [83, 84, 84],
+        'Epunch': [85, 86, 86],
+        'Ahit': [131, 131, 132],
+        'Bhit': [129, 129, 130],
+        'Chit': [131, 136, 137, 137, 136, 131],
+        'Ehit': [138, 139, 139],
+        'Fhit': [119, 120, 121, 122, 123, 123, 123, 124, 125, 126, 127, 128, 128, 0],
+        'Ghit': [145, 146, 147, 148, 123, 123, 124, 125, 126, 127, 128],
+        'Ablock': [17, 18, 18],
+        'Bblock': [15, 16, 16],
+        'dizzy': [140, 141, 142, 143, 144],
+        'win': [20, 111, 112, 112],
+        'Special': [100, 104, 105, 106, 106, 100],   # cruza as lâminas no alto: sai a faísca
+        'Fkick': [99, 102, 103, 104],              # blade fury (lâminas girando para a frente)
+        # gira com a lâmina esticada: corta a cabeça no índice 4
+        'fatality': [100, 101, 87, 88, 89, 90, 87, 88, 89, 101, 100],
+        'fatalityhit': [176, 176, 177, 178, 179, 180, 181, 181, 181, 181],
+    },
+    'Mileena': {
+        'dance': list(range(1, 11)),
+        'walk': list(range(21, 29)),
+        'jump': [15, 29, 30],
+        'spin': [31] + list(range(32, 39)),
+        'crouch': [15, 16, 16],
+        'Apunch': [1, 58, 59],
+        'Bpunch': [49, 49, 49, 49, 50, 51, 52, 53, 54, 53, 49],
+        'Cpunch': [96, 96, 97],
+        'Dpunch': [91, 92, 93, 94, 94],
+        'Akick': [73, 74, 75, 75, 76, 76, 77],
+        'Bkick': [68, 69, 70, 70, 71, 72, 72, 71, 70],
+        'Ckick': [16, 98, 98, 99, 99, 100, 100],
+        'Dkick': [86, 87, 88, 88, 87, 86],
+        'Ekick': [31, 108, 108],
+        'Epunch': [31, 152, 152],
+        'Ahit': [111, 111, 112],
+        'Bhit': [109, 110, 110],
+        'Chit': [111, 114, 115, 115, 114, 111],
+        'Ehit': [119, 120, 120],
+        'Fhit': [129, 130, 131, 132, 133, 133, 133, 140, 140, 141, 141, 142, 142, 143],
+        'Ghit': [129, 130, 131, 132, 133, 133, 140, 141, 142, 143, 143],
+        'Ablock': [11, 12, 12],
+        'Bblock': [17, 18, 18],
+        'dizzy': [145, 146, 147, 148, 149],
+        'win': [39, 40, 42, 44, 46, 48],
+        'Special': [1, 150, 151, 152, 152, 1],     # arremesso do sai
+        'Fkick': [15] + list(range(32, 39)),       # rolamento pelo chão (bola)
+        # crava os sais várias vezes e ergue um deles
+        'fatality': [174, 175, 176, 175, 174, 175, 176, 175, 174, 177, 178, 179, 179, 179],
+        'fatalityhit': [212, 213, 214, 215, 216, 217, 217, 217, 217, 217],
+    },
+    'ShangTsung': {
+        'dance': [1, 2, 3, 4, 5],
+        'walk': list(range(16, 25)),
+        'jump': [10, 25, 26],
+        'spin': [25] + list(range(28, 35)),
+        'crouch': [10, 11, 11],
+        'Apunch': [1, 39, 40],
+        'Bpunch': [36, 36, 36, 45, 46, 47, 36, 37, 37, 36, 36],
+        'Cpunch': [78, 78, 79],
+        'Dpunch': [73, 74, 75, 76, 76],
+        'Akick': [57, 57, 58, 58, 59, 59, 60],
+        'Bkick': [53, 53, 54, 54, 55, 56, 56, 55, 54],
+        'Ckick': [11, 11, 92, 92, 93, 93, 93],
+        'Dkick': [68, 69, 70, 70, 71, 72],
+        'Ekick': [25, 90, 90],
+        'Epunch': [25, 27, 27],
+        'Ahit': [94, 94, 95],
+        'Bhit': [99, 102, 103],
+        'Chit': [94, 104, 105, 105, 104, 94],
+        'Ehit': [106, 107, 107],
+        'Fhit': [117, 118, 119, 120, 121, 122, 122, 111, 110, 113, 114, 114, 115, 116],
+        'Ghit': [108, 109, 109, 110, 111, 111, 110, 113, 114, 115, 116],
+        'Ablock': [6, 7, 7],
+        'Bblock': [12, 13, 13],
+        'dizzy': [134, 135, 136, 137, 138],
+        'win': [294, 295, 296, 297],
+        'Special': [1, 139, 140, 140, 139, 1],      # caveira de fogo
+        'Special2': [1, 190, 190, 190, 190, 1],     # abre os braços: o fogo sobe do chão
+        # estende a mão para a vítima e puxa a alma (fatalfx desenha a alma)
+        'fatality': [206, 207, 208, 209, 210],
+        'fatalityhit': [251, 251, 252, 253, 254, 255, 256, 256, 256, 256],
+    },
+    'Jax': {
+        'dance': [1, 2, 3, 4, 5],
+        'walk': list(range(15, 24)),
+        'jump': [10, 24, 25],
+        'spin': [26] + list(range(27, 34)),
+        'crouch': [10, 11, 11],
+        'Apunch': [1, 47, 48],
+        'Bpunch': [40, 40, 40, 41, 42, 42, 43, 44, 45, 44, 40],
+        'Cpunch': [91, 91, 92],
+        'Dpunch': [86, 87, 88, 89, 90],
+        'Akick': [68, 68, 69, 69, 70, 70, 71],
+        'Bkick': [64, 64, 65, 66, 66, 67, 67, 66, 65],
+        'Ckick': [11, 11, 98, 98, 99, 99, 99],
+        'Dkick': [80, 81, 82, 83, 84, 85],
+        'Ekick': [102, 103, 103],
+        'Epunch': [100, 101, 101],
+        'Ahit': [106, 107, 107],
+        'Bhit': [108, 109, 109],
+        'Chit': [111, 112, 113, 113, 114, 115],
+        'Ehit': [118, 119, 119],
+        'Fhit': [120, 121, 122, 122, 123, 124, 124, 139, 140, 140, 141, 142, 143, 143],
+        'Ghit': [133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143],
+        'Ablock': [6, 7, 7],
+        'Bblock': [12, 13, 13],
+        'dizzy': [146, 147, 148, 149, 150],
+        'win': [34, 35, 36, 37, 38, 39],
+        'Special': [155, 156, 157, 158, 159, 160],  # onda de energia (sai no índice 3)
+        'Special2': [167, 168, 169, 170, 171, 172], # soco no chão (o punho bate no índice 3)
+        # agarra os braços da vítima, puxa e ergue os braços
+        'fatality': [174, 175, 176, 177, 178, 179, 180, 181, 182, 183],
+        'fatalityhit': [204, 205, 206, 207, 208, 209, 209, 209, 209, 209],
+    },
 }
 ALIGN = {
     'spin': 'center', 'Fhit': 'center', 'Ghit': 'center', 'fatalityhit': 'center',
     ('LiuKang', 'fatality'): 'left',   # o dragão cresce para a frente; a cauda fica no lugar
+    ('Mileena', 'Fkick'): 'center',    # a bola do rolamento gira em torno do centro
 }
 # efeitos (sem troca de paleta): nome -> (base, frames); âncora = frente do efeito
 FX_MK2 = {
@@ -148,6 +339,14 @@ FX_MK2 = {
     'fanwind': ('Kitana', [158, 159, 160, 161, 162, 163, 164, 165]),   # vento do fan lift
     'lightning': ('Raiden', [175, 177, 179, 181, 182, 183, 184, 186, 188, 193]),  # 0-2 forma, 3-6 voa, 7-9 estoura
     'raidenbolt': ('Raiden', [206, 207]),                              # raio do céu (fatality)
+    'hat': ('KungLao', [158, 159, 160]),                               # chapéu girando (visto de lado)
+    'greenball': ('JohnnyCage', [153, 154, 155, 156, 157, 158, 159, 160, 161]),  # 0-2 forma, 3-6 voa, 7-8 estoura
+    'spark': ('Baraka', [222, 218, 215, 216, 213, 214, 209, 210, 211, 219, 212]),  # 0-3 sai, 4-5 voa, 6-10 estoura
+    'sai': ('Mileena', [153, 155, 154, 156, 163, 164, 165, 166, 167]),  # 0-1 sai, 2-3 voa, 4-8 estoura
+    'skull': ('ShangTsung', [141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151]),  # 0-3 acende, 4-6 voa, 7-10 estoura
+    'firerise': ('ShangTsung', [191, 192, 193, 194, 195, 197]),    # fogo saindo do chão (cresce e apaga)
+    'soul': ('ShangTsung', list(range(211, 221))),                 # 0-2 alma sobe, 3-4 voa, 5-9 é absorvida
+    'wave': ('Jax', [163, 162, 161, 162, 163]),                    # 0-1 sai, 2 voa, 3-4 estoura
 }
 
 

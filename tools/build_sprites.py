@@ -4,14 +4,13 @@ Cada sheet é:
   * normalizada para o lutador olhar para a DIREITA (o jogo espelha em tempo real);
   * convertida para PNG paletizado (8 bits, índice 0 transparente).
 
-A paleta é o que permite criar novos lutadores por troca de cores (palette
-swap, exatamente como o MK fazia com Reptile, Smoke, Noob Saibot...): em tempo
-de execução só os ~255 índices da paleta são recoloridos, sem tocar pixel a
-pixel (o que seria lento demais no navegador/pygbag).
+A paleta é o que permite a segunda cor de um lutador (os dois lados com o
+mesmo personagem): em tempo de execução só os ~255 índices da paleta são
+recoloridos, sem tocar pixel a pixel (o que seria lento demais no navegador).
 
-Os lutadores do Mortal Kombat II (Liu Kang, Kitana, Raiden) saem das folhas do
-SNES em res/Char/<base>/sheet.png, recortadas por tools/mk2_sprites.py (chamado
-no fim deste script; também roda sozinho, sem Pillow).
+Os lutadores do Mortal Kombat II saem das folhas do SNES em
+res/Char/<base>/sheet.png, recortadas por tools/mk2_sprites.py (chamado no fim
+deste script; também roda sozinho, sem Pillow).
 
 Uso: python3 tools/build_sprites.py   (requer Pillow)
 """

@@ -1,37 +1,29 @@
 # Elenco de lutadores.
 #
-# Sub-Zero e Scorpion usam as spritesheets originais do jogo (MK1). Os outros
-# oito ninjas são feitos como o próprio Mortal Kombat fazia: troca de paleta
-# (palette swap) sobre um dos dois corpos-base + golpes especiais e fatalities
-# próprios. Liu Kang, Kitana e Raiden têm sprites próprios, tirados das folhas
-# do Mortal Kombat II de SNES (tools/mk2_sprites.py).
+# Cada lutador tem os próprios sprites: Sub-Zero e Scorpion usam as
+# spritesheets originais do jogo (MK1); os demais vêm das folhas do Mortal
+# Kombat II de SNES (recortadas por tools/mk2_sprites.py).
 #
 #   base       -> qual conjunto de sprites usar (res/sprites/<base>/)
-#   costume    -> (matiz, mult. saturação, mult. brilho) aplicados à roupa
-#   skin       -> idem para a pele (None = mantém)
-#   special    -> especial 1 (projétil)  : ice | spear | acid | shadow | soul | bolt | rock | shard |
-#                                          fireball | fan | lightning | mimic
-#   special2   -> especial 2             : slide | teleport | flykick | torpedo | fanlift
-#   fatality   -> anim (animação original da sheet) | melt | bomb | slice | slam | thunder | quake |
-#                 shatter | electro | random
+#   special    -> especial 1 (projétil)  : ice | spear | fireball | fan | lightning | hat | greenball |
+#                                          sai | spark | wave | skull
+#   special2   -> especial 2             : slide | teleport | flykick | torpedo | shadowkick |
+#                                          bladefury | roll | fanlift | quake | firerise
+#   fatality   -> anim (animação da própria sheet) | electro | hatsplit | devour | soulsteal
 #   color      -> cor de destaque na interface
 #   voice      -> som de vitória (res/Sound/<voice>.ogg)
 
 
 class Character:
-    def __init__(self, name, base, special, special2, fatality, color, costume=None,
-                 skin=None, voice='Excellent', ghost=False, specialName='', special2Name='',
-                 fatalityName=''):
+    def __init__(self, name, base, special, special2, fatality, color, voice='Excellent',
+                 specialName='', special2Name='', fatalityName=''):
         self.name = name
         self.base = base
         self.special = special
         self.special2 = special2
         self.fatality = fatality
         self.color = color
-        self.costume = costume
-        self.skin = skin
         self.voice = voice
-        self.ghost = ghost  # desenhado translúcido (Chameleon)
         self.specialName = specialName
         self.special2Name = special2Name
         self.fatalityName = fatalityName
@@ -47,46 +39,25 @@ ROSTER = [
     Character('SCORPION', 'Scorpion', 'spear', 'teleport', 'anim', (255, 200, 40),
               voice='ScorpionWins', specialName='SPEAR', special2Name='TELEPORT PUNCH',
               fatalityName='SPEAR SPLITTER'),
-    Character('REPTILE', 'Sub-Zero', 'acid', 'slide', 'melt', (90, 230, 70),
-              costume=(112, 1.0, 0.85), specialName='ACID SPIT', special2Name='SLIDE',
-              fatalityName='ACID BATH'),
-    Character('SMOKE', 'Scorpion', 'spear', 'teleport', 'bomb', (200, 200, 205),
-              costume=(210, 0.08, 0.80), specialName='HARPOON', special2Name='TELEPORT PUNCH',
-              fatalityName='SMOKE BOMB'),
-    Character('NOOB SAIBOT', 'Sub-Zero', 'shadow', 'teleport', 'slice', (120, 120, 140),
-              costume=(230, 0.25, 0.30), skin=(230, 0.15, 0.35), specialName='SHADOW DISC',
-              special2Name='SHADOW TELEPORT', fatalityName='SHADOW SLICE'),
-    Character('ERMAC', 'Scorpion', 'soul', 'teleport', 'slam', (230, 40, 40),
-              costume=(356, 1.10, 0.78), specialName='SOUL BALL', special2Name='TELEPORT PUNCH',
-              fatalityName='TELEKINETIC SLAM'),
-    Character('RAIN', 'Sub-Zero', 'bolt', 'slide', 'thunder', (190, 110, 255),
-              costume=(276, 0.95, 0.92), specialName='LIGHTNING ORB', special2Name='SLIDE',
-              fatalityName='THUNDERSTRIKE'),
-    Character('TREMOR', 'Scorpion', 'rock', 'slide', 'quake', (190, 130, 70),
-              costume=(26, 0.70, 0.58), specialName='ROCK THROW', special2Name='SLIDE',
-              fatalityName='EARTHQUAKE'),
-    Character('FROST', 'Sub-Zero', 'shard', 'slide', 'shatter', (200, 245, 255),
-              costume=(188, 0.30, 1.08), specialName='ICE SHARD', special2Name='SLIDE',
-              fatalityName='DEEP FREEZE'),
-    Character('CHAMELEON', 'Scorpion', 'mimic', 'teleport', 'random', (230, 120, 230),
-              costume=(300, 0.85, 0.95), ghost=True, specialName='MIMIC',
-              special2Name='TELEPORT PUNCH', fatalityName='ANY OF THEM'),
     Character('LIU KANG', 'LiuKang', 'fireball', 'flykick', 'anim', (235, 70, 40),
               specialName='FIREBALL', special2Name='FLYING KICK', fatalityName='DRAGON BITE'),
     Character('KITANA', 'Kitana', 'fan', 'fanlift', 'anim', (80, 130, 255),
               specialName='FAN THROW', special2Name='FAN LIFT', fatalityName='FAN DECAPITATION'),
     Character('RAIDEN', 'Raiden', 'lightning', 'torpedo', 'electro', (130, 220, 255),
               specialName='LIGHTNING', special2Name='TORPEDO', fatalityName='ELECTROCUTION'),
+    Character('KUNG LAO', 'KungLao', 'hat', 'teleport', 'hatsplit', (70, 170, 200),
+              specialName='HAT THROW', special2Name='TELEPORT', fatalityName='HAT SLICE'),
+    Character('JOHNNY CAGE', 'JohnnyCage', 'greenball', 'shadowkick', 'anim', (120, 230, 90),
+              specialName='GREEN BOLT', special2Name='SHADOW KICK', fatalityName='UPPERCUT DECAPITATION'),
+    Character('BARAKA', 'Baraka', 'spark', 'bladefury', 'anim', (230, 200, 120),
+              specialName='BLADE SPARK', special2Name='BLADE FURY', fatalityName='BLADE DECAPITATION'),
+    Character('MILEENA', 'Mileena', 'sai', 'roll', 'anim', (200, 90, 230),
+              specialName='SAI THROW', special2Name='ROLL', fatalityName='SAI FRENZY'),
+    Character('JAX', 'Jax', 'wave', 'quake', 'anim', (230, 160, 90),
+              specialName='ENERGY WAVE', special2Name='GROUND SMASH', fatalityName='ARM RIP'),
+    Character('SHANG TSUNG', 'ShangTsung', 'skull', 'firerise', 'soulsteal', (255, 110, 40),
+              specialName='FLAMING SKULL', special2Name='GROUND FIRE', fatalityName='SOUL STEAL'),
 ]
-
-# fatalities "procedurais" (sorteio do Chameleon)
-PROCEDURAL_FATALITIES = ['melt', 'bomb', 'slice', 'slam', 'thunder', 'quake', 'shatter', 'electro']
-FATALITY_TITLES = {
-    'melt': 'ACID BATH', 'bomb': 'SMOKE BOMB', 'slice': 'SHADOW SLICE',
-    'slam': 'TELEKINETIC SLAM', 'thunder': 'THUNDERSTRIKE', 'quake': 'EARTHQUAKE',
-    'shatter': 'DEEP FREEZE', 'electro': 'ELECTROCUTION',
-}
-MIMIC_SPECIALS = ['ice', 'acid', 'shadow', 'soul', 'bolt', 'rock', 'shard', 'fireball', 'fan', 'lightning']
 
 
 def byName(name):
