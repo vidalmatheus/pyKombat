@@ -1,34 +1,77 @@
-# Publica a pasta web/ (build pygbag do jogo) no GitHub Pages.
-# Requer: Settings -> Pages -> Source: "GitHub Actions" (o configure-pages
-# abaixo tenta habilitar sozinho na primeira execução).
+# Compila a versão web (pygbag) e publica no GitHub Pages.
+#
+# O site principal fica na raiz do branch gh-pages; as prévias de PR ficam em
+# gh-pages/pr-preview/pr-<N>/ (ver pr-preview.yml) e são preservadas aqui
+# (clean-exclude). Para isso: Settings -> Pages -> Source: "Deploy from a
+# branch" -> gh-pages / (root).
+#
+# O job "actions-deploy" mantém o modo antigo (Source: "GitHub Actions")
+# funcionando até essa troca ser feita; depois dela ele pode falhar sem
+# problema (continue-on-error).
 name: Deploy web build to GitHub Pages
 
 on:
   push:
     branches: [master]
-    paths: ['web/**']
+    paths: ['main.py', 'src/**', 'res/**', 'webjs/**', 'web.tmpl', 'build_web.sh',
+            '.github/workflows/pages.yml']
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build the web version (pygbag)
+        run: |
+          pip install pygbag==0.9.3
+          ./build_web.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: web
+          path: web
+          include-hidden-files: true
+
+  gh-pages-branch:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: web
+          path: web
+      - uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: web
+          branch: gh-pages
+          clean-exclude: pr-preview/
+          force: false
+
+  actions-deploy:
+    needs: build
+    continue-on-error: true
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
+      - uses: actions/download-artifact@v4
         with:
-          enablement: true
+          name: web
+          path: web
+      - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
           path: web

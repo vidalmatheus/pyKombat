@@ -1,0 +1,67 @@
+# Elenco de lutadores.
+#
+# Cada lutador tem os próprios sprites: Sub-Zero e Scorpion usam as
+# spritesheets originais do jogo (MK1); os demais vêm das folhas do Mortal
+# Kombat II de SNES (recortadas por tools/mk2_sprites.py).
+#
+#   base       -> qual conjunto de sprites usar (res/sprites/<base>/)
+#   special    -> especial 1 (projétil)  : ice | spear | fireball | fan | lightning | hat | greenball |
+#                                          sai | spark | wave | skull
+#   special2   -> especial 2             : slide | teleport | flykick | torpedo | shadowkick |
+#                                          bladefury | roll | fanlift | quake | firerise
+#   fatality   -> anim (animação da própria sheet) | electro | hatsplit | devour | soulsteal
+#   color      -> cor de destaque na interface
+#   voice      -> som de vitória (res/Sound/<voice>.ogg)
+
+
+class Character:
+    def __init__(self, name, base, special, special2, fatality, color, voice='Excellent',
+                 specialName='', special2Name='', fatalityName=''):
+        self.name = name
+        self.base = base
+        self.special = special
+        self.special2 = special2
+        self.fatality = fatality
+        self.color = color
+        self.voice = voice
+        self.specialName = specialName
+        self.special2Name = special2Name
+        self.fatalityName = fatalityName
+
+    def paletteKey(self, alt=False):
+        return (self.name, alt)
+
+
+ROSTER = [
+    Character('SUB-ZERO', 'Sub-Zero', 'ice', 'slide', 'anim', (90, 180, 255),
+              voice='SubZeroWins', specialName='ICE BLAST', special2Name='SLIDE',
+              fatalityName='SPINE SPLITTER'),
+    Character('SCORPION', 'Scorpion', 'spear', 'teleport', 'anim', (255, 200, 40),
+              voice='ScorpionWins', specialName='SPEAR', special2Name='TELEPORT PUNCH',
+              fatalityName='SPEAR SPLITTER'),
+    Character('LIU KANG', 'LiuKang', 'fireball', 'flykick', 'anim', (235, 70, 40),
+              specialName='FIREBALL', special2Name='FLYING KICK', fatalityName='DRAGON BITE'),
+    Character('KITANA', 'Kitana', 'fan', 'fanlift', 'anim', (80, 130, 255),
+              specialName='FAN THROW', special2Name='FAN LIFT', fatalityName='FAN DECAPITATION'),
+    Character('RAIDEN', 'Raiden', 'lightning', 'torpedo', 'electro', (130, 220, 255),
+              specialName='LIGHTNING', special2Name='TORPEDO', fatalityName='ELECTROCUTION'),
+    Character('KUNG LAO', 'KungLao', 'hat', 'teleport', 'hatsplit', (70, 170, 200),
+              specialName='HAT THROW', special2Name='TELEPORT', fatalityName='HAT SLICE'),
+    Character('JOHNNY CAGE', 'JohnnyCage', 'greenball', 'shadowkick', 'anim', (120, 230, 90),
+              specialName='GREEN BOLT', special2Name='SHADOW KICK', fatalityName='UPPERCUT DECAPITATION'),
+    Character('BARAKA', 'Baraka', 'spark', 'bladefury', 'anim', (230, 200, 120),
+              specialName='BLADE SPARK', special2Name='BLADE FURY', fatalityName='BLADE DECAPITATION'),
+    Character('MILEENA', 'Mileena', 'sai', 'roll', 'anim', (200, 90, 230),
+              specialName='SAI THROW', special2Name='ROLL', fatalityName='SAI FRENZY'),
+    Character('JAX', 'Jax', 'wave', 'quake', 'anim', (230, 160, 90),
+              specialName='ENERGY WAVE', special2Name='GROUND SMASH', fatalityName='ARM RIP'),
+    Character('SHANG TSUNG', 'ShangTsung', 'skull', 'firerise', 'soulsteal', (255, 110, 40),
+              specialName='FLAMING SKULL', special2Name='GROUND FIRE', fatalityName='SOUL STEAL'),
+]
+
+
+def byName(name):
+    for i, c in enumerate(ROSTER):
+        if c.name == name:
+            return i
+    return 0
