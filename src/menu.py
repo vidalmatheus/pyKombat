@@ -3,6 +3,7 @@
 #   title -> mode -> select -> stage -> fight -> select ...
 #   mode -> host/join -> netselect -> (host escolhe cenário) -> fight -> netselect ...
 import asyncio
+import math
 import random
 import time
 import pygame
@@ -34,11 +35,13 @@ class MenuFacade:
         while state is not None:
             print('menu:', state)
             if state == 'title':
-                state = await TitleMenu(game, hub).run()
+                state = await TitleMenu(game, hub, ctx).run()
             elif state == 'mode':
                 state = await ModeMenu(game, hub, ctx).run()
-            elif state == 'controls':
-                state = await ControlsScreen(game, hub).run()
+            elif state == 'controls':  # aberto pela tela inicial (OPTIONS)
+                state = await ControlsScreen(game, hub).run(back='title')
+            elif state == 'modecontrols':  # aberto pelo menu de modos
+                state = await ControlsScreen(game, hub).run(back='mode')
             elif state == 'select':
                 state = await CharacterSelect(game, hub, ctx).run()
             elif state == 'stage':
@@ -116,7 +119,7 @@ class Screen:
 
 class TitleMenu(Screen):
     async def run(self):
-        sel = 0
+        sel = self.ctx.pop('titleSel', 0)
         while True:
             self.hub.poll()
             if self.hub.quit:
@@ -127,6 +130,7 @@ class TitleMenu(Screen):
                     assets.playSound('selection')
                 elif action in ('ok', 'start'):
                     assets.playSound('start' if sel == 0 else 'options')
+                    self.ctx['titleSel'] = sel  # ao voltar, mantém START/OPTIONS marcado
                     return 'mode' if sel == 0 else 'controls'
             img = 'res/Background/MainMenu01.png' if sel == 0 else 'res/Background/MainMenu02.png'
             self.surf.blit(assets.image(img, alpha=False), (0, 0))
@@ -138,7 +142,9 @@ class ModeMenu(Screen):
 
     async def run(self):
         ctx = self.ctx
-        sel = {'cpu': 0, 'versus': 1, 'host': 2, 'guest': 3}.get(ctx['mode'], 0)
+        sel = ctx.pop('modeSel', None)
+        if sel is None:
+            sel = {'cpu': 0, 'versus': 1, 'host': 2, 'guest': 3}.get(ctx['mode'], 0)
         level = ai.LEVEL_NAMES.index(ctx['cpuLevel'])
         while True:
             self.hub.poll()
@@ -167,7 +173,8 @@ class ModeMenu(Screen):
                         return 'host'
                     if sel == 3:
                         return 'join'
-                    return 'controls'
+                    ctx['modeSel'] = sel  # volta para este menu com CONTROLS marcado
+                    return 'modecontrols'
             s = self.surf
             background(s, 9, 150)
             logo(s)
@@ -196,7 +203,7 @@ class ControlsScreen(Screen):
         ('PAUSE', 'ESC', 'ESC', 'OPTIONS / START'),
     ]
 
-    async def run(self):
+    async def run(self, back='title'):
         while True:
             self.hub.poll()
             if self.hub.quit:
@@ -204,7 +211,7 @@ class ControlsScreen(Screen):
             for group, action in self.hub.menu:
                 if action in ('back', 'ok', 'start'):
                     assets.playSound('back')
-                    return 'title'
+                    return back
             s = self.surf
             background(s, 3, 185)
             ui.text(s, 'CONTROLS', 40, (400, 14), (255, 200, 60), outline=True)
@@ -235,8 +242,8 @@ class CharacterSelect(Screen):
         me = 1 if mode == 'guest' else 0
         cursor = list(ctx['chars'])
         ready = [False, False]
-        cpuRoll = 0
         n = len(ROSTER)
+        self.selPos = [None, None]   # posição animada dos seletores (deslizam suave)
         t0 = time.perf_counter()
         link = ctx.get('net')
         lastSent = None
@@ -253,7 +260,7 @@ class CharacterSelect(Screen):
                     if who is None and action == 'back':
                         who = 0 if not ready[1] else 1
                 elif mode == 'cpu':
-                    who = 0
+                    who = 1 if ready[0] else 0   # depois do seu lutador, você escolhe o da CPU
                 else:
                     who = me
                 if who is None:
@@ -261,6 +268,10 @@ class CharacterSelect(Screen):
                 if action == 'back':
                     if ready[who]:
                         ready[who] = False
+                        assets.playSound('back')
+                        continue
+                    if mode == 'cpu' and who == 1:  # volta a escolher o próprio lutador
+                        ready[0] = False
                         assets.playSound('back')
                         continue
                     assets.playSound('back')
@@ -279,19 +290,18 @@ class CharacterSelect(Screen):
                 elif action in ('ok', 'start'):
                     ready[who] = True
                     assets.playSound('start')
-                    if mode == 'cpu':
-                        cpuRoll = 50
+                    if mode == 'cpu' and who == 0 and cursor[1] == cursor[0]:
+                        cursor[1] = (cursor[0] + 1) % n   # sugere outro lutador p/ a CPU
                 if c != cursor[who]:
                     cursor[who] = c
                     assets.playSound('selection')
 
-            if mode == 'cpu' and ready[0] and not ready[1]:
-                cpuRoll -= 1
-                if cpuRoll % 4 == 0:
-                    cursor[1] = random.choice([i for i in range(n) if i != cursor[0]])
-                if cpuRoll <= 0:
-                    ready[1] = True
-                    assets.playSound('start')
+            # R: lutador aleatório para o seletor ativo (o seu ou o da CPU)
+            if pygame.K_r in self.hub.keys and not online:
+                who = (1 if ready[0] else 0) if mode == 'cpu' else 0
+                if not ready[who]:
+                    cursor[who] = random.choice([i for i in range(n) if i != cursor[who]])
+                    assets.playSound('selection')
 
             if online:
                 link.poll()
@@ -327,7 +337,9 @@ class CharacterSelect(Screen):
     def draw(self, cursor, ready, tick, mode, me):
         s = self.surf
         background(s, 6, 190)
-        ui.text(s, 'CHOOSE YOUR FIGHTER', 34, (400, 12), (255, 200, 60), outline=True)
+        pickingCpu = mode == 'cpu' and ready[0] and not ready[1]
+        ui.text(s, 'CHOOSE YOUR OPPONENT' if pickingCpu else 'CHOOSE YOUR FIGHTER', 34, (400, 12),
+                (255, 200, 60), outline=True)
         size = 88
         gap = 8
         x0 = 400 - (COLS * size + (COLS - 1) * gap) // 2
@@ -337,13 +349,33 @@ class CharacterSelect(Screen):
             y = y0 + (i // COLS) * (size + gap)
             pygame.draw.rect(s, (30, 10, 10), (x - 2, y - 2, size + 4, size + 4))
             s.blit(assets.portrait(c, size=(size, size)), (x, y))
-            for p, col in ((0, (230, 40, 40)), (1, (60, 120, 255))):
-                if cursor[p] == i and (tick // 6) % 2 == 0 or (cursor[p] == i and ready[p]):
-                    off = 0 if p == 0 else 4
-                    pygame.draw.rect(s, col, (x - 3 + off, y - 3 + off, size + 6 - 2 * off, size + 6 - 2 * off), 3)
+        # seletores: deslizam até o lutador escolhido e "respiram" devagar (sem piscar)
+        for p, base in ((0, (220, 40, 40)), (1, (60, 120, 255))):
+            if mode == 'cpu' and p == 1 and not ready[0]:
+                continue  # o da CPU só aparece depois que você escolhe o seu
+            tx = x0 + (cursor[p] % COLS) * (size + gap)
+            ty = y0 + (cursor[p] // COLS) * (size + gap)
+            pos = self.selPos[p]
+            if pos is None:
+                pos = [float(tx), float(ty)]
+            pos[0] += (tx - pos[0]) * 0.45
+            pos[1] += (ty - pos[1]) * 0.45
+            self.selPos[p] = pos
+            if ready[p]:
+                col = tuple(min(255, v + 60) for v in base)
+            else:
+                k = 0.5 + 0.5 * math.sin(tick * 0.08)
+                col = tuple(int(v + (255 - v) * 0.35 * k) for v in base)
+            off = 0 if p == 0 else 4
+            rect = pygame.Rect(int(pos[0]) - 3 + off, int(pos[1]) - 3 + off, size + 6 - 2 * off, size + 6 - 2 * off)
+            pygame.draw.rect(s, col, rect, 3)
         labels = {'cpu': ('1P', 'CPU'), 'versus': ('1P', '2P'), 'host': ('YOU', 'FRIEND'),
                   'guest': ('FRIEND', 'YOU')}[mode]
         for p in range(2):
+            if mode == 'cpu' and p == 1 and not ready[0]:
+                ui.text(s, labels[1], 18, (695, 268), (90, 140, 255), outline=True)
+                ui.text(s, '?', 60, (695, 330), (90, 140, 255), outline=True)
+                continue  # o lutador da CPU só aparece quando for escolhê-lo
             c = ROSTER[cursor[p]]
             alt = p == 1 and cursor[0] == cursor[1]
             facing = 1 if p == 0 else -1
@@ -369,8 +401,8 @@ class CharacterSelect(Screen):
             ui.text(s, c.name, 24, (cx, 290), c.color, outline=True)
             if ready[p]:
                 ui.text(s, 'READY', 18, (cx, 318), (255, 255, 255), outline=True)
-        # info do lutador sob o cursor (do jogador local)
-        c = ROSTER[cursor[me if mode in ('host', 'guest') else 0]]
+        # info do lutador sob o cursor ativo (do jogador local / da CPU sendo escolhida)
+        c = ROSTER[cursor[me if mode in ('host', 'guest') else (1 if pickingCpu else 0)]]
         ui.panel(s, pygame.Rect(232, 262, 336, 150), 150)
         ui.text(s, c.name, 24, (400, 270), c.color)
         ui.text(s, 'SPECIAL: ' + c.specialName, 15, (400, 305))
@@ -380,6 +412,9 @@ class CharacterSelect(Screen):
         ui.text(s, 'FATALITY: ' + c.fatalityName, 15, (400, 384), (255, 120, 120))
         if mode == 'versus':
             ui.text(s, 'P1: WASD + J      P2: ARROWS + ENTER', 13, (400, 425), ui.GRAY)
+        elif mode == 'cpu':
+            ui.text(s, 'PICK THE CPU FIGHTER  -  R: RANDOM' if pickingCpu else 'R: RANDOM', 13,
+                    (400, 425), ui.GRAY)
         ui.backHint(s)
 
 
