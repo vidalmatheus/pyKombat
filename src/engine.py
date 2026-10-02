@@ -659,7 +659,8 @@ class Music:
     def resume(self):
         pygame.music.unpause()
     def volume(self, value=1):
-        pygame.mixer.music.set_volume(value)
+        import assets
+        assets.setMusicVolume(value)   # respeita o som desligado
           
         
         

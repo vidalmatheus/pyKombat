@@ -18,13 +18,14 @@ def music(name, volume):
     try:
         pygame.mixer.music.load('res/Music/%s.ogg' % name)
         pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(volume)
+        assets.setMusicVolume(volume)   # respeita o som desligado
     except Exception as e:
         print('music error', e)
 
 
 class Fight:
     def __init__(self, game, hub, setup):
+        hub.muteRect = None   # na luta o canto de cima é do relógio/vida, sem botão de som
         """setup: mode, chars (índices), stage, seed, cpuLevel, net, players."""
         self.screen = game.getDisplay()
         self.hub = hub

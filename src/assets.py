@@ -259,7 +259,34 @@ def sound(name):
     return s or None
 
 
+# som ligado/desligado (botão de alto-falante nos menus; lembrado entre visitas)
+muted = False
+_musicVolume = 0.5
+
+
+def setMuted(value):
+    global muted
+    muted = bool(value)
+    setMusicVolume(_musicVolume)
+    try:
+        import prefs
+        prefs.put('mute', muted)
+    except Exception:
+        pass
+
+
+def setMusicVolume(volume):
+    global _musicVolume
+    _musicVolume = volume
+    try:
+        pygame.mixer.music.set_volume(0.0 if muted else volume)
+    except Exception:
+        pass
+
+
 def playSound(name, volume=1.0):
+    if muted:
+        return
     s = sound(name)
     if s is not None:
         s.set_volume(volume)

@@ -29,6 +29,7 @@ class MenuFacade:
 
     async def run(self, game):
         hub = inputs.Hub()
+        assets.setMuted(prefs.get('mute', False))   # som ligado/desligado da última visita
         level = prefs.get('cpuLevel', 'NORMAL')   # última dificuldade escolhida
         if level not in ai.LEVEL_NAMES:
             level = 'NORMAL'
@@ -110,14 +111,36 @@ def logo(surf, y=18, width=520):
     surf.blit(assets.scaledImage('res/Background/PyKombatLogo.png', (width, h)), (400 - width // 2, y))
 
 
+MUTE_RECT = pygame.Rect(756, 6, 38, 32)   # botão de som (canto de cima à direita)
+
+
+def drawMute(s):
+    """Alto-falante no canto: com ondas (som ligado) ou com um X (desligado)."""
+    r = MUTE_RECT
+    pygame.draw.rect(s, (0, 0, 0), r)
+    pygame.draw.rect(s, (120, 120, 120), r, 2)
+    x, y = r.x + 7, r.centery
+    col = (232, 232, 232)
+    pygame.draw.polygon(s, col, [(x, y - 5), (x + 6, y - 5), (x + 13, y - 11), (x + 13, y + 11), (x + 6, y + 5), (x, y + 5)])
+    if assets.muted:
+        pygame.draw.line(s, (220, 40, 40), (x + 17, y - 6), (x + 27, y + 6), 3)
+        pygame.draw.line(s, (220, 40, 40), (x + 27, y - 6), (x + 17, y + 6), 3)
+    else:
+        for k, rad in enumerate((7, 12)):
+            pygame.draw.arc(s, col, pygame.Rect(x + 9 - rad, y - rad, 2 * rad + 4, 2 * rad), -0.9, 0.9, 2)
+
+
 class Screen:
     def __init__(self, game, hub, ctx=None):
         self.game = game
         self.surf = game.getDisplay()
         self.hub = hub
         self.ctx = ctx
+        if hub is not None:
+            hub.muteRect = MUTE_RECT   # nos menus o botão de som fica disponível
 
     async def frame(self):
+        drawMute(self.surf)
         pygame.display.flip()
         # dorme só o que falta para o próximo quadro (o desenho já gastou parte dele)
         now = time.perf_counter()
@@ -574,6 +597,10 @@ def askText(title, current=''):
     try:
         import platform
         r = platform.window.prompt(title, current)
+        try:
+            platform.window.pkResumeAudio()   # o celular suspende o áudio enquanto a caixa está aberta
+        except Exception:
+            pass
         return str(r).strip().upper() if r is not None and str(r) not in ('null', 'undefined') else ''
     except Exception:
         return ''
