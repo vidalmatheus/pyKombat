@@ -49,3 +49,13 @@ def dim(surf, alpha=150):
 
 def backHint(surf, label='ESC / BACKSPACE: BACK'):
     text(surf, label, 14, (400, 478), GRAY)
+
+
+def tapItem(taps, ys, size, x0=140, x1=660):
+    """Índice do item de menu (texto no topo y, altura `size`) tocado/clicado, ou None."""
+    for x, y in taps:
+        if x0 <= x <= x1:
+            for i, top in enumerate(ys):
+                if top - 10 <= y <= top + size + 10:
+                    return i
+    return None

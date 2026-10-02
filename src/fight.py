@@ -18,13 +18,14 @@ def music(name, volume):
     try:
         pygame.mixer.music.load('res/Music/%s.ogg' % name)
         pygame.mixer.music.play(-1)
-        pygame.mixer.music.set_volume(volume)
+        assets.setMusicVolume(volume)   # respeita o som desligado
     except Exception as e:
         print('music error', e)
 
 
 class Fight:
     def __init__(self, game, hub, setup):
+        hub.muteRect = None   # na luta o canto de cima é do relógio/vida, sem botão de som
         """setup: mode, chars (índices), stage, seed, cpuLevel, net, players."""
         self.screen = game.getDisplay()
         self.hub = hub
@@ -202,7 +203,14 @@ class Fight:
             self.hub.poll()
             if self.hub.quit:
                 return None
-            for group, action in self.hub.menu:
+            events = list(self.hub.menu)
+            hit = ui.tapItem(self.hub.taps, [200 + i * 60 for i in range(len(options))], 34)
+            if self.hub.taps and showMoves:
+                events.append(('tap', 'back'))
+            elif hit is not None:
+                sel = hit
+                events.append(('tap', 'ok'))
+            for group, action in events:
                 if showMoves:
                     if action in ('back', 'ok', 'start'):
                         showMoves = False
@@ -246,7 +254,12 @@ class Fight:
             self.hub.poll()
             if self.hub.quit:
                 return None
-            for group, action in self.hub.menu:
+            events = list(self.hub.menu)
+            hit = ui.tapItem(self.hub.taps, [200, 260], 32)
+            if hit is not None:
+                sel = hit
+                events.append(('tap', 'ok'))
+            for group, action in events:
                 if action in ('up', 'down'):
                     sel = 1 - sel
                 elif action in ('back', 'start'):

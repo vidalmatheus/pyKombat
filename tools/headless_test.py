@@ -36,7 +36,7 @@ import assets  # noqa: E402
 import characters  # noqa: E402
 import fighter  # noqa: E402
 import menu  # noqa: E402
-from inputs import SPECIAL, LEFT, RIGHT, DOWN  # noqa: E402
+from inputs import SPECIAL, LEFT, RIGHT, DOWN, HK  # noqa: E402
 from match import Match  # noqa: E402
 from render import Renderer  # noqa: E402
 
@@ -272,8 +272,39 @@ def sounds():
               'som %s existe e está no build web' % n)
 
 
+def sweeps():
+    """Rasteira (baixo + chute alto) de todos alcança o oponente a uma distância normal."""
+    by = {c.name: c for c in characters.ROSTER}
+    for c in characters.ROSTER:
+        m = Match(c, by['SUB-ZERO'] if c.name != 'SUB-ZERO' else by['JAX'], 1, seed=2)
+        me, o = m.fighters
+        while m.phase != 'fight':
+            m.step([0, 0])
+        me.x, o.x = 300, 385
+        me.facing, o.facing = 1, -1
+        life0 = o.life
+        for t in range(50):
+            m.step([DOWN | (HK if 2 <= t < 5 else 0) if t < 5 else 0, 0])
+        check(o.life < life0, '%s: rasteira acerta a 85 px' % c.name.lower())
+
+
+def taps():
+    """Toque nos menus (celular): retratos da seleção e itens de menu."""
+    import ui
+    scr = menu.CharacterSelect(_Game(), None, {'mode': 'cpu', 'chars': [0, 1]})
+    x0 = 400 - (menu.COLS * scr.CELL + (menu.COLS - 1) * scr.GAP) // 2
+    ok = all(scr.cellAt(x0 + (i % menu.COLS) * (scr.CELL + scr.GAP) + 40,
+                        scr.GRID_Y + (i // menu.COLS) * (scr.CELL + scr.GAP) + 40) == i
+             for i in range(len(characters.ROSTER)))
+    check(ok and scr.cellAt(5, 5) is None, 'toque: cada retrato da seleção é tocável')
+    check(ui.tapItem([(400, 215)], [150, 202, 254], 30) == 1 and ui.tapItem([(20, 215)], [150, 202], 30) is None,
+          'toque: itens de menu respondem ao toque')
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
+    taps()
+    sweeps()
     sounds()
     groin()
     meter()

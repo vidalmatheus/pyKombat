@@ -4,10 +4,6 @@
 # gh-pages/pr-preview/pr-<N>/ (ver pr-preview.yml) e são preservadas aqui
 # (clean-exclude). Para isso: Settings -> Pages -> Source: "Deploy from a
 # branch" -> gh-pages / (root).
-#
-# O job "actions-deploy" mantém o modo antigo (Source: "GitHub Actions")
-# funcionando até essa troca ser feita; depois dela ele pode falhar sem
-# problema (continue-on-error).
 name: Deploy web build to GitHub Pages
 
 on:
@@ -19,8 +15,6 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
@@ -60,22 +54,3 @@ jobs:
           branch: gh-pages
           clean-exclude: pr-preview/
           force: false
-
-  actions-deploy:
-    needs: build
-    continue-on-error: true
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          name: web
-          path: web
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: web
-      - id: deployment
-        uses: actions/deploy-pages@v4

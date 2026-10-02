@@ -1,6 +1,7 @@
 // Ponte JS <-> Python (pygbag) para o pyKombat no navegador:
 //  * window.pkPads(): estado dos controles (Gamepad API) — DualSense, Xbox etc.
-//    pareados por Bluetooth/USB aparecem aqui com o layout "standard".
+//    pareados por Bluetooth/USB aparecem aqui com o layout "standard" — e o
+//    controle virtual de toque do celular (touch.js).
 //  * window.pkNet: salas online via WebRTC (PeerJS). O host registra
 //    "pykombat-v1-<CODE>" no servidor de sinalização; o convidado conecta nele.
 //    Depois disso o tráfego é peer-to-peer.
@@ -11,9 +12,8 @@
 
   // ---------------------------------------------------------------- gamepads
   window.pkPads = function () {
-    if (!navigator.getGamepads) return '';
     const out = [];
-    const pads = navigator.getGamepads();
+    const pads = navigator.getGamepads ? navigator.getGamepads() : [];
     for (let i = 0; i < pads.length; i++) {
       const g = pads[i];
       if (!g || !g.connected) continue;
@@ -27,6 +27,9 @@
       const name = String(g.id || 'gamepad').replace(/[|:]/g, ' ').slice(0, 40);
       out.push(g.index + ':' + bits + ':' + axes.join(',') + ':' + g.mapping + ':' + name);
     }
+    // controle virtual de toque (touch.js), no celular/tablet
+    const touch = window.pkTouchPad ? window.pkTouchPad() : '';
+    if (touch) out.push(touch);
     return out.join('|');
   };
 

@@ -224,7 +224,7 @@ FATAL_SPLIT_FRAME = {'LiuKang': 11, 'Kitana': 6, 'JohnnyCage': 4,
 # especiais em que o lutador avança reto para a frente -> altura do voo
 # (o sprite é desenhado acima do chão; 0 = vai pelo chão)
 DASH_KINDS = {'flykick': 34, 'torpedo': 34, 'shadowkick': 20, 'bladefury': 0, 'roll': 0,
-              'bicycle': 30, 'squarewave': 40, 'spin': 0}
+              'bicycle': 62, 'squarewave': 40, 'spin': 0}
 # especiais de corpo a corpo (golpe com animação própria; a tabela MOVES diz o dano)
 MELEE_SPECIALS = ('fanswipe', 'bladeswipe', 'splitpunch', 'gotcha', 'shadowup')
 # especiais 3 e 4: comandos (além do botão SPECIAL com baixo / para a frente)

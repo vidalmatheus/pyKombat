@@ -71,6 +71,8 @@ class Hub:
         self.menu = []          # eventos de menu deste frame: (grupo, ação)
         self.text = []          # caracteres digitados (código de sala)
         self.keys = []          # teclas apertadas neste frame
+        self.taps = []          # toques/cliques na tela neste frame: (x, y) em coords do jogo
+        self.muteRect = None    # botão de som (menus): toque nele liga/desliga e não vira toque de menu
         self.quit = False
         self._scanTimer = 0
         if not WEB:
@@ -193,9 +195,16 @@ class Hub:
         self.menu = []
         self.text = []
         self.keys = []
+        self.taps = []
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.quit = True
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if self.muteRect is not None and self.muteRect.collidepoint(event.pos):
+                    import assets
+                    assets.setMuted(not assets.muted)
+                    continue
+                self.taps.append(event.pos)   # toque no celular chega como clique
             elif event.type == pygame.KEYDOWN:
                 self.keys.append(event.key)
                 if event.key in MENU_KEYS:
