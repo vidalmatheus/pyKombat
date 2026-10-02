@@ -69,6 +69,7 @@ FRAMES_MK2 = {
         'Epunch': [111, 112, 112],
         'Ahit': [113, 113, 114],
         'Bhit': [115, 116, 116],
+        'Groin': [115, 146],   # golpe no saco (split punch do Johnny Cage)
         'Chit': [117, 118, 119, 119, 120, 121],
         'Ehit': [122, 123, 123],
         'Fhit': [131, 132, 133, 133, 134, 135, 135, 59, 60, 62, 63, 64, 65, 1],
@@ -102,6 +103,7 @@ FRAMES_MK2 = {
         'Epunch': [27, 104, 104],
         'Ahit': [109, 109, 110],
         'Bhit': [111, 112, 112],
+        'Groin': [111, 142],   # golpe no saco (split punch do Johnny Cage)
         'Chit': [113, 114, 115, 115, 114, 113],
         'Ehit': [118, 119, 119],
         'Fhit': [127, 128, 129, 130, 130, 131, 131, 54, 55, 56, 58, 59, 61, 62],
@@ -134,6 +136,7 @@ FRAMES_MK2 = {
         'Epunch': [28, 26, 26],
         'Ahit': [101, 101, 102],
         'Bhit': [107, 109, 110],
+        'Groin': [107, 135],   # golpe no saco (split punch do Johnny Cage)
         'Chit': [101, 105, 106, 106, 105, 101],
         'Ehit': [111, 112, 112],
         # queda (0-6, o último deitado) + levantar com rolamento para trás (7-13)
@@ -201,6 +204,7 @@ FRAMES_MK2 = {
         'Epunch': [28, 29, 29],
         'Ahit': [126, 127, 127],
         'Bhit': [130, 131, 131],
+        'Groin': [130, 161],   # golpe no saco (split punch do Johnny Cage)
         'Chit': [126, 128, 129, 129, 128, 126],
         'Ehit': [138, 139, 139],
         'Fhit': [145, 146, 146, 147, 148, 149, 149, 149, 13, 13, 14, 173, 174, 1],
@@ -232,6 +236,7 @@ FRAMES_MK2 = {
         'Epunch': [27, 99, 99],
         'Ahit': [104, 104, 105],
         'Bhit': [108, 109, 110],
+        'Groin': [108, 139],   # golpe no saco (split punch do Johnny Cage)
         'Chit': [104, 106, 107, 107, 106, 104],
         'Ehit': [116, 117, 117],
         # queda + levanta pelo mesmo caminho da rasteira (deitado -> agachado -> em pé)
@@ -264,6 +269,7 @@ FRAMES_MK2 = {
         'Epunch': [26, 99, 99],
         'Ahit': [104, 104, 105],
         'Bhit': [108, 109, 110],
+        'Groin': [108, 142],   # golpe no saco (split punch do Johnny Cage)
         'Chit': [104, 106, 107, 107, 106, 104],
         'Ehit': [115, 116, 116],
         'Fhit': [126, 127, 128, 129, 130, 131, 131, 138, 139, 140, 141, 141, 142, 1],
@@ -297,6 +303,7 @@ FRAMES_MK2 = {
         'Epunch': [85, 86, 86],
         'Ahit': [131, 131, 132],
         'Bhit': [129, 129, 130],
+        'Groin': [129, 139],   # golpe no saco (split punch do Johnny Cage)
         'Chit': [131, 136, 137, 137, 136, 131],
         'Ehit': [138, 139, 139],
         'Fhit': [119, 120, 121, 122, 123, 123, 123, 124, 125, 126, 127, 128, 128, 0],
@@ -363,6 +370,7 @@ FRAMES_MK2 = {
         'Epunch': [25, 27, 27],
         'Ahit': [94, 94, 95],
         'Bhit': [99, 102, 103],
+        'Groin': [99, 132],   # golpe no saco (split punch do Johnny Cage)
         'Chit': [94, 104, 105, 105, 104, 94],
         'Ehit': [106, 107, 107],
         'Fhit': [117, 118, 119, 120, 121, 122, 122, 111, 110, 113, 114, 114, 115, 116],
@@ -395,6 +403,7 @@ FRAMES_MK2 = {
         'Epunch': [100, 101, 101],
         'Ahit': [106, 107, 107],
         'Bhit': [108, 109, 109],
+        'Groin': [108, 145],   # golpe no saco (split punch do Johnny Cage)
         'Chit': [111, 112, 113, 113, 114, 115],
         'Ehit': [118, 119, 119],
         'Fhit': [120, 121, 122, 122, 123, 124, 124, 139, 140, 140, 141, 142, 143, 143],

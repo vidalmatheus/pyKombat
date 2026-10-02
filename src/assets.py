@@ -20,17 +20,17 @@ _MK2 = {'jump': 3, 'spin': 8, 'crouch': 3, 'Apunch': 3, 'Bpunch': 11, 'Cpunch': 
         'Bhit': 3, 'Chit': 6, 'Ehit': 3, 'Fhit': 14, 'Ghit': 11, 'Ablock': 3, 'Bblock': 3,
         'fatalityhit': 10}
 FRAMES = {
-    'Sub-Zero': dict(_MK2, dance=6, walk=9, dizzy=5, win=3, Special=6, Fkick=2, fatality=19, Special3=6),
-    'Scorpion': dict(_MK2, dance=6, walk=9, dizzy=5, win=4, Special=6, fatality=14),
-    'LiuKang': dict(_MK2, dance=6, walk=9, dizzy=6, win=4, Special=6, Fkick=2, fatality=12, Special3=6, Fkick2=6),
+    'Sub-Zero': dict(_MK2, dance=6, walk=9, dizzy=5, win=3, Special=6, Fkick=2, fatality=19, Special3=6, Groin=2),
+    'Scorpion': dict(_MK2, dance=6, walk=9, dizzy=5, win=4, Special=6, fatality=14, Groin=2),
+    'LiuKang': dict(_MK2, dance=6, walk=9, dizzy=6, win=4, Special=6, Fkick=2, fatality=12, Special3=6, Fkick2=6, Groin=2),
     'Kitana': dict(_MK2, dance=5, walk=8, dizzy=5, win=4, Special=6, Special2=6, fatality=8, Swipe=6, Fkick=3),
-    'Raiden': dict(_MK2, dance=8, walk=8, dizzy=7, win=5, Special=6, Fkick=2, fatality=3),
-    'KungLao': dict(_MK2, dance=6, walk=9, dizzy=6, win=6, Special=6, fatality=10, Fkick=6),
-    'JohnnyCage': dict(_MK2, dance=5, walk=8, dizzy=6, win=5, Special=6, Fkick=2, fatality=7, Upper2=4, Split=6),
-    'Baraka': dict(_MK2, dance=6, walk=9, dizzy=5, win=4, Special=6, Fkick=4, fatality=11, Swipe=6),
+    'Raiden': dict(_MK2, dance=8, walk=8, dizzy=7, win=5, Special=6, Fkick=2, fatality=3, Groin=2),
+    'KungLao': dict(_MK2, dance=6, walk=9, dizzy=6, win=6, Special=6, fatality=10, Fkick=6, Groin=2),
+    'JohnnyCage': dict(_MK2, dance=5, walk=8, dizzy=6, win=5, Special=6, Fkick=2, fatality=7, Upper2=4, Split=6, Groin=2),
+    'Baraka': dict(_MK2, dance=6, walk=9, dizzy=5, win=4, Special=6, Fkick=4, fatality=11, Swipe=6, Groin=2),
     'Mileena': dict(_MK2, dance=10, walk=8, dizzy=5, win=6, Special=6, Fkick=8, fatality=14, Telekick=5),
-    'ShangTsung': dict(_MK2, dance=5, walk=9, dizzy=5, win=4, Special=6, Special2=6, fatality=5),
-    'Jax': dict(_MK2, dance=5, walk=9, dizzy=5, win=6, Special=6, Special2=6, fatality=10, Grab=6),
+    'ShangTsung': dict(_MK2, dance=5, walk=9, dizzy=5, win=4, Special=6, Special2=6, fatality=5, Groin=2),
+    'Jax': dict(_MK2, dance=5, walk=9, dizzy=5, win=6, Special=6, Special2=6, fatality=10, Grab=6, Groin=2),
 }
 
 # matizes da roupa de cada corpo-base (graus mín., máx., saturação mín., brilho mín.)
