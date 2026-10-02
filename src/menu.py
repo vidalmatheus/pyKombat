@@ -14,6 +14,7 @@ import fight
 import fighter
 import inputs
 import net
+import prefs
 import ui
 from inputs import Player, KEYMAP_P1, KEYMAP_P2
 
@@ -28,7 +29,10 @@ class MenuFacade:
 
     async def run(self, game):
         hub = inputs.Hub()
-        ctx = {'mode': 'cpu', 'cpuLevel': 'NORMAL', 'chars': [0, 1], 'stage': 9, 'net': None,
+        level = prefs.get('cpuLevel', 'NORMAL')   # última dificuldade escolhida
+        if level not in ai.LEVEL_NAMES:
+            level = 'NORMAL'
+        ctx = {'mode': 'cpu', 'cpuLevel': level, 'chars': [0, 1], 'stage': 9, 'net': None,
                'autoJoin': net.roomFromUrl()}
         state = self.screen
         if ctx['autoJoin']:
@@ -162,6 +166,7 @@ class ModeMenu(Screen):
                 elif action in ('left', 'right') and sel == 0:
                     level = (level + (1 if action == 'right' else -1)) % 3
                     ctx['cpuLevel'] = ai.LEVEL_NAMES[level]
+                    prefs.put('cpuLevel', ctx['cpuLevel'])
                     assets.playSound('selection')
                 elif action == 'back':
                     assets.playSound('back')

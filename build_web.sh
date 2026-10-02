@@ -13,7 +13,7 @@ mkdir -p "$STAGE/src" "$STAGE/res/Background/ChoosingScenario" "$STAGE/res/Sound
 cp main.py "$STAGE/"
 cp src/menu.py src/engine.py src/fight.py src/fighter.py src/match.py src/render.py \
    src/fatalfx.py src/assets.py src/characters.py src/inputs.py src/ai.py src/net.py \
-   src/ui.py "$STAGE/src/"
+   src/ui.py src/prefs.py "$STAGE/src/"
 
 # sprites paletizados (gerados por tools/build_sprites.py a partir de res/Char)
 cp -r res/sprites "$STAGE/res/"
