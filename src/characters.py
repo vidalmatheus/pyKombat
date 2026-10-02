@@ -14,19 +14,22 @@
 #   fatality   -> anim (animação da própria sheet) | electro | hatsplit | soulsteal | deepfreeze |
 #                 firebreath
 #   color      -> cor de destaque na interface
-#   voice      -> som de vitória (res/Sound/<voice>.ogg)
+#   voice      -> som de vitória (res/Sound/<voice>.ogg); padrão: '<base>Wins',
+#                 o locutor do MK2 dizendo "<NOME> WINS"
+#   female     -> o locutor diz "FINISH HER" em vez de "FINISH HIM"
 
 
 class Character:
-    def __init__(self, name, base, special, special2, fatality, color, voice='Excellent',
-                 specialName='', special2Name='', fatalityName='', extra=()):
+    def __init__(self, name, base, special, special2, fatality, color, voice=None,
+                 specialName='', special2Name='', fatalityName='', extra=(), female=False):
         self.name = name
         self.base = base
         self.special = special
         self.special2 = special2
         self.fatality = fatality
         self.color = color
-        self.voice = voice
+        self.voice = voice or base.replace('-', '') + 'Wins'
+        self.female = female
         self.specialName = specialName
         self.special2Name = special2Name
         self.fatalityName = fatalityName
@@ -38,18 +41,18 @@ class Character:
 
 ROSTER = [
     Character('SUB-ZERO', 'Sub-Zero', 'ice', 'slide', 'deepfreeze', (90, 180, 255),
-              voice='SubZeroWins', specialName='ICE BLAST', special2Name='SLIDE',
+              specialName='ICE BLAST', special2Name='SLIDE',
               fatalityName='DEEP FREEZE',
               extra=[('groundice', 'GROUND FREEZE')]),
     Character('SCORPION', 'Scorpion', 'spear', 'teleport', 'firebreath', (255, 200, 40),
-              voice='ScorpionWins', specialName='SPEAR', special2Name='TELEPORT PUNCH',
+              specialName='SPEAR', special2Name='TELEPORT PUNCH',
               fatalityName='TOASTY'),
     Character('LIU KANG', 'LiuKang', 'fireball', 'flykick', 'anim', (235, 70, 40),
               specialName='FIREBALL', special2Name='FLYING KICK', fatalityName='DRAGON BITE',
               extra=[('lowfireball', 'LOW FIREBALL'), ('bicycle', 'BICYCLE KICK')]),
     Character('KITANA', 'Kitana', 'fan', 'fanlift', 'anim', (80, 130, 255),
               specialName='FAN THROW', special2Name='FAN LIFT', fatalityName='FAN DECAPITATION',
-              extra=[('fanswipe', 'FAN SWIPE'), ('squarewave', 'SQUARE WAVE PUNCH')]),
+              extra=[('fanswipe', 'FAN SWIPE'), ('squarewave', 'SQUARE WAVE PUNCH')], female=True),
     Character('RAIDEN', 'Raiden', 'lightning', 'torpedo', 'electro', (130, 220, 255),
               specialName='LIGHTNING', special2Name='TORPEDO', fatalityName='ELECTROCUTION',
               extra=[('teleport', 'TELEPORT')]),
@@ -64,7 +67,7 @@ ROSTER = [
               extra=[('bladeswipe', 'DOUBLE BLADE SWIPE')]),
     Character('MILEENA', 'Mileena', 'sai', 'roll', 'anim', (200, 90, 230),
               specialName='SAI THROW', special2Name='ROLL', fatalityName='SAI FRENZY',
-              extra=[('telekick', 'TELEPORT KICK')]),
+              extra=[('telekick', 'TELEPORT KICK')], female=True),
     Character('JAX', 'Jax', 'wave', 'quake', 'anim', (230, 160, 90),
               specialName='ENERGY WAVE', special2Name='GROUND SMASH', fatalityName='ARM RIP',
               extra=[('gotcha', 'GOTCHA GRAB')]),

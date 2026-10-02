@@ -207,8 +207,20 @@ def select_screen():
         pygame.image.save(SCREEN, os.path.join(OUT, name + '.png'))
 
 
+def sounds():
+    """Todo som que o jogo toca existe e vai para o build web."""
+    import match
+    web = open('build_web.sh').read()
+    names = {c.voice for c in characters.ROSTER} | set(match.PROJ_SOUND.values()) | \
+        {'FinishHim', 'FinishHer', 'Fatality', 'FlawlessVictory', 'Fight'}
+    for n in sorted(names):
+        check(os.path.exists('res/Sound/%s.ogg' % n) and ' %s ' % n in web.replace('\\\n', ' ').replace(';', ' '),
+              'som %s existe e está no build web' % n)
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
+    sounds()
     for c in characters.ROSTER:
         faces_right(c)
     select_screen()

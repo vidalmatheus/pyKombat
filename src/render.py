@@ -395,7 +395,10 @@ class Renderer:
                 k = min(1.0, (pt - 70) / 8)
                 ui.text(s, 'FIGHT!', int(40 + 40 * k), (400, 200 - int(20 * k)), (230, 30, 30), outline=True)
         elif ph == 'finish':
-            if (pt // 18) % 4 != 3:
+            loser = 1 - snap['mw'] if snap['mw'] >= 0 else 0
+            if (pt // 18) % 4 != 3 and characters.ROSTER[fs[loser][0]].female:
+                ui.text(s, 'FINISH HER!', 50, (400, 158), (230, 30, 30), outline=True)
+            elif (pt // 18) % 4 != 3:
                 img = assets.image('res/finishhim.png')
                 img = pygame.transform.scale(img, (img.get_width() * 3 // 2, img.get_height() * 3 // 2))
                 s.blit(img, (400 - img.get_width() // 2, 140))
@@ -407,7 +410,7 @@ class Renderer:
                     ui.text(s, 'DRAW', 50, (400, 160), (255, 255, 255), outline=True)
             elif pt >= 80:
                 ui.text(s, '%s WINS' % name(snap['rw']), 44, (400, 150), (255, 255, 255), outline=True)
-                if snap['fl'] and pt >= 150:
+                if snap['fl'] and pt >= 200:
                     ui.text(s, 'FLAWLESS VICTORY', 30, (400, 205), (255, 200, 60), outline=True)
         elif ph == 'over':
             w = snap['mw']
@@ -420,7 +423,7 @@ class Renderer:
                 ui.text(s, title, 20, (400, 245), (255, 200, 60), outline=True)
             elif pt >= 60:
                 ui.text(s, '%s WINS' % name(w), 44, (400, 150), (255, 255, 255), outline=True)
-                if snap['fl'] and pt >= 140:
+                if snap['fl'] and pt >= 185:
                     ui.text(s, 'FLAWLESS VICTORY', 30, (400, 205), (255, 200, 60), outline=True)
             if pt > 200 and (pt // 25) % 2 == 0:
                 ui.text(s, 'PRESS ANY ATTACK BUTTON', 18, (400, 440), (230, 230, 230), outline=True)

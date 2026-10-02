@@ -42,10 +42,11 @@ PROJ = {
 }
 # especiais que lançam vários projéteis em sequência: tipo -> (projétil, quantos, intervalo em ticks)
 MULTI_SHOT = {'skull3': ('skull', 3, 14)}
-PROJ_SOUND = {'ice': 'IceSound', 'spear': 'GetOverHere', 'fireball': 'HitLongo', 'fan': 'block',
-              'fanlift': 'HitLongo', 'lightning': 'IceSound2', 'hat': 'block', 'greenball': 'HitLongo',
-              'spark': 'IceSound2', 'sai': 'block', 'skull': 'HitLongo', 'wave': 'IceSound2',
-              'firerise': 'HitLongo', 'quake': 'HitLongo', 'lowfireball': 'HitLongo',
+# sons do pacote do MK2 (arcade): Fire = labareda, Whoosh = arremesso, Rumble = tremor
+PROJ_SOUND = {'ice': 'IceSound', 'spear': 'GetOverHere', 'fireball': 'Fire', 'fan': 'Whoosh',
+              'fanlift': 'Whoosh', 'lightning': 'IceSound2', 'hat': 'Whoosh', 'greenball': 'Fire',
+              'spark': 'IceSound2', 'sai': 'Whoosh', 'skull': 'Fire', 'wave': 'IceSound2',
+              'firerise': 'Fire', 'quake': 'Rumble', 'lowfireball': 'Fire',
               'groundice': 'IceSound'}
 PROJ_HEIGHT = 98    # altura padrão (o projétil sai da altura das mãos; ver handPoint)
 PROJ_FIXED_HEIGHT = {'fanlift': 62, 'firerise': 60, 'quake': 14, 'wave': 64, 'lowfireball': 46,
@@ -240,9 +241,10 @@ class Match:
                 self._winPose(w)
                 self.event('banner', 'wins', w.idx)
                 self.sound(w.char.voice)
-            if self.pt == 150 and w is not None and self.flawless:
+            # "<NOME> WINS" dura ~2 s: o flawless vem depois, sem atropelar
+            if self.pt == 200 and w is not None and self.flawless:
                 self.sound('FlawlessVictory')
-            if self.pt >= 230:
+            if self.pt >= 250:
                 self._nextRound()
         elif self.phase == 'over':
             w = self.winner
@@ -251,9 +253,9 @@ class Match:
             if self.pt == 60 and not self.fatalDone:
                 self.event('banner', 'wins', w.idx)
                 self.sound(w.char.voice)
-            if self.fatalDone and self.pt == 70:
+            if self.fatalDone and self.pt == 125:
                 self.sound('Fatality')
-            if self.pt == 140 and self.flawless and not self.fatalDone:
+            if self.pt == 185 and self.flawless and not self.fatalDone:
                 self.sound('FlawlessVictory')
             if self.pt > 150:
                 self.result = w.idx
@@ -292,7 +294,7 @@ class Match:
                 loser.invisible = False
                 loser.setState('dizzy', 'dizzy')
             self.event('music', 'stop')
-            self.sound('FinishHim')
+            self.sound('FinishHer' if loser.char.female else 'FinishHim')
             self.event('banner', 'finish', loser.idx)
         else:
             self.phase = 'ko'
@@ -392,7 +394,7 @@ class Match:
             if fz['kind'] == 'deepfreeze' and t == 62:
                 self.sound('IceSound2')     # a bola de gelo acerta: congela
             if fz['kind'] == 'firebreath' and t == 66:
-                self.sound('HitLongo')      # o fogo sai
+                self.sound('Fire')          # o fogo sai
             if t in FATALITY_HITS[fz['kind']]:
                 self.sound('HitFatality')
                 self.shakeScreen(12)
@@ -456,7 +458,7 @@ class Match:
         p.y = PROJ_FIXED_HEIGHT.get(kind, y)
         f.projectile = p
         self.projectiles.append(p)
-        self.sound(PROJ_SOUND.get(kind, 'HitLongo'))
+        self.sound(PROJ_SOUND.get(kind, 'Whoosh'))
 
     def _projectiles(self):
         for p in list(self.projectiles):

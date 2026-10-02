@@ -23,8 +23,10 @@ cp res/Background/Scenario?.png res/Background/MainMenu0?.png res/Background/PyK
 cp res/Background/ChoosingScenario/ChooseScenario0?.png "$STAGE/res/Background/ChoosingScenario/"
 cp res/Music/intro.ogg res/Music/mkt.ogg "$STAGE/res/Music/"
 for s in selection back start options Fight block IceSound IceSound2 ComeHere GetOverHere \
-         FinishHim ScorpionWins SubZeroWins Fatality HitFatality Excellent FlawlessVictory \
-         Toasty HitLongo BeforeFinish Hit0 Hit1 Hit2 Hit3 Hit4 Hit5 Hit6 Hit7 Hit8 Hit9 Hit10 Hit11 Hit12; do
+         FinishHim FinishHer Fatality HitFatality FlawlessVictory Fire Whoosh Rumble \
+         Toasty HitLongo BeforeFinish Hit0 Hit1 Hit2 Hit3 Hit4 Hit5 Hit6 Hit7 Hit8 Hit9 Hit10 Hit11 Hit12 \
+         SubZeroWins ScorpionWins LiuKangWins KitanaWins RaidenWins KungLaoWins JohnnyCageWins \
+         BarakaWins MileenaWins JaxWins ShangTsungWins; do
     cp "res/Sound/$s.ogg" "$STAGE/res/Sound/"
 done
 
