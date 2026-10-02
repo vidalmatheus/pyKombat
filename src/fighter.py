@@ -216,11 +216,26 @@ BASE_ANIMS = {
         'gotcha': A('Grab', range(6), [4, 4, 5, 5, 6, 4]),
         'fatal': A('fatality', range(10), [10, 12, 8, 8, 8, 25, 10, 10, 10, HOLD]),
     },
+    'Reptile': {
+        'idle': A('dance', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 6, True),
+        'dizzy': A('dizzy', [0, 1, 2, 3, 4, 3, 2, 1], 7, True),
+        'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),       # cuspe de ácido
+        'special2': A('Special2', range(6), [4, 5, 6, 10, 6, 4]),     # bola de força
+        'special4': A('Special', [0, 1, 1, 1, 1, 0], [3, 4, 4, 12, 6, 4]),   # some (invisível)
+        'slide': A('Fkick', [0, 1], [3, HOLD]),
+        'pulled': A('Chit', [0, 1, 2, 1], 5, True),
+        'win': A('win', range(4), [7, 8, 8, HOLD]),
+        'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
+        # tira a máscara, abre a boca e estica a língua (14: arranca a cabeça), recolhe e mastiga
+        'fatal': A('fatality', range(25), [10, 8, 8, 10, 12, 8, 6, 6, 6, 10, 3, 3, 3, 3, 14,
+                                           3, 3, 3, 3, 6, 8, 10, 10, 10, HOLD]),
+    },
 }
 SPECIAL_SPAWN = 3                  # índice da sequência em que o projétil sai
 # quando a vítima se parte (fatality 'anim'): índice da sequência do vencedor
 FATAL_SPLIT_FRAME = {'LiuKang': 11, 'Kitana': 6, 'JohnnyCage': 4,
-                     'Baraka': 4, 'Mileena': 2, 'Jax': 5}
+                     'Baraka': 4, 'Mileena': 2, 'Jax': 5, 'Reptile': 14}
+CLOAK_TICKS = 5 * 60               # invisibilidade do Reptile
 # especiais em que o lutador avança reto para a frente -> altura do voo
 # (o sprite é desenhado acima do chão; 0 = vai pelo chão)
 DASH_KINDS = {'flykick': 34, 'torpedo': 34, 'shadowkick': 20, 'bladefury': 0, 'roll': 0,
@@ -286,6 +301,7 @@ class Fighter:
         self.life = 100.0
         self.lastLife = 100.0
         self.meter = float(SPECIAL_MAX)   # cargas de especial (cheio a cada round)
+        self.cloak = 0                    # ticks de invisibilidade (Reptile)
         self.state = 'idle'
         self.t = 0
         self.move = None
@@ -408,6 +424,10 @@ class Fighter:
     # ------------------------------------------------------------ comandos
     def update(self, held, pressed, match):
         tick = match.tick
+        if self.cloak > 0:
+            self.cloak -= 1
+            if self.cloak == 0:
+                match.event('tele', int(self.x), int(self.y), self.idx)   # reaparece
         tok = self._token(held)
         if tok != self.lastToken:
             self.lastToken = tok
@@ -645,7 +665,12 @@ class Fighter:
             kind = self.specialKind
             if self.ai == SPECIAL_SPAWN and not self.spawned:
                 self.spawned = True
-                match.spawnProjectile(self, kind)
+                if kind == 'invisible':   # Reptile some por alguns segundos
+                    self.cloak = CLOAK_TICKS
+                    match.event('tele', int(self.x), int(self.y), self.idx)
+                    match.sound('Whoosh')
+                else:
+                    match.spawnProjectile(self, kind)
             if kind == 'spear' and self.projectile is not None and self.ai >= SPECIAL_SPAWN:
                 self.ai = SPECIAL_SPAWN  # segura o braço esticado até o arpão voltar
                 self.at = 0

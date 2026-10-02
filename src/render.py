@@ -26,6 +26,8 @@ FX = {
     'wave': ('wave', 5, (0, 1), (2,), (3, 4)),
     'lowfireball': ('fireball', 8, (0, 1), (2, 3), (4, 5, 6, 7)),
     'groundice': ('icepuddle', 9, (0, 1), (2,), (3, 4, 5, 6, 7, 8)),   # poça de gelo deslizando no chão
+    'acid': ('acid', 8, (0,), (1, 2), (3, 4, 5, 6, 7)),                  # cuspe do Reptile
+    'forceball': ('forceball', 8, (0,), (1, 2, 3), (4, 5, 6, 7)),        # bola de força (anéis no impacto)
 }
 GROUND_FX = {'firerise': ('firerise', 6, 7)}   # efeitos que saem do chão: (sheet, frames, ticks/frame)
 SHADOW_KICK = (90, 230, 60)   # rastro verde da shadow kick do Johnny Cage
@@ -203,7 +205,7 @@ class Renderer:
         fighters = snap['f']
         # sombras
         for f in fighters:
-            if f[7] & 2:
+            if f[7] & 18:   # invisível / Reptile camuflado: sem sombra
                 continue
             sw = max(30, 80 - f[5] // 3)
             self._shadow(world, f[4], ground, sw)
@@ -275,6 +277,8 @@ class Renderer:
         alpha = None
         if flags & 8:
             alpha = 90 if tick % 4 < 2 else 200
+        if flags & 16:   # invisível (Reptile): só um vulto; aparece um pouco quando apanha
+            alpha = 110 if flags & 4 else 26
         if alpha is not None:
             img = assets.tinted(img, 'ghost', (0, 0, 0, 0), pygame.BLEND_RGBA_ADD)
             img.set_alpha(alpha)

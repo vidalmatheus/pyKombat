@@ -31,6 +31,7 @@ FRAMES = {
     'Mileena': dict(_MK2, dance=10, walk=8, dizzy=5, win=6, Special=6, Fkick=8, fatality=14, Telekick=5),
     'ShangTsung': dict(_MK2, dance=5, walk=9, dizzy=5, win=4, Special=6, Special2=6, fatality=5, Groin=2),
     'Jax': dict(_MK2, dance=5, walk=9, dizzy=5, win=6, Special=6, Special2=6, fatality=10, Grab=6, Groin=2),
+    'Reptile': dict(_MK2, dance=6, walk=9, dizzy=5, win=4, Special=6, Special2=6, Fkick=2, fatality=25, Groin=2),
 }
 
 # matizes da roupa de cada corpo-base (graus mín., máx., saturação mín., brilho mín.)
@@ -40,7 +41,7 @@ COSTUME_HUE = {'Sub-Zero': (180, 240, 0.25, 0.0), 'Scorpion': (38, 66, 0.35, 0.2
                'Raiden': (180, 205, 0.35, 0.0), 'KungLao': (180, 210, 0.30, 0.0),
                'JohnnyCage': (345, 10, 0.45, 0.15), 'Baraka': (345, 12, 0.45, 0.2),
                'Mileena': (265, 320, 0.30, 0.0), 'ShangTsung': (40, 65, 0.40, 0.2),
-               'Jax': (350, 12, 0.45, 0.2)}
+               'Jax': (350, 12, 0.45, 0.2), 'Reptile': (75, 150, 0.30, 0.0)}
 # roupa do "espelho" (mesmo lutador dos dois lados) quando o personagem não troca a paleta
 ALT_COSTUME = {'Sub-Zero': (228, 1.0, 0.75), 'Scorpion': (30, 1.0, 0.88),
                'LiuKang': (222, 0.9, 0.85),     # calça azul (como a 2ª cor do MK2)
@@ -51,7 +52,8 @@ ALT_COSTUME = {'Sub-Zero': (228, 1.0, 0.75), 'Scorpion': (30, 1.0, 0.88),
                'Baraka': (110, 0.8, 0.8),       # detalhes verdes
                'Mileena': (140, 0.8, 0.75),     # verde da Jade
                'ShangTsung': (270, 0.8, 0.8),   # manto roxo
-               'Jax': (210, 0.8, 0.8)}          # calça azul
+               'Jax': (210, 0.8, 0.8),          # calça azul
+               'Reptile': (30, 0.9, 0.9)}       # roupa laranja
 
 
 def _clamp(v):

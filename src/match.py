@@ -23,6 +23,8 @@ PROJ = {
     'spear':  dict(speed=17.0, dmg=6, effect='pull', r=6, color=(200, 200, 200), core=(255, 255, 255)),
     # MK2: desenhados com os sprites do jogo (render.py)
     'fireball':  dict(speed=9.0, dmg=9, effect='heavy', r=13, color=(255, 140, 30), core=(255, 240, 160)),
+    'acid':      dict(speed=10.0, dmg=8, effect='mid', r=11, color=(110, 230, 80), core=(220, 255, 200)),
+    'forceball': dict(speed=4.5, dmg=12, effect='heavy', r=14, color=(255, 240, 150), core=(255, 255, 235)),
     'fan':       dict(speed=10.0, dmg=7, effect='mid', r=13, color=(220, 220, 230), core=(255, 255, 255)),
     'fanlift':   dict(speed=7.0, dmg=4, effect='lift', r=16, color=(220, 130, 255), core=(255, 230, 255)),
     'lightning': dict(speed=10.5, dmg=8, effect='launch', r=13, color=(120, 220, 255), core=(240, 255, 255)),
@@ -47,7 +49,7 @@ PROJ_SOUND = {'ice': 'IceSound', 'spear': 'GetOverHere', 'fireball': 'Fire', 'fa
               'fanlift': 'Whoosh', 'lightning': 'IceSound2', 'hat': 'Whoosh', 'greenball': 'Fire',
               'spark': 'IceSound2', 'sai': 'Whoosh', 'skull': 'Fire', 'wave': 'IceSound2',
               'firerise': 'Fire', 'quake': 'Rumble', 'lowfireball': 'Fire',
-              'groundice': 'IceSound'}
+              'groundice': 'IceSound', 'acid': 'Whoosh', 'forceball': 'IceSound2'}
 GROIN_STUN = 60     # ticks segurando o saco depois do split punch do Johnny Cage
 PROJ_HEIGHT = 98    # altura padrão (o projétil sai da altura das mãos; ver handPoint)
 PROJ_FIXED_HEIGHT = {'fanlift': 62, 'firerise': 60, 'quake': 14, 'wave': 64, 'lowfireball': 46,
@@ -62,12 +64,13 @@ FATALITY_HITS = {'electro': (40, 75, 110, 150), 'hatsplit': (60,), 'soulsteal': 
 FATAL_GAP_KIND = {'deepfreeze': 74, 'firebreath': 150}   # distância das fatalities desenhadas
 FATAL_GAP = 112      # distância entre os lutadores na fatality original (arpão)
 FATAL_GAP_BASE = {'LiuKang': 150, 'Kitana': 92, 'JohnnyCage': 70, 'Baraka': 95,
-                  'Mileena': 75, 'Jax': 80}   # boca do dragão / alcance do golpe
+                  'Mileena': 75, 'Jax': 80, 'Reptile': 178}   # boca do dragão / alcance do golpe / da língua
 # som da fatality 'anim' (animação da própria sheet) de cada corpo-base
 FATAL_SOUND = {'LiuKang': 'HitLongo', 'Kitana': 'block',
                'JohnnyCage': 'Hit0', 'Baraka': 'HitLongo', 'Mileena': 'HitLongo',
-               'Jax': 'HitLongo'}
-HEAD_FATALITY = ('Kitana', 'JohnnyCage', 'Baraka')   # fatality 'anim' em que a cabeça da vítima voa
+               'Jax': 'HitLongo', 'Reptile': 'HitLongo'}
+HEAD_FATALITY = ('Kitana', 'JohnnyCage', 'Baraka', 'Reptile')   # fatality 'anim' em que a cabeça da vítima voa
+HEAD_TO_WINNER = ('Reptile',)   # a língua puxa a cabeça para a boca (voa na direção do vencedor)
 
 
 class Projectile:
@@ -293,6 +296,8 @@ class Match:
         self.wins[w.idx] += 1
         self.roundWinner = w
         self.flawless = w.life >= 100
+        for f in self.fighters:
+            f.cloak = 0   # o Reptile reaparece no fim do round
         self.projectiles = []
         for f in self.fighters:
             f.projectile = None
@@ -388,7 +393,8 @@ class Match:
                     if w.base in HEAD_FATALITY:
                         sheetName, frame = l.sheetFrame()
                         self.event('head', self.charIdx[l.idx],
-                                   1 if l.alt else 0, sheetName, frame, int(l.x), l.facing, w.facing, t)
+                                   1 if l.alt else 0, sheetName, frame, int(l.x), l.facing,
+                                   -w.facing if w.base in HEAD_TO_WINNER else w.facing, t)
                     l.setAnim('victim_split')
                     self.sound('HitFatality')
                     self.event('blood', int(l.x), int(self.ground - 90), -l.facing, 40, t)
@@ -740,6 +746,8 @@ class Match:
                 flags |= 4
             if f.state == 'tele' and f.t < 6:
                 flags |= 8
+            if f.cloak > 0:   # Reptile invisível
+                flags |= 16
             ax = f.animDef.get('ax') or 0
             fs.append([self.charIdx[f.idx], 1 if f.alt else 0, sheetName, frame, int(round(f.x)),
                        int(round(f.y)), f.facing, flags, ax, round(max(0.0, f.life), 1),
