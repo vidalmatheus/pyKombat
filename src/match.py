@@ -356,9 +356,11 @@ class Match:
         self.pt = 0
         self.projectiles = []
         self.event('fatal', kind)
-        self.sound({'anim': FATAL_SOUND.get(w.base, 'HitLongo'), 'electro': 'IceSound2',
-                    'hatsplit': 'block', 'soulsteal': 'HitLongo', 'deepfreeze': 'IceSound',
-                    'firebreath': 'BeforeFinish'}[kind])
+        scream = 'HitFLongo' if self.loser.char.female else 'HitLongo'   # grito da vítima
+        snd = {'anim': FATAL_SOUND.get(w.base, 'HitLongo'), 'electro': 'IceSound2',
+               'hatsplit': 'block', 'soulsteal': 'HitLongo', 'deepfreeze': 'IceSound',
+               'firebreath': 'BeforeFinish'}[kind]
+        self.sound(scream if snd == 'HitLongo' else snd)
 
     def _fatalityStep(self):
         fz = self.fatal
@@ -651,8 +653,8 @@ class Match:
         d.invisible = False
         self.event('blood', point[0], point[1], dirX, int(6 + dmg * 2.2), self.tick)
         self.sound('Hit0')
-        if self.rng.random() < 0.45:
-            self.sound('Hit%d' % self.rng.randint(1, 12))
+        if self.rng.random() < 0.45:   # gemido de dor (voz feminina para Kitana/Mileena)
+            self.sound('HitF%d' % self.rng.randint(1, 4) if d.char.female else 'Hit%d' % self.rng.randint(1, 12))
         self.hitstop = 4 + int(dmg // 3)
         if dmg >= 9:
             self.shakeScreen(6)

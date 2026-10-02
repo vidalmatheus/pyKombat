@@ -187,8 +187,7 @@ def extras(char, opponent):
             opp.life = max(opp.life, 1.0)
         ok = states & {'dash', 'slide', 'tele', 'special', 'attack'}
         check(bool(ok), '%s: especial %d (%s) saiu (%s)' % (tag, which, label, ','.join(sorted(states))))
-        if kind != 'teleport':
-            check(opp.life < life0, '%s: especial %d (%s) acertou (%.0f de dano)' % (tag, which, label, life0 - opp.life))
+        check(opp.life < life0, '%s: especial %d (%s) acertou (%.0f de dano)' % (tag, which, label, life0 - opp.life))
 
 
 class _Game:
@@ -211,8 +210,9 @@ def sounds():
     """Todo som que o jogo toca existe e vai para o build web."""
     import match
     web = open('build_web.sh').read()
-    names = {c.voice for c in characters.ROSTER} | set(match.PROJ_SOUND.values()) | \
-        {'FinishHim', 'FinishHer', 'Fatality', 'FlawlessVictory', 'Fight'}
+    names = {c.voice for c in characters.ROSTER} | {c.nameSound for c in characters.ROSTER} | \
+        set(match.PROJ_SOUND.values()) | {'FinishHim', 'FinishHer', 'Fatality', 'FlawlessVictory', 'Fight',
+                                           'HitF1', 'HitF2', 'HitF3', 'HitF4', 'HitFLongo'}
     for n in sorted(names):
         check(os.path.exists('res/Sound/%s.ogg' % n) and ' %s ' % n in web.replace('\\\n', ' ').replace(';', ' '),
               'som %s existe e está no build web' % n)

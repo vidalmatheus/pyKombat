@@ -11,6 +11,7 @@ JUMP_VX = 4.4
 WALK_F = 3.4
 WALK_B = 2.8
 BODY_HALF = 26          # meia largura da "caixa de empurrão"
+TELE_GAP = 2 * BODY_HALF + 2   # distância do oponente ao reaparecer do teleporte
 STAGE_MIN = 40
 STAGE_MAX = 760
 HOLD = 9999             # duração "infinita" (segura o último frame)
@@ -238,7 +239,8 @@ MOVES = {
     'jk': dict(dmg=9, level='high', react='heavy', active=(2, 2), stun=20, push=5.0, air=True),
     'jp': dict(dmg=7, level='high', react='mid', active=(2, 2), stun=17, push=4.0, air=True),
     'slide': dict(dmg=9, level='low', react='sweep', active=(1, 1), stun=0, push=3.0, special=True),
-    'tele_punch': dict(dmg=10, level='high', react='launch', active=(1, 2), stun=0, push=4.0, special=True),
+    'tele_punch': dict(dmg=10, level='high', react='launch', active=(1, 2), stun=0, push=4.0, special=True,
+                       advance=2.0),
     'dash': dict(dmg=10, level='high', react='launch', active=(1, 1), stun=0, push=4.0, special=True),
     # especiais de corpo a corpo (advance: px/tick para a frente até o fim da janela ativa)
     'fanswipe': dict(dmg=10, level='high', react='heavy', active=(3, 3), stun=24, push=6.0, special=True,
@@ -662,9 +664,10 @@ class Fighter:
             if self.t == 16:
                 opp = match.other(self)
                 side = 1 if self.x < opp.x else -1      # lado em que eu estava
-                nx = max(STAGE_MIN, min(STAGE_MAX, opp.x + side * 70))
-                if abs(nx - opp.x) < 50:  # sem espaço atrás (canto): fica na frente
-                    nx = max(STAGE_MIN, min(STAGE_MAX, opp.x - side * 70))
+                # reaparece colado nas costas (a 70 px o soco não alcançava)
+                nx = max(STAGE_MIN, min(STAGE_MAX, opp.x + side * TELE_GAP))
+                if abs(nx - opp.x) < TELE_GAP - 6:  # sem espaço atrás (canto): fica na frente
+                    nx = max(STAGE_MIN, min(STAGE_MAX, opp.x - side * TELE_GAP))
                 self.x = nx
                 self.faceTowards(opp)
                 self.invisible = False

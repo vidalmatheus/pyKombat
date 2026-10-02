@@ -300,7 +300,7 @@ class CharacterSelect(Screen):
                     c = (c + COLS) % n
                 elif action in ('ok', 'start'):
                     ready[who] = True
-                    assets.playSound('start')
+                    assets.playSound(characters.ROSTER[cursor[who]].nameSound)   # locutor diz o nome
                     if mode == 'cpu' and who == 0 and cursor[1] == cursor[0]:
                         cursor[1] = (cursor[0] + 1) % n   # sugere outro lutador p/ a CPU
                 if c != cursor[who]:
@@ -327,6 +327,8 @@ class CharacterSelect(Screen):
                 for msg in link.recv():
                     if msg.get('t') == 'sel':
                         cursor[1 - me] = int(msg['c']) % n
+                        if msg['r'] and not ready[1 - me]:
+                            assets.playSound(characters.ROSTER[cursor[1 - me]].nameSound)
                         ready[1 - me] = bool(msg['r'])
                     elif msg.get('t') == 'bye':
                         closeNet(ctx)
