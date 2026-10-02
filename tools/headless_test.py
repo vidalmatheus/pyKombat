@@ -34,8 +34,9 @@ SCREEN = pygame.display.set_mode((800, 500))
 import ai  # noqa: E402
 import assets  # noqa: E402
 import characters  # noqa: E402
+import fighter  # noqa: E402
 import menu  # noqa: E402
-from inputs import SPECIAL, LEFT, RIGHT  # noqa: E402
+from inputs import SPECIAL, LEFT, RIGHT, DOWN  # noqa: E402
 from match import Match  # noqa: E402
 from render import Renderer  # noqa: E402
 
@@ -160,6 +161,36 @@ def fight(char, side, opponent, stage):
     check(fatalSeen > 0 and m.fatalDone, '%s: fez a fatality (%s)' % (tag, char.fatalityName))
 
 
+def extras(char, opponent):
+    """Especiais 3 e 4 (baixo/frente + SPECIAL): saem e acertam o oponente parado."""
+    tag = char.name.lower().replace(' ', '_')
+    for i, (kind, label) in enumerate(char.extra):
+        which = 3 + i
+        m = Match(char, opponent, 1, seed=99 + i)
+        me, opp = m.fighters
+        while m.phase != 'fight':
+            m.step([0, 0])
+        far = kind not in fighter.MELEE_SPECIALS and kind not in fighter.DASH_KINDS
+        me.x, opp.x = 300, 300 + (260 if far else 70)
+        me.facing, opp.facing = 1, -1
+        r = Renderer(SCREEN)
+        life0 = opp.life
+        states = set()
+        for t in range(150):
+            held = [0, 0]
+            if t < 3:
+                held[0] = SPECIAL | (DOWN if which == 3 else RIGHT)
+            m.step(held)
+            states.add(me.state)
+            if t == 14:
+                shot(r, m.snapshot(), '%s_special%d_%s' % (tag, which, kind))
+            opp.life = max(opp.life, 1.0)
+        ok = states & {'dash', 'slide', 'tele', 'special', 'attack'}
+        check(bool(ok), '%s: especial %d (%s) saiu (%s)' % (tag, which, label, ','.join(sorted(states))))
+        if kind != 'teleport':
+            check(opp.life < life0, '%s: especial %d (%s) acertou (%.0f de dano)' % (tag, which, label, life0 - opp.life))
+
+
 class _Game:
     def getDisplay(self):
         return SCREEN
@@ -176,8 +207,20 @@ def select_screen():
         pygame.image.save(SCREEN, os.path.join(OUT, name + '.png'))
 
 
+def sounds():
+    """Todo som que o jogo toca existe e vai para o build web."""
+    import match
+    web = open('build_web.sh').read()
+    names = {c.voice for c in characters.ROSTER} | set(match.PROJ_SOUND.values()) | \
+        {'FinishHim', 'FinishHer', 'Fatality', 'FlawlessVictory', 'Fight'}
+    for n in sorted(names):
+        check(os.path.exists('res/Sound/%s.ogg' % n) and ' %s ' % n in web.replace('\\\n', ' ').replace(';', ' '),
+              'som %s existe e está no build web' % n)
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
+    sounds()
     for c in characters.ROSTER:
         faces_right(c)
     select_screen()
@@ -187,6 +230,7 @@ def main():
         opponent = byName['SUB-ZERO'] if name != 'SUB-ZERO' else byName['SCORPION']
         for side in (0, 1):
             fight(c, side, opponent, stage=1 + (i * 2 + side) % 8)
+        extras(c, opponent)
     # página simples para ver os screenshots (publicada junto da prévia do PR)
     imgs = sorted(f for f in os.listdir(OUT) if f.endswith('.png'))
     with open(os.path.join(OUT, 'index.html'), 'w') as fh:

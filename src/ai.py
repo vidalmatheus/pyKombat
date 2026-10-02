@@ -12,7 +12,7 @@
 # Tudo isso é dosado pelo nível (EASY quase não usa; HARD usa sempre).
 import random
 from inputs import UP, DOWN, LEFT, RIGHT, LP, HP, LK, HK, BLOCK, SPECIAL, FATAL
-from fighter import NEUTRAL, MOVES, DASH_KINDS
+from fighter import NEUTRAL, MOVES, DASH_KINDS, MELEE_SPECIALS
 
 LEVELS = {
     # react: atraso de reação (ticks)      block: chance de defender
@@ -60,6 +60,11 @@ class CPU:
 
     def _tap(self, mask, hold=2, after=4):
         return [mask] * hold + [0] * after
+
+    def _special(self, which, fwd, back):
+        """Botões do especial 1-4 (SPECIAL sozinho / com trás / com baixo / com frente)."""
+        mod = {1: 0, 2: back, 3: DOWN, 4: fwd}[which]
+        return [mod] * (2 if mod else 0) + [mod | SPECIAL] * 2 + [0] * 26
 
     def _out(self, mask):
         self.lastOut = mask
@@ -281,9 +286,9 @@ class CPU:
             return [UP | fwd] * 3 + [fwd] * 14 + [HK] * 2 + [0] * 20
         if dist > 120:
             if canSpecial and r < cfg['special'] * (1 + blocker):
-                if rng.random() < 0.5:   # especial 2 (slide, teleporte, voadora, fan lift...)
-                    return [back | SPECIAL] * 2 + [0] * 26
-                return self._tap(SPECIAL, 2, 30)
+                # sorteia entre os especiais de distância (1, 2 e os extras que não são de perto)
+                opts = [1, 2] + [3 + i for i, (k, _) in enumerate(me.char.extra) if k not in MELEE_SPECIALS]
+                return self._special(rng.choice(opts), fwd, back)
             if jumper > 0.4 and r < 0.5:   # quem pula muito: espera na meia distância
                 return [0] * rng.randint(10, 20)
             if r < 0.65:
@@ -294,6 +299,9 @@ class CPU:
         # perto: contra quem defende muito, ataca baixo; contra quem ataca muito, defende e pune
         if rusher > 0.4 and rng.random() < 0.35 * rusher:
             return [BLOCK] * rng.randint(12, 20)
+        close = [3 + i for i, (k, _) in enumerate(me.char.extra) if k in MELEE_SPECIALS]
+        if close and canSpecial and rng.random() < cfg['special']:   # golpe especial de perto
+            return self._special(rng.choice(close), fwd, back)
         lowBias = 0.35 * blocker
         choice = rng.random()
         if choice < lowBias:

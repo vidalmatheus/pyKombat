@@ -9,6 +9,7 @@ import pygame
 import characters
 
 SPRITE_DIR = 'res/sprites/'
+FOOT = 20   # linhas de cada frame de lutador abaixo do chão (tools/mk2_sprites.SINK)
 CELL_W = 200
 CELL_H = 164
 
@@ -19,17 +20,17 @@ _MK2 = {'jump': 3, 'spin': 8, 'crouch': 3, 'Apunch': 3, 'Bpunch': 11, 'Cpunch': 
         'Bhit': 3, 'Chit': 6, 'Ehit': 3, 'Fhit': 14, 'Ghit': 11, 'Ablock': 3, 'Bblock': 3,
         'fatalityhit': 10}
 FRAMES = {
-    'Sub-Zero': dict(_MK2, dance=6, walk=9, dizzy=5, win=3, Special=6, Fkick=2, fatality=19),
+    'Sub-Zero': dict(_MK2, dance=6, walk=9, dizzy=5, win=3, Special=6, Fkick=2, fatality=19, Special3=6),
     'Scorpion': dict(_MK2, dance=6, walk=9, dizzy=5, win=4, Special=6, fatality=14),
-    'LiuKang': dict(_MK2, dance=6, walk=9, dizzy=6, win=4, Special=6, Fkick=2, fatality=12),
-    'Kitana': dict(_MK2, dance=5, walk=8, dizzy=5, win=4, Special=6, Special2=6, fatality=8),
+    'LiuKang': dict(_MK2, dance=6, walk=9, dizzy=6, win=4, Special=6, Fkick=2, fatality=12, Special3=6, Fkick2=6),
+    'Kitana': dict(_MK2, dance=5, walk=8, dizzy=5, win=4, Special=6, Special2=6, fatality=8, Swipe=6, Fkick=3),
     'Raiden': dict(_MK2, dance=8, walk=8, dizzy=7, win=5, Special=6, Fkick=2, fatality=3),
-    'KungLao': dict(_MK2, dance=6, walk=9, dizzy=6, win=6, Special=6, fatality=10),
-    'JohnnyCage': dict(_MK2, dance=5, walk=8, dizzy=6, win=5, Special=6, Fkick=2, fatality=7),
-    'Baraka': dict(_MK2, dance=6, walk=9, dizzy=5, win=4, Special=6, Fkick=4, fatality=11),
-    'Mileena': dict(_MK2, dance=10, walk=8, dizzy=5, win=6, Special=6, Fkick=8, fatality=14),
+    'KungLao': dict(_MK2, dance=6, walk=9, dizzy=6, win=6, Special=6, fatality=10, Fkick=6),
+    'JohnnyCage': dict(_MK2, dance=5, walk=8, dizzy=6, win=5, Special=6, Fkick=2, fatality=7, Upper2=4, Split=6),
+    'Baraka': dict(_MK2, dance=6, walk=9, dizzy=5, win=4, Special=6, Fkick=4, fatality=11, Swipe=6),
+    'Mileena': dict(_MK2, dance=10, walk=8, dizzy=5, win=6, Special=6, Fkick=8, fatality=14, Telekick=5),
     'ShangTsung': dict(_MK2, dance=5, walk=9, dizzy=5, win=4, Special=6, Special2=6, fatality=5),
-    'Jax': dict(_MK2, dance=5, walk=9, dizzy=5, win=6, Special=6, Special2=6, fatality=10),
+    'Jax': dict(_MK2, dance=5, walk=9, dizzy=5, win=6, Special=6, Special2=6, fatality=10, Grab=6),
 }
 
 # matizes da roupa de cada corpo-base (graus mín., máx., saturação mín., brilho mín.)
@@ -92,11 +93,13 @@ def recolorPalette(palette, char, alt):
 class Sheet:
     """Uma tira de animação: frames lado a lado, virados p/ direita."""
 
-    def __init__(self, surf, frames, anchorX):
+    def __init__(self, surf, frames, anchorX, foot=0):
         self.n = frames
         self.surf = surf
         self.w = surf.get_width() // frames
         self.h = surf.get_height()
+        self.foot = foot                 # linhas abaixo da linha do chão
+        self.gh = self.h - foot          # do topo do frame até o chão
         self.anchorX = anchorX
         self._flipped = None
         self._frames = {}
@@ -169,7 +172,7 @@ def sheet(char, name, alt=False):
         if raw.get_colorkey() is None:
             raw.set_colorkey(0)  # índice 0 = transparente (tools/build_sprites.py)
     surf = raw.convert_alpha()
-    s = Sheet(surf, frames, surf.get_width() // frames // 2)   # âncora: centro do frame
+    s = Sheet(surf, frames, surf.get_width() // frames // 2, FOOT)   # âncora: centro do frame
     _sheets[key] = s
     return s
 

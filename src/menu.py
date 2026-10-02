@@ -14,6 +14,7 @@ import fight
 import fighter
 import inputs
 import net
+import prefs
 import ui
 from inputs import Player, KEYMAP_P1, KEYMAP_P2
 
@@ -28,7 +29,10 @@ class MenuFacade:
 
     async def run(self, game):
         hub = inputs.Hub()
-        ctx = {'mode': 'cpu', 'cpuLevel': 'NORMAL', 'chars': [0, 1], 'stage': 9, 'net': None,
+        level = prefs.get('cpuLevel', 'NORMAL')   # última dificuldade escolhida
+        if level not in ai.LEVEL_NAMES:
+            level = 'NORMAL'
+        ctx = {'mode': 'cpu', 'cpuLevel': level, 'chars': [0, 1], 'stage': 9, 'net': None,
                'autoJoin': net.roomFromUrl()}
         state = self.screen
         if ctx['autoJoin']:
@@ -162,6 +166,7 @@ class ModeMenu(Screen):
                 elif action in ('left', 'right') and sel == 0:
                     level = (level + (1 if action == 'right' else -1)) % 3
                     ctx['cpuLevel'] = ai.LEVEL_NAMES[level]
+                    prefs.put('cpuLevel', ctx['cpuLevel'])
                     assets.playSound('selection')
                 elif action == 'back':
                     assets.playSound('back')
@@ -228,7 +233,8 @@ class ControlsScreen(Screen):
                     ui.text(s, cell, 17, (x, y), color)
             y = 380
             for line in ('SPECIAL 1: DOWN, FORWARD + LOW PUNCH  -  SPECIAL 2: DOWN, BACK + LOW KICK',
-                         '(OR SPECIAL BUTTON  /  BACK + SPECIAL BUTTON)',
+                         'SPECIAL 3: BACK, FORWARD + HIGH PUNCH  -  SPECIAL 4: FORWARD, BACK + HIGH KICK',
+                         '(OR SPECIAL BUTTON ALONE / WITH BACK / DOWN / FORWARD)',
                          'UPPERCUT: DOWN + HIGH PUNCH    SWEEP: DOWN + HIGH KICK',
                          'FINISH HIM: PRESS FATALITY  (OR DOWN, FORWARD + HIGH PUNCH)'):
                 ui.text(s, line, 14, (400, y), (220, 220, 220))
@@ -399,7 +405,7 @@ class CharacterSelect(Screen):
                 img = sh.frame(seq[(tick // 6) % len(seq)], facing)
                 ax = sh.anchor(facing)
             cx = 105 if p == 0 else 695
-            s.blit(img, (cx - ax, 470 - sh.h))
+            s.blit(img, (cx - ax, 470 - sh.gh))
             col = (230, 60, 60) if p == 0 else (90, 140, 255)
             ui.text(s, labels[p], 18, (cx, 268), col, outline=True)
             ui.text(s, c.name, 24, (cx, 290), c.color, outline=True)
@@ -409,11 +415,11 @@ class CharacterSelect(Screen):
         c = ROSTER[cursor[me if mode in ('host', 'guest') else (1 if pickingCpu else 0)]]
         ui.panel(s, pygame.Rect(232, 262, 336, 150), 150)
         ui.text(s, c.name, 24, (400, 270), c.color)
-        ui.text(s, 'SPECIAL: ' + c.specialName, 15, (400, 305))
-        ui.text(s, '(DOWN, FWD + LP)', 12, (400, 324), ui.GRAY)
-        ui.text(s, 'SPECIAL 2: ' + c.special2Name, 15, (400, 344))
-        ui.text(s, '(DOWN, BACK + LK)', 12, (400, 363), ui.GRAY)
-        ui.text(s, 'FATALITY: ' + c.fatalityName, 15, (400, 384), (255, 120, 120))
+        moves = [(c.specialName, 'D,F + LP'), (c.special2Name, 'D,B + LK')] + \
+            [(n, k) for (_, n), k in zip(c.extra, ('B,F + HP', 'F,B + HK'))]
+        for i, (name, keys) in enumerate(moves):   # especiais e o comando de cada um
+            ui.text(s, '%s  %s' % (name, keys), 13, (400, 300 + i * 19), ui.WHITE if i < 2 else (255, 220, 140))
+        ui.text(s, 'FATALITY: ' + c.fatalityName, 14, (400, 386), (255, 120, 120))
         if mode == 'versus':
             ui.text(s, 'P1: WASD + J      P2: ARROWS + ENTER', 13, (400, 425), ui.GRAY)
         elif mode == 'cpu':
@@ -440,7 +446,7 @@ class StageSelect(Screen):
                 return None
             for group, action in self.hub.menu:
                 if action in ('ok', 'start'):
-                    assets.playSound('Fight')
+                    assets.playSound('start')   # o "Fight!" é falado na abertura do round
                     ctx['stage'] = stage if stage != 9 else random.randint(1, 8)
                     ctx['seed'] = random.randrange(1 << 30)
                     return 'fight'
