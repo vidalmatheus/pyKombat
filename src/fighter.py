@@ -444,7 +444,7 @@ class Fighter:
             self.setState('idle', 'idle')
 
     def startAttack(self, mv):
-        if mv == 'hp':  # socos fortes seguidos alternam os braços (como no MK1)
+        if mv == 'hp':  # socos fortes seguidos alternam os braços
             self.hpAlt = not self.hpAlt
             if self.hpAlt:
                 mv = 'hp2'

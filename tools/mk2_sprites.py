@@ -8,10 +8,10 @@ sprites soltos sobre um fundo liso; aqui:
      é estável: por linha da folha, da esquerda para a direita, então os
      índices abaixo (FRAMES_MK2) apontam sempre para o mesmo desenho;
   2. as tiras são montadas com os índices escolhidos para cada animação,
-     ampliadas (os sprites do SNES são menores que os do MK1 arcade) e
-     alinhadas pelos pés na última linha e pelo quadril no centro do frame;
-  3. cada tira é gravada como PNG paletizado (índice 0 transparente), igual às
-     de tools/build_sprites.py — assim a troca de paleta funciona igual.
+     ampliadas com Scale2x e na proporção 8:7 do pixel do SNES, e alinhadas
+     pelos pés na última linha e pelo quadril no centro do frame;
+  3. cada tira é gravada como PNG paletizado (índice 0 transparente) — a
+     segunda cor de um lutador é só uma troca dessa paleta.
 
 Não usa Pillow (só zlib, via tools/pngio.py): as folhas do SNES têm poucas
 cores, então não é preciso quantizar.
