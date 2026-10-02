@@ -219,6 +219,31 @@ def meter():
     shot(Renderer(SCREEN), m.snapshot(), 'meter')
 
 
+def groin():
+    """Split punch do Johnny Cage num homem: ele fica segurando o saco (mulher: golpe comum)."""
+    by = {c.name: c for c in characters.ROSTER}
+    johnny = by['JOHNNY CAGE']
+    for opp in characters.ROSTER:
+        m = Match(johnny, opp, 1, seed=3)
+        me, o = m.fighters
+        while m.phase != 'fight':
+            m.step([0, 0])
+        me.x, o.x = 300, 370
+        me.facing, o.facing = 1, -1
+        held = 0
+        for t in range(40):
+            m.step([SPECIAL | RIGHT if t < 3 else 0, 0])
+            if o.animName == 'hit_groin':
+                held += 1
+                if held == 25:
+                    shot(Renderer(SCREEN), m.snapshot(), 'groin_%s' % opp.base.lower())
+        tag = 'johnny x %s' % opp.name.lower()
+        if opp.female:
+            check(held == 0, '%s: split punch numa mulher é golpe comum' % tag)
+        else:
+            check(held >= 25, '%s: split punch no saco -> segura o saco (%d ticks)' % (tag, held))
+
+
 class _Game:
     def getDisplay(self):
         return SCREEN
@@ -281,6 +306,7 @@ def main():
     taps()
     sweeps()
     sounds()
+    groin()
     meter()
     for c in characters.ROSTER:
         faces_right(c)

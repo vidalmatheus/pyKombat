@@ -48,6 +48,7 @@ PROJ_SOUND = {'ice': 'IceSound', 'spear': 'GetOverHere', 'fireball': 'Fire', 'fa
               'spark': 'IceSound2', 'sai': 'Whoosh', 'skull': 'Fire', 'wave': 'IceSound2',
               'firerise': 'Fire', 'quake': 'Rumble', 'lowfireball': 'Fire',
               'groundice': 'IceSound'}
+GROIN_STUN = 60     # ticks segurando o saco depois do split punch do Johnny Cage
 PROJ_HEIGHT = 98    # altura padrão (o projétil sai da altura das mãos; ver handPoint)
 PROJ_FIXED_HEIGHT = {'fanlift': 62, 'firerise': 60, 'quake': 14, 'wave': 64, 'lowfireball': 46,
                      'groundice': 12}   # altura fixa, não da mão
@@ -623,7 +624,10 @@ class Match:
                     self.hitstop = 8
                     self._over(fatality=False)
                 continue
-            self._applyHit(a, d, mv['dmg'], mv['level'], mv['react'], mv['stun'], mv['push'], point,
+            react, stun = mv['react'], mv['stun']
+            if a.move == 'splitpunch' and not d.char.female and not d.crouching():
+                react, stun = 'groin', GROIN_STUN   # no saco: fica um tempo se contorcendo
+            self._applyHit(a, d, mv['dmg'], mv['level'], react, stun, mv['push'], point,
                            special=mv.get('special', False))
             if a.move == 'upper' and self.rng.random() < 0.12:
                 self.event('toasty', 0)
@@ -663,7 +667,7 @@ class Match:
         d.invisible = False
         self.event('blood', point[0], point[1], dirX, int(6 + dmg * 2.2), self.tick)
         self.sound('Hit0')
-        if self.rng.random() < 0.45:   # gemido de dor (voz feminina para Kitana/Mileena)
+        if react == 'groin' or self.rng.random() < 0.45:   # gemido de dor (voz feminina para Kitana/Mileena)
             self.sound('HitF%d' % self.rng.randint(1, 4) if d.char.female else 'Hit%d' % self.rng.randint(1, 12))
         self.hitstop = 4 + int(dmg // 3)
         if dmg >= 9:
@@ -680,7 +684,8 @@ class Match:
             elif level == 'low' and react in ('hi', 'mid'):
                 name = 'hit_low'
             else:
-                name = {'hi': 'hit_hi', 'mid': 'hit_mid', 'heavy': 'hit_heavy'}.get(react, 'hit_mid')
+                name = {'hi': 'hit_hi', 'mid': 'hit_mid', 'heavy': 'hit_heavy',
+                        'groin': 'hit_groin'}.get(react, 'hit_mid')
             d.setState('hitstun', name)
             d.stun = stun
             d.push = dirX * push

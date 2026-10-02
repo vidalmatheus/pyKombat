@@ -55,6 +55,7 @@ COMMON_ANIMS = {
     'hit_heavy': A('Chit', range(6), [3, 3, 4, 4, 4, 4]),
     'hit_crouch': A('Ehit', [0, 1, 2, 1, 0], [2, 3, 5, 3, 2]),
     'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),   # chute baixo em quem está em pé
+    'hit_groin': A('Groin', [0, 1], [4, HOLD]),   # split punch do Johnny Cage num homem: mãos no saco
     'fall': A('Fhit', range(7), [3, 4, 4, 4, 4, 4, HOLD]),
     'getup': A('Fhit', range(7, 14), 4),
     'sweepfall': A('Ghit', range(6), [3, 4, 4, 4, 4, HOLD]),
