@@ -48,7 +48,7 @@ COMMON_ANIMS = {
     'hit_mid': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
     'hit_heavy': A('Chit', range(6), [3, 3, 4, 4, 4, 4]),
     'hit_crouch': A('Ehit', [0, 1, 2, 1, 0], [2, 3, 5, 3, 2]),
-    'hit_low': A('Dhit', [0, 1, 1, 0], [2, 4, 5, 3]),   # chute baixo em quem está em pé
+    'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),   # chute baixo em quem está em pé
     'fall': A('Fhit', range(7), [3, 4, 4, 4, 4, 4, HOLD]),
     'getup': A('Fhit', range(7, 14), 4),
     'sweepfall': A('Ghit', range(6), [3, 4, 4, 4, 4, HOLD]),
@@ -61,30 +61,36 @@ COMMON_ANIMS = {
     'victim_split': A('fatalityhit', range(10), [6] * 9 + [HOLD]),
 }
 BASE_ANIMS = {
+    # --- tiras de tools/mk2_sprites.py (MK2 SNES); o projétil sai no índice 3
     'Sub-Zero': {
-        # rajada com as duas mãos: o projétil sai no índice 3
-        'special': A('Special', [0, 1, 2, 3, 4, 5, 6, 7, 2, 1, 0], [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]),
-        'pulled': A('hitSpecial', [0, 1, 2, 1], 5, True),
-        'win': A('win', [0, 1, 2], [8, 8, HOLD]),
-        'cast': A('Special', [0, 1, 2, 3, 4], [4, 4, 4, 4, HOLD]),
-        'fatal': A('fatality', range(17), [6] * 16 + [HOLD]),
+        'idle': A('dance', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 6, True),
+        'dizzy': A('dizzy', [0, 1, 2, 3, 4, 3, 2, 1], 7, True),
+        'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
+        'slide': A('Fkick', [0, 1], [3, HOLD]),
+        'pulled': A('Chit', [0, 1, 2, 1], 5, True),
+        'win': A('win', range(3), [8, 8, HOLD]),
+        'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
+        # bola de gelo (0-7), arremesso no 10 (a vítima congela), uppercut no 16 (estilhaça):
+        # mesmos tempos de fatalfx.FREEZE_AT / SHATTER_AT
+        'fatal': A('fatality', range(19), [6] * 8 + [6, 6, 10, 10, 10, 8, 6, 6, 8, 8, HOLD]),
     },
     'Scorpion': {
-        # arremesso: projétil no índice 3; segura o frame 3 enquanto o arpão voa
-        'special': A('Special', [0, 1, 2, 3, 4, 5, 6], [3, 3, 3, 6, 3, 3, 3]),
+        'idle': A('dance', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 6, True),
+        'dizzy': A('dizzy', [0, 1, 2, 3, 4, 3, 2, 1], 7, True),
+        # arremesso: projétil no índice 3; segura o braço esticado enquanto o arpão voa
+        'special': A('Special', range(6), [3, 4, 4, 6, 4, 4]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'win': A('fatality', [16, 17, 18, 19], [7, 7, 7, HOLD], ax=100),
-        'cast': A('Special', [0, 1, 2, 3], [4, 4, 4, HOLD]),
-        'fatal': A('fatality', range(20), [6] * 19 + [HOLD]),
+        'win': A('win', range(4), [7, 8, 8, HOLD]),
+        'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
+        # tira a máscara e cospe fogo a partir do índice 8 (fatalfx.FIRE_AT)
+        'fatal': A('fatality', range(14), [6, 8, 8, 8, 10, 10, 10, 6] + [12] * 5 + [HOLD]),
     },
-    # --- MK2 (SNES): tiras de tools/mk2_sprites.py; o projétil sai no índice 3
     'LiuKang': {
         'idle': A('dance', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 6, True),
         'dizzy': A('dizzy', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 7, True),
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'dash': A('Fkick', [0, 1], [5, HOLD]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', [0, 1, 2, 3], [8, 8, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         # vira dragão (0-11), morde no 11 e volta a ser o Liu Kang
@@ -99,7 +105,6 @@ BASE_ANIMS = {
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'special2': A('Special2', range(6), [3, 4, 4, 10, 5, 4]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', [0, 1, 2, 3], [8, 8, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         # gira o leque e corta no índice 6
@@ -113,7 +118,6 @@ BASE_ANIMS = {
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'dash': A('Fkick', [0, 1], [5, HOLD]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', [0, 1, 2, 3, 4], [7, 7, 7, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         'fatal': A('fatality', [0, 1, 2], [8, 8, HOLD]),   # braços para o céu: o raio cai (fatalfx)
@@ -123,7 +127,6 @@ BASE_ANIMS = {
         'dizzy': A('dizzy', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 7, True),
         'special': A('Special', range(6), [3, 4, 5, 8, 5, 4]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', range(6), [7, 7, 7, 7, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         # tira o chapéu e arremessa; segura o braço esticado enquanto o chapéu corta (fatalfx)
@@ -137,7 +140,6 @@ BASE_ANIMS = {
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'dash': A('Fkick', [0, 1], [5, HOLD]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', range(5), [8, 8, 8, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         # agacha e solta o uppercut: a cabeça voa no índice 4
@@ -149,7 +151,6 @@ BASE_ANIMS = {
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'dash': A('Fkick', [0, 1, 2, 3, 2, 1, 2, 3, 2, 1], 3, True),   # lâminas girando
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', range(4), [8, 8, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         'fatal': A('fatality', range(11), [10, 8, 5, 4, 30, 4, 4, 4, 5, 8, HOLD]),
@@ -162,7 +163,6 @@ BASE_ANIMS = {
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'dash': A('Fkick', [0] + [1, 2, 3, 4, 5, 6, 7] * 4, 2, True),   # rola pelo chão
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', range(6), [8, 8, 8, 8, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         'fatal': A('fatality', range(14), [8, 5, 5, 5, 5, 5, 5, 5, 6, 10, 8, 8, 20, HOLD]),
@@ -173,7 +173,6 @@ BASE_ANIMS = {
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'special2': A('Special2', range(6), [3, 5, 5, 14, 6, 4]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', range(4), [7, 7, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         # guarda, estende a mão (segura enquanto a alma sai), puxa, ergue os braços
@@ -185,7 +184,6 @@ BASE_ANIMS = {
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'special2': A('Special2', range(6), [4, 4, 4, 8, 8, 5]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', range(6), [7, 7, 7, 7, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         # agarra (1), puxa os braços (2-5): o sangue espirra no índice 5
@@ -194,7 +192,7 @@ BASE_ANIMS = {
 }
 SPECIAL_SPAWN = 3                  # índice da sequência em que o projétil sai
 # quando a vítima se parte (fatality 'anim'): índice da sequência do vencedor
-FATAL_SPLIT_FRAME = {'Sub-Zero': 13, 'Scorpion': 13, 'LiuKang': 11, 'Kitana': 6, 'JohnnyCage': 4,
+FATAL_SPLIT_FRAME = {'LiuKang': 11, 'Kitana': 6, 'JohnnyCage': 4,
                      'Baraka': 4, 'Mileena': 2, 'Jax': 5}
 # especiais em que o lutador avança reto para a frente -> altura do voo
 # (o sprite é desenhado acima do chão; 0 = vai pelo chão)
@@ -446,7 +444,7 @@ class Fighter:
             self.setState('idle', 'idle')
 
     def startAttack(self, mv):
-        if mv == 'hp':  # socos fortes seguidos alternam os braços (como no MK1)
+        if mv == 'hp':  # socos fortes seguidos alternam os braços
             self.hpAlt = not self.hpAlt
             if self.hpAlt:
                 mv = 'hp2'

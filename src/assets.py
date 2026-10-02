@@ -12,20 +12,15 @@ SPRITE_DIR = 'res/sprites/'
 CELL_W = 200
 CELL_H = 164
 
-# nº de frames de cada sheet (mesma tabela de tools/build_sprites.py e
-# tools/mk2_sprites.py)
-_MK1 = {'dance': 7, 'walk': 9, 'jump': 3, 'crouch': 3, 'Apunch': 3, 'Bpunch': 11,
-        'Cpunch': 3, 'Dpunch': 5, 'Akick': 7, 'Bkick': 9, 'Ckick': 7, 'Dkick': 6,
-        'Ekick': 3, 'Epunch': 3, 'Ahit': 3, 'Bhit': 3, 'Chit': 6, 'Dhit': 2, 'Ehit': 3,
-        'Fhit': 14, 'Ghit': 11, 'Ablock': 3, 'Bblock': 3, 'dizzy': 7, 'fatalityhit': 10}
-# lutadores do MK2 (SNES): mesmas tiras comuns, com a quantidade de frames de cada um
+# nº de frames de cada sheet (mesma tabela de tools/mk2_sprites.py)
+# tiras comuns a todos os lutadores (MK2 SNES); cada um acrescenta as próprias
 _MK2 = {'jump': 3, 'spin': 8, 'crouch': 3, 'Apunch': 3, 'Bpunch': 11, 'Cpunch': 3, 'Dpunch': 5,
         'Akick': 7, 'Bkick': 9, 'Ckick': 7, 'Dkick': 6, 'Ekick': 3, 'Epunch': 3, 'Ahit': 3,
         'Bhit': 3, 'Chit': 6, 'Ehit': 3, 'Fhit': 14, 'Ghit': 11, 'Ablock': 3, 'Bblock': 3,
         'fatalityhit': 10}
 FRAMES = {
-    'Sub-Zero': dict(_MK1, hitSpecial=3, Special=12, fatality=17, spin=8, win=3),
-    'Scorpion': dict(_MK1, Special=7, fatality=20),
+    'Sub-Zero': dict(_MK2, dance=6, walk=9, dizzy=5, win=3, Special=6, Fkick=2, fatality=19),
+    'Scorpion': dict(_MK2, dance=6, walk=9, dizzy=5, win=4, Special=6, fatality=14),
     'LiuKang': dict(_MK2, dance=6, walk=9, dizzy=6, win=4, Special=6, Fkick=2, fatality=12),
     'Kitana': dict(_MK2, dance=5, walk=8, dizzy=5, win=4, Special=6, Special2=6, fatality=8),
     'Raiden': dict(_MK2, dance=8, walk=8, dizzy=7, win=5, Special=6, Fkick=2, fatality=3),
@@ -36,13 +31,10 @@ FRAMES = {
     'ShangTsung': dict(_MK2, dance=5, walk=9, dizzy=5, win=4, Special=6, Special2=6, fatality=5),
     'Jax': dict(_MK2, dance=5, walk=9, dizzy=5, win=6, Special=6, Special2=6, fatality=10),
 }
-# ponto de ancoragem (centro do corpo) dentro do frame, para sheets onde o
-# corpo não está no meio do frame
-ANCHOR_X = {('Sub-Zero', 'fatality'): 64, ('Scorpion', 'fatality'): 64}
 
 # matizes da roupa de cada corpo-base (graus mín., máx., saturação mín., brilho mín.)
 # — o resto (pele, preto, sangue) fica
-COSTUME_HUE = {'Sub-Zero': (150, 250, 0.12, 0.0), 'Scorpion': (29, 66, 0.08, 0.30),
+COSTUME_HUE = {'Sub-Zero': (180, 240, 0.25, 0.0), 'Scorpion': (38, 66, 0.35, 0.2),
                'LiuKang': (350, 8, 0.55, 0.25), 'Kitana': (205, 250, 0.35, 0.0),
                'Raiden': (180, 205, 0.35, 0.0), 'KungLao': (180, 210, 0.30, 0.0),
                'JohnnyCage': (345, 10, 0.45, 0.15), 'Baraka': (345, 12, 0.45, 0.2),
@@ -169,10 +161,6 @@ def sheet(char, name, alt=False):
         return s
     frames = FRAMES[char.base].get(name)
     if frames is None:
-        if name == 'spin':
-            s = _synthSpin(char, alt)
-            _sheets[key] = s
-            return s
         return None
     raw = pygame.image.load(SPRITE_DIR + char.base + '/' + name + '.png')
     pal = raw.get_palette() if raw.get_bitsize() == 8 else None
@@ -181,21 +169,9 @@ def sheet(char, name, alt=False):
         if raw.get_colorkey() is None:
             raw.set_colorkey(0)  # índice 0 = transparente (tools/build_sprites.py)
     surf = raw.convert_alpha()
-    s = Sheet(surf, frames, ANCHOR_X.get((char.base, name), surf.get_width() // frames // 2))
+    s = Sheet(surf, frames, surf.get_width() // frames // 2)   # âncora: centro do frame
     _sheets[key] = s
     return s
-
-
-def _synthSpin(char, alt):
-    # cambalhota p/ corpos sem sheet de 'spin': gira o frame encolhido do pulo
-    tuck = sheet(char, 'jump', alt).frame(2, 1)
-    strip = pygame.Surface((CELL_W * 8, CELL_H), pygame.SRCALPHA)
-    body = tuck.subsurface(tuck.get_bounding_rect()).copy()
-    for i in range(8):
-        r = pygame.transform.rotate(body, -45 * i)
-        strip.blit(r, (i * CELL_W + (CELL_W - r.get_width()) // 2,
-                       CELL_H - 40 - r.get_height() // 2 - 30))
-    return Sheet(strip, 8, CELL_W // 2)
 
 
 def fxSheet(name, frames, anchorX=None):

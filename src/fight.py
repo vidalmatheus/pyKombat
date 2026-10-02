@@ -45,7 +45,6 @@ class Fight:
         else:  # convidado só desenha; pré-carrega os sprites para não engasgar
             for c, alt in ((c1, False), (c2, c1 is c2)):
                 assets.preload(c, alt)
-                assets.sheet(c, 'spin', alt)
         self.players = setup['players']   # inputs.Player por lado (None = CPU/remoto)
         self.cpu = None
         if self.mode == 'cpu':

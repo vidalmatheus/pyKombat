@@ -1,15 +1,15 @@
 # Elenco de lutadores.
 #
-# Cada lutador tem os próprios sprites: Sub-Zero e Scorpion usam as
-# spritesheets originais do jogo (MK1); os demais vêm das folhas do Mortal
-# Kombat II de SNES (recortadas por tools/mk2_sprites.py).
+# Cada lutador tem os próprios sprites, todos das folhas do Mortal Kombat II de
+# SNES (recortadas por tools/mk2_sprites.py), e os especiais e fatalities do MK2.
 #
 #   base       -> qual conjunto de sprites usar (res/sprites/<base>/)
 #   special    -> especial 1 (projétil)  : ice | spear | fireball | fan | lightning | hat | greenball |
 #                                          sai | spark | wave | skull
 #   special2   -> especial 2             : slide | teleport | flykick | torpedo | shadowkick |
 #                                          bladefury | roll | fanlift | quake | firerise
-#   fatality   -> anim (animação da própria sheet) | electro | hatsplit | devour | soulsteal
+#   fatality   -> anim (animação da própria sheet) | electro | hatsplit | soulsteal | deepfreeze |
+#                 firebreath
 #   color      -> cor de destaque na interface
 #   voice      -> som de vitória (res/Sound/<voice>.ogg)
 
@@ -33,12 +33,12 @@ class Character:
 
 
 ROSTER = [
-    Character('SUB-ZERO', 'Sub-Zero', 'ice', 'slide', 'anim', (90, 180, 255),
+    Character('SUB-ZERO', 'Sub-Zero', 'ice', 'slide', 'deepfreeze', (90, 180, 255),
               voice='SubZeroWins', specialName='ICE BLAST', special2Name='SLIDE',
-              fatalityName='SPINE SPLITTER'),
-    Character('SCORPION', 'Scorpion', 'spear', 'teleport', 'anim', (255, 200, 40),
+              fatalityName='DEEP FREEZE'),
+    Character('SCORPION', 'Scorpion', 'spear', 'teleport', 'firebreath', (255, 200, 40),
               voice='ScorpionWins', specialName='SPEAR', special2Name='TELEPORT PUNCH',
-              fatalityName='SPEAR SPLITTER'),
+              fatalityName='TOASTY'),
     Character('LIU KANG', 'LiuKang', 'fireball', 'flykick', 'anim', (235, 70, 40),
               specialName='FIREBALL', special2Name='FLYING KICK', fatalityName='DRAGON BITE'),
     Character('KITANA', 'Kitana', 'fan', 'fanlift', 'anim', (80, 130, 255),
