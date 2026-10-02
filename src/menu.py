@@ -231,14 +231,15 @@ class ControlsScreen(Screen):
                     x = (110, 300, 480, 660)[c]
                     color = (255, 200, 60) if r == 0 or c == 0 else ui.WHITE
                     ui.text(s, cell, 17, (x, y), color)
-            y = 380
+            y = 362
             for line in ('SPECIAL 1: DOWN, FORWARD + LOW PUNCH  -  SPECIAL 2: DOWN, BACK + LOW KICK',
                          'SPECIAL 3: BACK, FORWARD + HIGH PUNCH  -  SPECIAL 4: FORWARD, BACK + HIGH KICK',
                          '(OR SPECIAL BUTTON ALONE / WITH BACK / DOWN / FORWARD)',
                          'UPPERCUT: DOWN + HIGH PUNCH    SWEEP: DOWN + HIGH KICK',
+                         'SPECIALS SPEND 1 OF 3 CHARGES: THEY REFILL OVER TIME AND WHEN YOU GET HIT',
                          'FINISH HIM: PRESS FATALITY  (OR DOWN, FORWARD + HIGH PUNCH)'):
                 ui.text(s, line, 14, (400, y), (220, 220, 220))
-                y += 21
+                y += 18
             ui.backHint(s)
             await self.frame()
 

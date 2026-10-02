@@ -12,6 +12,11 @@ WALK_F = 3.4
 WALK_B = 2.8
 BODY_HALF = 26          # meia largura da "caixa de empurrão"
 TELE_GAP = 2 * BODY_HALF + 2   # distância do oponente ao reaparecer do teleporte
+# escassez de especiais: até 3 cargas; cada especial gasta 1. Recarregam com o
+# tempo e com o dano tomado (golpe forte recarrega mais que golpe fraco)
+SPECIAL_MAX = 3
+SPECIAL_REGEN = 1 / (8 * 60)       # cargas por tick (1 a cada 8 s)
+SPECIAL_PER_DMG = 1 / 25           # cargas por ponto de vida perdido (25 de dano = 1 carga)
 STAGE_MIN = 40
 STAGE_MAX = 760
 HOLD = 9999             # duração "infinita" (segura o último frame)
@@ -278,6 +283,8 @@ class Fighter:
         self.push = 0.0          # empurrão (recuo de golpe), decai
         self.facing = facing
         self.life = 100.0
+        self.lastLife = 100.0
+        self.meter = float(SPECIAL_MAX)   # cargas de especial (cheio a cada round)
         self.state = 'idle'
         self.t = 0
         self.move = None
@@ -443,7 +450,13 @@ class Fighter:
                 sp = 3
             elif extra >= 2 and pressed & HK and self.motion(tick, SPECIAL4_MOTION, 16):
                 sp = 4
+            # sem carga não sai (no "finish him" é livre)
+            if sp is not None and match.phase == 'fight' and self.meter < 1:
+                sp = None
+                match.event('nometer', self.idx)
             if sp is not None:
+                if match.phase == 'fight':
+                    self.meter -= 1
                 self.startSpecial(sp, match)
                 return
         # 2) pulo

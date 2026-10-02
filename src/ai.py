@@ -172,7 +172,7 @@ class CPU:
             return self._out(c)
         # depois do uppercut que levantou o oponente: projétil nele no ar (HARD)
         if (me.state in NEUTRAL and opp.state == 'fall' and opp.vy > 0 and me.projectile is None
-                and 120 < dist < 330 and rng.random() < cfg['combo'] * 0.08):
+                and me.meter >= 1 and 120 < dist < 330 and rng.random() < cfg['combo'] * 0.08):
             self.plan = self._tap(SPECIAL, 2, 20)
             return self._out(self.plan.pop(0))
 
@@ -194,7 +194,7 @@ class CPU:
                 self.willBlock = False
                 if threat == 'proj' and dist > 200:
                     r = rng.random()
-                    if me.projectile is None and r < 0.4 * cfg['punish'] + 0.1:
+                    if me.projectile is None and me.meter >= 1 and r < 0.4 * cfg['punish'] + 0.1:
                         # projétil contra projétil: os dois se anulam
                         self.plan = self._tap(SPECIAL, 2, 20)
                         return self._out(self.plan.pop(0))
@@ -255,7 +255,7 @@ class CPU:
         # projétil jogado de longe: o oponente está parado lançando -> avança nele
         if oState == 'special' and dist > 170:
             kind = me.char.special2
-            if kind in DASH_KINDS or kind == 'teleport':
+            if (kind in DASH_KINDS or kind == 'teleport') and me.meter >= 1:
                 return [back | SPECIAL] * 2 + [0] * 24
             if dist < 330:
                 return [UP | fwd] * 3 + [fwd] * 12 + [HK] * 2 + [0] * 20
@@ -268,7 +268,7 @@ class CPU:
     def _neutral(self, me, opp, dist, fwd, back):
         cfg = self.cfg
         rng = self.rng
-        canSpecial = me.projectile is None
+        canSpecial = me.projectile is None and me.meter >= 1   # especial gasta carga
         jumper = self._likes('jump')
         blocker = self._likes('block')
         zoner = self._likes('proj')

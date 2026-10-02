@@ -198,10 +198,20 @@ class Match:
             self._projectiles()
             self._melee()
             self._pushboxes()
+        self._meters()
         for f in fs:
             if f.state in NEUTRAL and self.phase in ('intro', 'fight', 'finish'):
                 f.faceTowards(self.other(f))
         self._phasePost(presses)
+
+    def _meters(self):
+        """Recarga dos especiais: com o tempo e proporcional ao dano tomado."""
+        for f in self.fighters:
+            lost = f.lastLife - f.life
+            f.lastLife = f.life
+            if self.phase == 'fight':
+                f.meter = min(float(F.SPECIAL_MAX),
+                              f.meter + F.SPECIAL_REGEN + max(0.0, lost) * F.SPECIAL_PER_DMG)
 
     # ------------------------------------------------------------ fases
     def _phasePre(self, helds, presses):
@@ -727,7 +737,8 @@ class Match:
                 flags |= 8
             ax = f.animDef.get('ax') or 0
             fs.append([self.charIdx[f.idx], 1 if f.alt else 0, sheetName, frame, int(round(f.x)),
-                       int(round(f.y)), f.facing, flags, ax, round(max(0.0, f.life), 1)])
+                       int(round(f.y)), f.facing, flags, ax, round(max(0.0, f.life), 1),
+                       round(f.meter, 2)])
         ps = []
         for p in self.projectiles:
             if p.t <= 0:

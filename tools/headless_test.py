@@ -190,6 +190,35 @@ def extras(char, opponent):
         check(opp.life < life0, '%s: especial %d (%s) acertou (%.0f de dano)' % (tag, which, label, life0 - opp.life))
 
 
+def meter():
+    """Escassez de especiais: 3 cargas; o 4º seguido não sai; recarrega com o tempo e com dano."""
+    by = {c.name: c for c in characters.ROSTER}
+    m = Match(by['LIU KANG'], by['SUB-ZERO'], 1, seed=5)
+    me, opp = m.fighters
+    while m.phase != 'fight':
+        m.step([0, 0])
+    me.x, opp.x = 200, 700
+    shots = 0
+    for n in range(4):
+        for t in range(70):
+            m.step([SPECIAL if t < 2 else 0, 0])
+            opp.x = 700
+            if t == 1 and me.state == 'special':
+                shots += 1
+        m.projectiles = []
+        me.projectile = None
+    check(shots == 3, 'medidor: 3 especiais seguidos saem e o 4º não (%d saíram)' % shots)
+    m0 = me.meter
+    for t in range(60 * 4):
+        m.step([0, 0])
+    check(0.4 < me.meter - m0 < 0.6, 'medidor: recarrega com o tempo (+%.2f em 4 s)' % (me.meter - m0))
+    m0 = me.meter
+    me.life -= 20
+    m.step([0, 0])
+    check(me.meter - m0 > 0.7, 'medidor: dano tomado recarrega (+%.2f com 20 de dano)' % (me.meter - m0))
+    shot(Renderer(SCREEN), m.snapshot(), 'meter')
+
+
 class _Game:
     def getDisplay(self):
         return SCREEN
@@ -221,6 +250,7 @@ def sounds():
 def main():
     os.makedirs(OUT, exist_ok=True)
     sounds()
+    meter()
     for c in characters.ROSTER:
         faces_right(c)
     select_screen()
