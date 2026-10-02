@@ -44,6 +44,7 @@ cp "$STAGE/build/web/index.html" "$STAGE/build/web/pykombat.tar.gz" web/
 BUILD=$(git rev-parse --short HEAD 2>/dev/null || echo dev)-$(date +%s)
 sed -i "s/__BUILD__/$BUILD/g" web/index.html
 cp webjs/net.js webjs/peerjs.min.js web/   # salas online + controles (ver web.tmpl)
+cp webjs/touch.js webjs/manifest.json web/  # controles de toque no celular + abre deitado
 cp res/icon.png web/favicon.png # favicon = logo do jogo (não o padrão do pygbag)
 cp res/Background/MainMenu01.png web/splash.png # arte da tela de carregamento (ver web.tmpl)
 echo "OK: web/ atualizado ($(du -sh web | cut -f1))"

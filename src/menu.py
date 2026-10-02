@@ -133,7 +133,11 @@ class TitleMenu(Screen):
             self.hub.poll()
             if self.hub.quit:
                 return None
-            for group, action in self.hub.menu:
+            actions = [a for _, a in self.hub.menu]
+            if self.hub.taps:   # toque: START (metade de cima) ou OPTIONS (embaixo)
+                sel = 1 if self.hub.taps[0][1] > 392 else 0
+                actions.append('ok')
+            for action in actions:
                 if action in ('up', 'down'):
                     sel = 1 - sel
                     assets.playSound('selection')
@@ -159,7 +163,13 @@ class ModeMenu(Screen):
             self.hub.poll()
             if self.hub.quit:
                 return None
-            for group, action in self.hub.menu:
+            actions = [a for _, a in self.hub.menu]
+            hit = ui.tapItem(self.hub.taps, [150 + i * 52 for i in range(len(self.ITEMS))], 30, 60, 740)
+            if hit is not None:
+                sel = hit
+                x = self.hub.taps[0][0]
+                actions.append('left' if hit == 0 and x < 250 else 'right' if hit == 0 and x > 550 else 'ok')
+            for action in actions:
                 if action in ('up', 'down'):
                     sel = (sel + (1 if action == 'down' else -1)) % len(self.ITEMS)
                     assets.playSound('selection')
@@ -195,7 +205,7 @@ class ModeMenu(Screen):
             pads = [p.name for p in self.hub.pads]
             hint = 'GAMEPADS: ' + (', '.join(pads)[:70] if pads else 'NONE (PAIR ONE VIA BLUETOOTH AND PRESS A BUTTON)')
             ui.text(s, hint.upper(), 13, (400, 438), ui.GRAY)
-            ui.backHint(s, 'ARROWS / D-PAD: MOVE   ENTER / CROSS: SELECT   ESC / CIRCLE: BACK')
+            ui.backHint(s, 'ARROWS / D-PAD: MOVE   ENTER / CROSS: SELECT   ESC / CIRCLE: BACK   (OR TAP)')
             await self.frame()
 
 
@@ -218,7 +228,7 @@ class ControlsScreen(Screen):
             self.hub.poll()
             if self.hub.quit:
                 return None
-            for group, action in self.hub.menu:
+            for group, action in self.hub.menu + [('tap', 'back')] * bool(self.hub.taps):
                 if action in ('back', 'ok', 'start'):
                     assets.playSound('back')
                     return back
@@ -265,9 +275,24 @@ class CharacterSelect(Screen):
                 closeNet(ctx)
                 return None
             tick = int((time.perf_counter() - t0) * 60)
-            for group, action in self.hub.menu:
+            events = list(self.hub.menu)
+            for x, y in self.hub.taps:
+                cell = self.cellAt(x, y)
+                if cell is None:
+                    continue
+                who = me if online else (1 if ready[0] else 0) if mode == 'cpu' else (0 if not ready[0] else 1)
+                if ready[who]:
+                    continue
+                if cell == cursor[who]:
+                    events.append(('tap%d' % who, 'ok'))
+                else:
+                    cursor[who] = cell
+                    assets.playSound('selection')
+            for group, action in events:
                 # quem controla qual cursor
-                if mode == 'versus':
+                if group.startswith('tap'):
+                    who = int(group[3])
+                elif mode == 'versus':
                     who = 0 if group in ('kb1', 'pad0') else 1 if group in ('kb2', 'pad1') else None
                     if who is None and action == 'back':
                         who = 0 if not ready[1] else 1
@@ -348,16 +373,28 @@ class CharacterSelect(Screen):
                     return 'netstage'
                 return 'netstage' if mode == 'host' else 'stage'
 
+    # grade de retratos (mesma geometria de draw)
+    CELL, GAP, GRID_Y = 88, 8, 62
+
+    def cellAt(self, x, y):
+        x0 = 400 - (COLS * self.CELL + (COLS - 1) * self.GAP) // 2
+        col, cx = divmod(x - x0, self.CELL + self.GAP)
+        row, cy = divmod(y - self.GRID_Y, self.CELL + self.GAP)
+        i = row * COLS + col
+        if 0 <= col < COLS and row >= 0 and cx < self.CELL and cy < self.CELL and i < len(ROSTER):
+            return i
+        return None
+
     def draw(self, cursor, ready, tick, mode, me):
         s = self.surf
         background(s, 6, 190)
         pickingCpu = mode == 'cpu' and ready[0] and not ready[1]
         ui.text(s, 'CHOOSE YOUR OPPONENT' if pickingCpu else 'CHOOSE YOUR FIGHTER', 34, (400, 12),
                 (255, 200, 60), outline=True)
-        size = 88
-        gap = 8
+        size = self.CELL
+        gap = self.GAP
         x0 = 400 - (COLS * size + (COLS - 1) * gap) // 2
-        y0 = 62
+        y0 = self.GRID_Y
         for i, c in enumerate(ROSTER):
             x = x0 + (i % COLS) * (size + gap)
             y = y0 + (i // COLS) * (size + gap)
@@ -447,7 +484,17 @@ class StageSelect(Screen):
             self.hub.poll()
             if self.hub.quit:
                 return None
-            for group, action in self.hub.menu:
+            actions = [a for _, a in self.hub.menu]
+            for x, y in self.hub.taps:
+                col = 0 if x < 315 else 1 if x < 531 else 2
+                row = 0 if y < 203 else 1 if y < 341 else 2
+                hit = row * 3 + col + 1
+                if hit == stage:
+                    actions.append('ok')
+                else:
+                    stage = hit
+                    assets.playSound('selection')
+            for action in actions:
                 if action in ('ok', 'start'):
                     assets.playSound('start')   # o "Fight!" é falado na abertura do round
                     ctx['stage'] = stage if stage != 9 else random.randint(1, 8)
@@ -522,6 +569,16 @@ class NetStage(Screen):
             await self.frame()
 
 
+def askText(title, current=''):
+    """Caixa de texto do navegador (abre o teclado do celular). Devolve '' se cancelar."""
+    try:
+        import platform
+        r = platform.window.prompt(title, current)
+        return str(r).strip().upper() if r is not None and str(r) not in ('null', 'undefined') else ''
+    except Exception:
+        return ''
+
+
 def applyStart(ctx, msg):
     ctx['chars'] = [int(c) for c in msg['chars']]
     ctx['stage'] = int(msg['stage'])
@@ -559,7 +616,7 @@ class HostScreen(Screen):
                     closeNet(ctx)
                     ctx['mode'] = 'cpu'
                     return 'mode'
-            for ch in self.hub.text:
+            for ch in self.hub.text + ['c'] * bool(self.hub.taps):   # C ou toque: copia o link
                 if ch.lower() == 'c' and link.copy(link.shareUrl() or link.code):
                     copied = 60
             link.poll()
@@ -584,7 +641,7 @@ class HostScreen(Screen):
                     pygame.font.init()
                     img = pygame.font.SysFont(None, 22).render(url, True, (200, 220, 255))
                     s.blit(img, (400 - img.get_width() // 2, 285))
-                    ui.text(s, 'PRESS C TO COPY THE LINK' if not copied else 'LINK COPIED!', 16, (400, 315),
+                    ui.text(s, 'PRESS C (OR TAP) TO COPY THE LINK' if not copied else 'LINK COPIED!', 16, (400, 315),
                             (255, 200, 60) if copied else ui.GRAY)
                 dots = '.' * (1 + int(time.perf_counter() * 2) % 3)
                 status = 'WAITING FOR YOUR FRIEND' + dots if link.state == 'waiting' else 'CREATING ROOM' + dots
@@ -609,7 +666,12 @@ class JoinScreen(Screen):
             if self.hub.quit:
                 closeNet(ctx)
                 return None
-            for ch in self.hub.text:
+            typed = list(self.hub.text)
+            if self.hub.taps and not connecting and net.WEB:
+                code = askText('ROOM CODE', code) or code
+                if code:
+                    typed.append('\n')
+            for ch in typed:
                 if ch == '\b':
                     if connecting:
                         closeNet(ctx)
@@ -660,7 +722,7 @@ class JoinScreen(Screen):
                     dots = '.' * (1 + int(time.perf_counter() * 2) % 3)
                     ui.text(s, 'CONNECTING' + dots, 24, (400, 290))
             else:
-                ui.text(s, 'ENTER: CONNECT', 18, (400, 290), ui.GRAY)
+                ui.text(s, 'ENTER: CONNECT   (OR TAP TO TYPE)' if net.WEB else 'ENTER: CONNECT', 18, (400, 290), ui.GRAY)
             ui.backHint(s, 'ESC: CANCEL')
             await self.frame()
 

@@ -194,8 +194,10 @@ function show_infobox() {
     <title>{{cookiecutter.title}}</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="viewport" content="height=device-height, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="screen-orientation" content="landscape">
+    <meta name="x5-orientation" content="landscape">
+    <link rel="manifest" href="manifest.json">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes"/>
 
@@ -329,6 +331,8 @@ function show_infobox() {
     <!-- pyKombat: salas online (WebRTC/PeerJS) e controles (Gamepad API) -->
     <script src="peerjs.min.js"></script>
     <script src="net.js?v=__BUILD__"></script>
+    <!-- pyKombat: controles de toque no celular (direcional + botões, tela deitada) -->
+    <script src="touch.js?v=__BUILD__"></script>
 
 </head>
 

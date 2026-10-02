@@ -69,6 +69,15 @@ another attack.
 computer/phone, open the game and press any button — it shows up in the main menu. In 2-player mode
 the first gamepad is P1 and the second is P2; in the other modes any gamepad controls you.
 
+**Phone / tablet**: open the game link and turn the phone sideways (it asks you to). The first touch
+goes fullscreen in landscape where the browser allows it. On-screen controls: stick on the left,
+LP / HP / LK / HK / BLOCK / SPECIAL / FATAL on the right, BACK and PAUSE at the top corners. In
+the menus you can also just tap: tap a fighter or arena to highlight it, tap it again to pick it.
+`?touch=1` in the URL shows the touch controls on a PC too (`?touch=0` hides them).
+
+Specials cost charges: each fighter has 3 (the bars under the name), refilled over time and when
+you get hit — heavier hits refill more.
+
 
 ## Run the game locally:
 
@@ -124,6 +133,7 @@ workflow runs it and publishes the screenshots under `pr-preview/pr-<N>/shots/`.
 | `src/ai.py` | CPU opponent |
 | `src/inputs.py` | keyboard + gamepads (SDL GameController on desktop, Gamepad API in the browser) |
 | `src/net.py`, `webjs/net.js` | online rooms (TCP on desktop, WebRTC/PeerJS in the browser) |
+| `webjs/touch.js` | on-screen touch controls for phones (exposed to Python as one more gamepad) |
 | `src/menu.py`, `src/fight.py` | menus and the fight loop |
 
 Enjoy! :)

@@ -247,8 +247,22 @@ def sounds():
               'som %s existe e está no build web' % n)
 
 
+def taps():
+    """Toque nos menus (celular): retratos da seleção e itens de menu."""
+    import ui
+    scr = menu.CharacterSelect(_Game(), None, {'mode': 'cpu', 'chars': [0, 1]})
+    x0 = 400 - (menu.COLS * scr.CELL + (menu.COLS - 1) * scr.GAP) // 2
+    ok = all(scr.cellAt(x0 + (i % menu.COLS) * (scr.CELL + scr.GAP) + 40,
+                        scr.GRID_Y + (i // menu.COLS) * (scr.CELL + scr.GAP) + 40) == i
+             for i in range(len(characters.ROSTER)))
+    check(ok and scr.cellAt(5, 5) is None, 'toque: cada retrato da seleção é tocável')
+    check(ui.tapItem([(400, 215)], [150, 202, 254], 30) == 1 and ui.tapItem([(20, 215)], [150, 202], 30) is None,
+          'toque: itens de menu respondem ao toque')
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
+    taps()
     sounds()
     meter()
     for c in characters.ROSTER:
