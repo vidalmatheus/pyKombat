@@ -61,23 +61,30 @@ COMMON_ANIMS = {
     'victim_split': A('fatalityhit', range(10), [6] * 9 + [HOLD]),
 }
 BASE_ANIMS = {
+    # --- tiras de tools/mk2_sprites.py (MK2 SNES); o projétil sai no índice 3
     'Sub-Zero': {
-        # rajada com as duas mãos: o projétil sai no índice 3
-        'special': A('Special', [0, 1, 2, 3, 4, 5, 6, 7, 2, 1, 0], [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]),
-        'pulled': A('hitSpecial', [0, 1, 2, 1], 5, True),
-        'win': A('win', [0, 1, 2], [8, 8, HOLD]),
-        'cast': A('Special', [0, 1, 2, 3, 4], [4, 4, 4, 4, HOLD]),
-        'fatal': A('fatality', range(17), [6] * 16 + [HOLD]),
+        'idle': A('dance', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 6, True),
+        'dizzy': A('dizzy', [0, 1, 2, 3, 4, 3, 2, 1], 7, True),
+        'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
+        'slide': A('Fkick', [0, 1], [3, HOLD]),
+        'pulled': A('Chit', [0, 1, 2, 1], 5, True),
+        'win': A('win', range(3), [8, 8, HOLD]),
+        'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
+        # bola de gelo (0-7), arremesso no 10 (a vítima congela), uppercut no 16 (estilhaça):
+        # mesmos tempos de fatalfx.FREEZE_AT / SHATTER_AT
+        'fatal': A('fatality', range(19), [6] * 8 + [6, 6, 10, 10, 10, 8, 6, 6, 8, 8, HOLD]),
     },
     'Scorpion': {
-        # arremesso: projétil no índice 3; segura o frame 3 enquanto o arpão voa
-        'special': A('Special', [0, 1, 2, 3, 4, 5, 6], [3, 3, 3, 6, 3, 3, 3]),
+        'idle': A('dance', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 6, True),
+        'dizzy': A('dizzy', [0, 1, 2, 3, 4, 3, 2, 1], 7, True),
+        # arremesso: projétil no índice 3; segura o braço esticado enquanto o arpão voa
+        'special': A('Special', range(6), [3, 4, 4, 6, 4, 4]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'win': A('fatality', [16, 17, 18, 19], [7, 7, 7, HOLD], ax=100),
-        'cast': A('Special', [0, 1, 2, 3], [4, 4, 4, HOLD]),
-        'fatal': A('fatality', range(20), [6] * 19 + [HOLD]),
+        'win': A('win', range(4), [7, 8, 8, HOLD]),
+        'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
+        # tira a máscara e cospe fogo a partir do índice 8 (fatalfx.FIRE_AT)
+        'fatal': A('fatality', range(14), [6, 8, 8, 8, 10, 10, 10, 6] + [12] * 5 + [HOLD]),
     },
-    # --- MK2 (SNES): tiras de tools/mk2_sprites.py; o projétil sai no índice 3
     'LiuKang': {
         'idle': A('dance', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 6, True),
         'dizzy': A('dizzy', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 7, True),
@@ -185,7 +192,7 @@ BASE_ANIMS = {
 }
 SPECIAL_SPAWN = 3                  # índice da sequência em que o projétil sai
 # quando a vítima se parte (fatality 'anim'): índice da sequência do vencedor
-FATAL_SPLIT_FRAME = {'Sub-Zero': 13, 'Scorpion': 13, 'LiuKang': 11, 'Kitana': 6, 'JohnnyCage': 4,
+FATAL_SPLIT_FRAME = {'LiuKang': 11, 'Kitana': 6, 'JohnnyCage': 4,
                      'Baraka': 4, 'Mileena': 2, 'Jax': 5}
 # especiais em que o lutador avança reto para a frente -> altura do voo
 # (o sprite é desenhado acima do chão; 0 = vai pelo chão)

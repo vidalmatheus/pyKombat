@@ -38,12 +38,76 @@ SCALE_X = SCALE * 8 / 7
 
 # Tiras: nome -> lista de frames. Cada frame é o índice de um sprite da folha
 # (ou uma tupla (índice, dx) para corrigir o alinhamento na mão, em pixels já
-# ampliados). As tiras usam os mesmos nomes e a mesma quantidade de frames das
+# ampliados; ou uma lista [i, j] de pedaços que o detector separou e que
+# formam um desenho só). As tiras usam os mesmos nomes e a mesma quantidade de frames das
 # do Sub-Zero/Scorpion, para as animações comuns (fighter.COMMON_ANIMS) valerem
 # para todos; o que falta no MK2 repete um frame vizinho.
 # Opções por tira (dict em ALIGN): 'center' = alinha pelo centro da caixa
 # (cambalhotas, quedas), 'left' = pela borda de trás.
 FRAMES_MK2 = {
+    'Sub-Zero': {
+        'dance': [1, 2, 3, 4, 5, 6],
+        'walk': list(range(20, 29)),
+        'jump': [15, 31, 30],
+        'spin': [31] + list(range(32, 39)),
+        'crouch': [15, 16, 16],
+        'Apunch': [1, 54, 55],
+        'Bpunch': [44, 44, 44, 41, 42, 43, 44, 45, 46, 45, 44],
+        'Cpunch': [96, 96, 97],
+        'Dpunch': [90, 91, 92, 92, 93],
+        'Akick': [72, 72, 73, 73, 70, 70, 74],
+        'Bkick': [66, 66, 67, 67, 68, 69, 69, 68, 67],
+        'Ckick': [16, 16, 98, 103, 104, 104, 104],
+        'Dkick': [85, 86, 87, 88, 88, 89],
+        'Ekick': [109, 110, 110],
+        'Epunch': [111, 112, 112],
+        'Ahit': [113, 113, 114],
+        'Bhit': [115, 116, 116],
+        'Chit': [117, 118, 119, 119, 120, 121],
+        'Ehit': [122, 123, 123],
+        'Fhit': [131, 132, 133, 133, 134, 135, 135, 59, 60, 62, 63, 64, 65, 1],
+        'Ghit': [56, 57, 58, 134, 135, 135, 59, 61, 63, 65, 1],
+        'Ablock': [11, 12, 12],
+        'Bblock': [17, 18, 18],
+        'dizzy': [148, 149, 150, 151, 152],
+        'win': [39, 40, 40],
+        'Special': [1, 154, 155, 156, 155, 1],      # rajada de gelo (as duas mãos)
+        'Fkick': [187, 188],                       # slide
+        # deep freeze: forma a bola de gelo (0-7), arremessa (8-10, congela), uppercut (14-18, estilhaça no 16)
+        'fatality': [189, 190, 191, 192, 193, 194, 195, 195, 196, 197, 198, 198, 198, 1, 90, 91, 92, 93, 93],
+        'fatalityhit': [227, 227, 228, 229, 230, 230, 231, 232, 232, 232],
+    },
+    'Scorpion': {
+        'dance': [1, 2, 3, 4, 5, 6],
+        'walk': list(range(16, 25)),
+        'jump': [11, 27, 26],
+        'spin': [27] + list(range(28, 35)),
+        'crouch': [11, 12, 12],
+        'Apunch': [1, 50, 51],
+        'Bpunch': [44, 44, 44, 40, 41, 42, 37, 38, 39, 38, 44],
+        'Cpunch': [92, 92, 93],
+        'Dpunch': [86, 86, 87, 88, 88],
+        'Akick': [67, 67, 68, 68, 69, 69, 70],
+        'Bkick': [63, 63, 64, 64, 64, 65, 65, 66, 63],
+        'Ckick': [12, 12, 98, 99, 100, 100, 100],
+        'Dkick': [81, 82, 83, 84, 85, 81],
+        'Ekick': [27, 108, 108],
+        'Epunch': [27, 104, 104],
+        'Ahit': [109, 109, 110],
+        'Bhit': [111, 112, 112],
+        'Chit': [113, 114, 115, 115, 114, 113],
+        'Ehit': [118, 119, 119],
+        'Fhit': [127, 128, 129, 130, 130, 131, 131, 54, 55, 56, 58, 59, 61, 62],
+        'Ghit': [52, 53, 54, 54, 54, 54, 55, 57, 59, 61, 62],
+        'Ablock': [7, 8, 8],
+        'Bblock': [13, 14, 14],
+        'dizzy': [144, 145, 146, 147, 148],
+        'win': [9, 35, 36, 36],
+        'Special': [1, 149, 150, 151, 151, 151],    # arremesso do arpão (segura o braço esticado)
+        # toasty: vira de frente e tira a máscara (1-3), caveira (4-6), volta de lado (7) e cospe fogo (8+)
+        'fatality': [1, 167, 168, 169, 170, 170, 170, 171, 172, 172, 172, 172, 172, 172],
+        'fatalityhit': [227, 228, 229, 230, 231, 232, 232, 232, 232, 232],
+    },
     'LiuKang': {
         'dance': [1, 2, 3, 4, 5, 6],
         'walk': list(range(17, 26)),
@@ -337,6 +401,11 @@ ALIGN = {
 }
 # efeitos (sem troca de paleta): nome -> (base, frames); âncora = frente do efeito
 FX_MK2 = {
+    'ice': ('Sub-Zero', [157, 158, 159, [161, 162], [163, 164], [165, 166], 167, 168, 169]),  # 0-2 sai, 3-4 voa, 5-8 estoura
+    'freezefx': ('Sub-Zero', [199, 200]),                         # bola de gelo da fatality
+    'spearhead': ('Scorpion', [155]),                              # kunai do arpão (a corda é desenhada no código)
+    'firebreath': ('Scorpion', [173, 174, 175, 176]),              # fogo saindo da boca (faísca -> labareda)
+    'fireburn': ('Scorpion', [177, 178, 179, 180, 181, 183]),      # fogo na vítima (bola -> coluna -> caveira)
     'fireball': ('LiuKang', [146, 147, 150, 151, 152, 153, 154, 155]),   # 0-1 saindo, 2-3 voando, 4-7 explosão
     'fan': ('Kitana', list(range(148, 158))),                          # leque girando
     'fanwind': ('Kitana', [158, 159, 160, 161, 162, 163, 164, 165]),   # vento do fan lift
@@ -435,10 +504,15 @@ class Sheet:
 
     def sprite(self, i):
         """(largura, altura, pixels) do sprite i, já ampliado (ver scale2x)."""
-        cached = self._cache.get(i)
+        cached = self._cache.get(tuple(i) if isinstance(i, list) else i)
         if cached is not None:
             return cached
-        x0, y0, x1, y1 = self.boxes[i]
+        if isinstance(i, list):   # desenho que o detector separou em pedaços: junta as caixas
+            bs = [self.boxes[k] for k in i]
+            x0, y0 = min(b[0] for b in bs), min(b[1] for b in bs)
+            x1, y1 = max(b[2] for b in bs), max(b[3] for b in bs)
+        else:
+            x0, y0, x1, y1 = self.boxes[i]
         bg = self.bg
         raw = [[None if c == bg else c for c in row[x0:x1]] for row in self.px[y0:y1]]
         big = scale2x(raw)                      # 2x suavizado
@@ -447,8 +521,9 @@ class Sheet:
         # 2x -> tamanho final (fatores < 2): amostra o pixel mais próximo
         out = [[big[min(bh - 1, int(y * 2 / SCALE))][min(bw - 1, int(x * 2 / SCALE_X))]
                 for x in range(sw)] for y in range(sh)]
-        self._cache[i] = (sw, sh, out)
-        return self._cache[i]
+        key = tuple(i) if isinstance(i, list) else i
+        self._cache[key] = (sw, sh, out)
+        return self._cache[key]
 
     def hip(self, sw, sh, spx):
         """x do quadril: mediana dos pixels na faixa da cintura (ou o centro da caixa)."""
@@ -493,7 +568,8 @@ def build_strip(sheet, frames, align):
 
 
 def build_fx(sheet, frames):
-    """Efeito (bola de fogo...): frames alinhados pela frente (borda direita) e pelo centro vertical."""
+    """Efeito (bola de fogo...): frames alinhados pela frente (borda direita) e pelo centro vertical.
+    Um frame pode ser uma lista de pedaços (ver FRAMES_MK2)."""
     sprites = [sheet.sprite(i) for i in frames]
     cw = max(sw for sw, _, _ in sprites) + 4
     ch = max(sh for _, sh, _ in sprites) + 4

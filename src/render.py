@@ -13,6 +13,7 @@ ATTACK_SHEETS = {'Apunch', 'Bpunch', 'Cpunch', 'Dpunch', 'Akick', 'Bkick', 'Ckic
 # projéteis do MK2 desenhados com os sprites do jogo (tools/mk2_sprites.py):
 # kind -> (sheet de efeito, nº de frames, frames saindo, frames voando, frames do impacto)
 FX = {
+    'ice': ('ice', 9, (0, 1, 2), (3, 4), (5, 6, 7, 8)),
     'fireball': ('fireball', 8, (0, 1), (2, 3), (4, 5, 6, 7)),
     'fan': ('fan', 10, (), tuple(range(10)), ()),
     'fanlift': ('fanwind', 8, (0, 1, 2), (3, 4, 5, 6, 7), ()),

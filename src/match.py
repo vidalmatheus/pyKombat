@@ -47,13 +47,15 @@ AT_TARGET = ('firerise',)      # nasce embaixo do oponente (fogo do chão do Sha
 SPEAR_RANGE = 440
 
 # fatalities desenhadas por fatalfx.py (duração em ticks e quando o golpe acerta)
-FATALITY_LEN = {'electro': 230, 'hatsplit': 200, 'soulsteal': 230}
-FATALITY_HITS = {'electro': (40, 75, 110, 150), 'hatsplit': (60,), 'soulsteal': (150,)}
+FATALITY_LEN = {'electro': 230, 'hatsplit': 200, 'soulsteal': 230, 'deepfreeze': 210, 'firebreath': 250}
+FATALITY_HITS = {'electro': (40, 75, 110, 150), 'hatsplit': (60,), 'soulsteal': (150,), 'deepfreeze': (110,),
+                 'firebreath': (86,)}
+FATAL_GAP_KIND = {'deepfreeze': 74, 'firebreath': 150}   # distância das fatalities desenhadas
 FATAL_GAP = 112      # distância entre os lutadores na fatality original (arpão)
 FATAL_GAP_BASE = {'LiuKang': 150, 'Kitana': 92, 'JohnnyCage': 70, 'Baraka': 95,
                   'Mileena': 75, 'Jax': 80}   # boca do dragão / alcance do golpe
 # som da fatality 'anim' (animação da própria sheet) de cada corpo-base
-FATAL_SOUND = {'Sub-Zero': 'IceSound', 'Scorpion': 'GetOverHere', 'LiuKang': 'HitLongo', 'Kitana': 'block',
+FATAL_SOUND = {'LiuKang': 'HitLongo', 'Kitana': 'block',
                'JohnnyCage': 'Hit0', 'Baraka': 'HitLongo', 'Mileena': 'HitLongo',
                'Jax': 'HitLongo'}
 HEAD_FATALITY = ('Kitana', 'JohnnyCage', 'Baraka')   # fatality 'anim' em que a cabeça da vítima voa
@@ -324,7 +326,10 @@ class Match:
         kind = w.char.fatality
         d = 1 if l.x > w.x else -1
         # reposiciona para o efeito caber na tela (e o arpão alcançar a vítima)
-        gap = FATAL_GAP_BASE.get(w.base, FATAL_GAP) if kind == 'anim' else max(110, min(190, abs(l.x - w.x)))
+        if kind == 'anim':
+            gap = FATAL_GAP_BASE.get(w.base, FATAL_GAP)
+        else:
+            gap = FATAL_GAP_KIND.get(kind) or max(110, min(190, abs(l.x - w.x)))
         mid = max(130 + gap / 2, min(670 - gap / 2, (w.x + l.x) / 2))
         w.x = mid - d * gap / 2
         l.x = mid + d * gap / 2
@@ -342,7 +347,8 @@ class Match:
         self.projectiles = []
         self.event('fatal', kind)
         self.sound({'anim': FATAL_SOUND.get(w.base, 'HitLongo'), 'electro': 'IceSound2',
-                    'hatsplit': 'block', 'soulsteal': 'HitLongo'}[kind])
+                    'hatsplit': 'block', 'soulsteal': 'HitLongo', 'deepfreeze': 'IceSound',
+                    'firebreath': 'BeforeFinish'}[kind])
 
     def _fatalityStep(self):
         fz = self.fatal
@@ -375,6 +381,10 @@ class Match:
         else:
             if fz['kind'] == 'electro' and t in (40, 75, 110):
                 self.sound('IceSound2')
+            if fz['kind'] == 'deepfreeze' and t == 62:
+                self.sound('IceSound2')     # a bola de gelo acerta: congela
+            if fz['kind'] == 'firebreath' and t == 66:
+                self.sound('HitLongo')      # o fogo sai
             if t in FATALITY_HITS[fz['kind']]:
                 self.sound('HitFatality')
                 self.shakeScreen(12)

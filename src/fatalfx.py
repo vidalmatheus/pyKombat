@@ -6,8 +6,10 @@ import pygame
 import assets
 
 G = 0.5
-FREEZE_FX = ('freezefx', 1)   # (sheet de efeito, nº de frames) — tools/mk2_sprites.py
-FIRE_FX = ('firebreath', 1)
+# efeitos (sheet, nº de frames) gerados por tools/mk2_sprites.py
+FREEZE_FX = ('freezefx', 2)   # bola de gelo do Sub-Zero
+FIRE_FX = ('firebreath', 4)   # fogo saindo da boca do Scorpion
+BURN_FX = ('fireburn', 6)     # fogo tomando a vítima
 _tiles = {}
 _drops = {}
 
@@ -109,8 +111,10 @@ def draw(screen, kind, t, victimSurf, left, top, ground, seed, winnerX):
         drawFireBreath(screen, t, victimSurf, left, top, ground, seed, winnerX)
 
 
-FREEZE_AT = 30      # deep freeze: o gelo começa a cobrir a vítima
-SHATTER_AT = 110    # ... e o uppercut a estilhaça (FATAL_SHATTER no lutador)
+# tempos sincronizados com as animações 'fatal' de fighter.py
+THROW_AT = 60       # deep freeze: a bola de gelo sai da mão (índice 10 da animação)
+FREEZE_AT = 72      # ... acerta e a vítima começa a congelar
+SHATTER_AT = 110    # ... o uppercut (índice 16) a estilhaça
 
 
 def _fxCentered(screen, name, n, frame, cx, cy, facing):
@@ -121,24 +125,29 @@ def _fxCentered(screen, name, n, frame, cx, cy, facing):
 
 
 def drawDeepFreeze(screen, t, victimSurf, left, top, ground, seed, winnerX):
-    """Deep Freeze (Sub-Zero, MK2): o sopro de gelo congela a vítima por inteiro e
+    """Deep Freeze (Sub-Zero, MK2): a bola de gelo congela a vítima por inteiro e
     o uppercut a estilhaça em pedaços de gelo."""
     w, h = victimSurf.get_size()
     body = victimSurf.get_bounding_rect()
     cx = left + body.centerx
     facing = 1 if cx > winnerX else -1
     if t < SHATTER_AT:
-        k = 0 if t < FREEZE_AT else min(4, (t - FREEZE_AT) // 12 + 1)
+        k = 0 if t < FREEZE_AT else min(4, (t - FREEZE_AT) // 8 + 1)
         img = victimSurf
         if k:
             img = assets.tinted(victimSurf, ('ice', k), (255 - 30 * k, 255 - 12 * k, 255), pygame.BLEND_RGB_MULT)
             img = assets.tinted(img, ('ice+', k), (18 * k, 34 * k, 48 * k), pygame.BLEND_RGB_ADD)
         screen.blit(img, (left, top))
-        if FREEZE_AT <= t < FREEZE_AT + 50:   # o sopro/rajada de gelo indo até a vítima
-            n = FREEZE_FX[1]
-            f = min(n - 1, (t - FREEZE_AT) // 5)
-            _fxCentered(screen, FREEZE_FX[0], n, f, (winnerX + cx) / 2, top + body.y + body.h * 0.35, facing)
-        if t > FREEZE_AT + 40:                # brilhos no gelo
+        if THROW_AT <= t < FREEZE_AT:     # a bola de gelo voa da mão até a vítima
+            f = (t - THROW_AT) / (FREEZE_AT - THROW_AT)
+            hx = winnerX + facing * 40
+            hy = top + body.y + 10
+            _fxCentered(screen, FREEZE_FX[0], FREEZE_FX[1], (t // 2) % FREEZE_FX[1],
+                        hx + (cx - hx) * f, hy + (top + body.y + body.h * 0.3 - hy) * f, facing)
+        if FREEZE_AT <= t < FREEZE_AT + 10:
+            _glow(screen, cx, top + body.y + body.h * 0.3, 14 + (t - FREEZE_AT) * 3, (200, 240, 255),
+                  220 - (t - FREEZE_AT) * 20)
+        if t > FREEZE_AT + 24:            # brilhos no gelo
             rng = random.Random(seed + t // 6)
             for _ in range(5):
                 sx = left + body.x + rng.randint(0, body.w)
@@ -154,44 +163,46 @@ def drawDeepFreeze(screen, t, victimSurf, left, top, ground, seed, winnerX):
             _glow(screen, cx, top + body.y + 50, 30 + tau * 5, (220, 250, 255), 200 - tau * 15)
 
 
-FIRE_AT = 45        # toasty: o fogo sai da boca da caveira
+FIRE_AT = 66        # toasty: o fogo sai da boca da caveira (índice 8 da animação)
+FIRE_TRAVEL = 18    # ticks do fogo indo da boca até a vítima
 
 
 def drawFireBreath(screen, t, victimSurf, left, top, ground, seed, winnerX):
-    """Toasty (Scorpion, MK2): tira a máscara e cospe fogo; a vítima pega fogo,
-    fica carbonizada e desmancha em cinzas."""
+    """Toasty (Scorpion, MK2): tira a máscara e cospe fogo; a vítima é tomada por
+    uma coluna de fogo, fica carbonizada e desmancha em cinzas."""
     w, h = victimSurf.get_size()
     body = victimSurf.get_bounding_rect()
     cx = left + body.centerx
     facing = 1 if cx > winnerX else -1
-    burnEnd = FIRE_AT + 90
-    if t < burnEnd + 20:
+    hitT = FIRE_AT + FIRE_TRAVEL
+    burnEnd = hitT + 100
+    if t < burnEnd:
         img = victimSurf
-        if t >= FIRE_AT + 15:   # queimando: pisca laranja e vai escurecendo
-            k = min(4, (t - FIRE_AT - 15) // 18 + 1)
+        if t >= hitT:   # queimando: vai escurecendo e treme
+            k = min(4, (t - hitT) // 18 + 1)
             dark = 255 - 45 * k
             img = assets.tinted(victimSurf, ('burn', k), (255, dark, max(0, dark - 60)), pygame.BLEND_RGB_MULT)
-        screen.blit(img, (left + ((t % 3) - 1 if FIRE_AT + 15 <= t < burnEnd else 0), top))
-        if FIRE_AT + 10 <= t < burnEnd + 10:     # chamas pelo corpo
-            rng = random.Random(seed + t // 3)
-            for _ in range(7):
-                fx = left + body.x + rng.randint(0, body.w)
-                fy = top + body.y + rng.randint(body.h // 4, body.h)
-                _glow(screen, fx, fy - rng.randint(0, 20), rng.randint(6, 13),
-                      rng.choice(((255, 120, 20), (255, 200, 60), (230, 60, 10))), 190)
+        screen.blit(img, (left + ((t % 3) - 1 if hitT <= t else 0), top))
     else:
-        tau = t - burnEnd - 20
+        tau = t - burnEnd
         ash = assets.tinted(victimSurf, ('burn', 5), (40, 30, 25), pygame.BLEND_RGB_MULT)
         _drawChunks(screen, ash, left, top, ground, tau, seed, power=0.25, upward=0.15, spin=False)
-    if FIRE_AT <= t < burnEnd:                    # o jato de fogo (sprites do MK2)
-        n = FIRE_FX[1]
-        mouthX = winnerX + facing * 34
-        mouthY = top + body.y + 22
-        steps = max(1, int(abs(cx - mouthX) // 34))
-        for i in range(steps + 1):                # chamas em fila da boca até a vítima
-            f = ((t - FIRE_AT) // 3 + i) % n
-            x = mouthX + (cx - mouthX) * i / steps
-            _fxCentered(screen, FIRE_FX[0], n, f, x, mouthY + i * 3, facing)
+    mouthX = winnerX + facing * 30
+    mouthY = top + body.y + 18
+    if FIRE_AT <= t < hitT:          # o fogo sai da boca e voa até a vítima
+        f = (t - FIRE_AT) / FIRE_TRAVEL
+        frame = min(FIRE_FX[1] - 1, int(f * FIRE_FX[1]))
+        _fxCentered(screen, FIRE_FX[0], FIRE_FX[1], frame, mouthX + (cx - mouthX) * f,
+                    mouthY + (top + body.y + body.h * 0.45 - mouthY) * f, facing)
+    if hitT <= t < burnEnd + 10:     # bola de fogo -> coluna de fogo -> caveira de fogo (MK2)
+        n = BURN_FX[1]
+        frame = min(n - 1, (t - hitT) // 12)
+        if frame >= n - 2:            # as duas últimas (caveira) alternam enquanto queima
+            frame = n - 2 + (t // 6) % 2
+        sh = assets.fxSheet(BURN_FX[0], n)
+        img = sh.frame(frame, facing)
+        br = img.get_bounding_rect()
+        screen.blit(img, (int(cx - br.centerx), int(ground - br.bottom)))
 
 
 def _soulFrame(screen, frame, cx, cy, facing):

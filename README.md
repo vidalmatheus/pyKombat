@@ -31,8 +31,8 @@ press the fatality button (or ↓ → + HP) for your fighter's fatality.
 
 | Fighter | Special 1 (↓ → + LP) | Special 2 (↓ ← + LK) | Fatality |
 |---|---|---|---|
-| Sub-Zero | Ice blast (freezes) | Slide | Spine splitter |
-| Scorpion | Spear ("Get over here!") | Teleport punch | Spear splitter |
+| Sub-Zero | Ice blast (freezes) | Slide | Deep freeze |
+| Scorpion | Spear ("Get over here!") | Teleport punch | Toasty (fire breath) |
 | Liu Kang | Fireball | Flying kick | Dragon bite |
 | Kitana | Fan throw | Fan lift | Fan decapitation |
 | Raiden | Lightning | Torpedo | Electrocution |
@@ -43,9 +43,8 @@ press the fatality button (or ↓ → + HP) for your fighter's fatality.
 | Jax | Energy wave | Ground smash | Arm rip |
 | Shang Tsung | Flaming skull | Ground fire | Soul steal |
 
-Sub-Zero and Scorpion use the original sprites of the game; the other nine come from the
-Mortal Kombat II (SNES) sprite sheets. Freezing an already frozen opponent backfires, just like
-in MK.
+Every fighter uses the Mortal Kombat II (SNES) sprites, specials and fatalities. Freezing an
+already frozen opponent backfires, just like in MK.
 
 
 ## Controls
@@ -104,11 +103,11 @@ After a rebuild, just hard-refresh the browser (the game bundle is cached aggres
 
 ## Sprites
 
-`res/Char/` holds the original sprite sheets. `tools/build_sprites.py` turns them into the
-palettized, right-facing sheets in `res/sprites/` that the game loads (re-run it after editing
-the originals; requires Pillow). The MK2 fighters are cut from the SNES sheets
-(`res/Char/<name>/sheet.png`, from spriters-resource.com) by `tools/mk2_sprites.py`, which maps
-each animation to sprite indices of the sheet (no Pillow needed). Fighters are defined in
+`res/Char/<name>/sheet.png` are the Mortal Kombat II (SNES) sprite sheets from
+spriters-resource.com. `tools/build_sprites.py` (standard library only) runs
+`tools/mk2_sprites.py`, which maps each animation to sprite indices of the sheet and writes the
+palettized, right-facing strips in `res/sprites/` that the game loads. The SNES sprites are
+scaled with Scale2x and the console's 8:7 pixel aspect. Fighters are defined in
 `src/characters.py`.
 
 `tools/headless_test.py` plays CPU vs CPU fights with every fighter on both sides of the screen

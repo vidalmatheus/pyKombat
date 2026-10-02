@@ -19,8 +19,8 @@ _MK2 = {'jump': 3, 'spin': 8, 'crouch': 3, 'Apunch': 3, 'Bpunch': 11, 'Cpunch': 
         'Bhit': 3, 'Chit': 6, 'Ehit': 3, 'Fhit': 14, 'Ghit': 11, 'Ablock': 3, 'Bblock': 3,
         'fatalityhit': 10}
 FRAMES = {
-    'Sub-Zero': dict(_MK1, hitSpecial=3, Special=12, fatality=17, spin=8, win=3),
-    'Scorpion': dict(_MK1, Special=7, fatality=20),
+    'Sub-Zero': dict(_MK2, dance=6, walk=9, dizzy=5, win=3, Special=6, Fkick=2, fatality=19),
+    'Scorpion': dict(_MK2, dance=6, walk=9, dizzy=5, win=4, Special=6, fatality=14),
     'LiuKang': dict(_MK2, dance=6, walk=9, dizzy=6, win=4, Special=6, Fkick=2, fatality=12),
     'Kitana': dict(_MK2, dance=5, walk=8, dizzy=5, win=4, Special=6, Special2=6, fatality=8),
     'Raiden': dict(_MK2, dance=8, walk=8, dizzy=7, win=5, Special=6, Fkick=2, fatality=3),
@@ -34,7 +34,7 @@ FRAMES = {
 
 # matizes da roupa de cada corpo-base (graus mín., máx., saturação mín., brilho mín.)
 # — o resto (pele, preto, sangue) fica
-COSTUME_HUE = {'Sub-Zero': (150, 250, 0.12, 0.0), 'Scorpion': (29, 66, 0.08, 0.30),
+COSTUME_HUE = {'Sub-Zero': (180, 240, 0.25, 0.0), 'Scorpion': (38, 66, 0.35, 0.2),
                'LiuKang': (350, 8, 0.55, 0.25), 'Kitana': (205, 250, 0.35, 0.0),
                'Raiden': (180, 205, 0.35, 0.0), 'KungLao': (180, 210, 0.30, 0.0),
                'JohnnyCage': (345, 10, 0.45, 0.15), 'Baraka': (345, 12, 0.45, 0.2),
