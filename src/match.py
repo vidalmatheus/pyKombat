@@ -44,8 +44,6 @@ PROJ_SOUND = {'ice': 'IceSound', 'spear': 'GetOverHere', 'fireball': 'HitLongo',
 PROJ_HEIGHT = 98    # altura padrão (o projétil sai da altura das mãos; ver handPoint)
 PROJ_FIXED_HEIGHT = {'fanlift': 62, 'firerise': 60, 'quake': 14, 'wave': 64}   # altura fixa, não da mão
 AT_TARGET = ('firerise',)      # nasce embaixo do oponente (fogo do chão do Shang Tsung)
-ICE_LAUNCH = 15     # ticks em que a rajada de gelo se forma na mão (ver render.py)
-ICE_FORM_W = (40, 65, 100, 125, 140)  # largura dos frames 0-4 da rajada se formando (icefx)
 SPEAR_RANGE = 440
 
 # fatalities desenhadas por fatalfx.py (duração em ticks e quando o golpe acerta)
@@ -71,7 +69,6 @@ class Projectile:
         self.y = PROJ_HEIGHT
         self.t = 0
         self.alive = True
-        self.x0 = float(x)       # onde saiu (a rajada de gelo cresce a partir daqui)
         self.length = 0.0        # arpão: comprimento da corda
         self.retract = False
         self.hooked = False
@@ -108,7 +105,6 @@ class Match:
         self.fighters = [Fighter(0, c1, False, 250, 1), Fighter(1, c2, alt2, 550, -1)]
         for f in self.fighters:
             assets.preload(f.char, f.alt)
-            assets.sheet(f.char, 'spin', f.alt)
         self.projectiles = []
         self.tick = 0
         self.round = 1
@@ -412,8 +408,6 @@ class Match:
             x, y = f.x + f.facing * 62, PROJ_HEIGHT
         else:
             x, y = self.handPoint(f)
-        if kind == 'ice':  # a rajada se forma a partir da mão (a frente é a referência)
-            x += f.facing * ICE_FORM_W[0]
         if kind in AT_TARGET:
             x = self.other(f).x
         p = Projectile(kind, f, x)
@@ -439,14 +433,7 @@ class Match:
                     if p.length >= SPEAR_RANGE:
                         p.retract = True
             else:
-                speed = p.cfg['speed']
-                if p.kind == 'ice' and p.t <= ICE_LAUNCH:
-                    # a rajada se forma na mão antes de disparar: a traseira fica na mão
-                    # e a frente cresce junto com o frame (ver render.py)
-                    w0 = ICE_FORM_W[min(4, p.t // 3)]
-                    p.x = p.x0 + p.facing * (w0 - ICE_FORM_W[0])
-                else:
-                    p.x += p.facing * speed
+                p.x += p.facing * p.cfg['speed']
                 if p.x < -40 or p.x > 840 or p.t > p.cfg.get('life', 1 << 30):
                     p.alive = False
             active = p.cfg.get('active')

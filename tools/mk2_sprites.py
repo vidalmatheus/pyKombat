@@ -31,7 +31,10 @@ DST = os.path.join(ROOT, 'res', 'sprites')
 
 CELL_W = 200
 CELL_H = 164
-SCALE = 1.36   # Liu Kang parado: ~99 px no SNES -> ~135 px (altura do Sub-Zero)
+SCALE = 1.36   # altura: Liu Kang parado tem ~99 px no SNES -> ~135 px no jogo
+# O pixel do SNES não é quadrado: a TV o mostrava 8/7 mais largo que alto. Sem
+# essa correção os lutadores ficam espremidos (mais magros que no console).
+SCALE_X = SCALE * 8 / 7
 
 # Tiras: nome -> lista de frames. Cada frame é o índice de um sprite da folha
 # (ou uma tupla (índice, dx) para corrigir o alinhamento na mão, em pixels já
@@ -394,30 +397,58 @@ def find_sprites(w, h, px, bg, gap=2, minPixels=12):
     return out
 
 
+def scale2x(img):
+    """Scale2x (EPX): dobra o sprite suavizando as diagonais, sem criar cores novas
+    (a paleta continua a mesma, o que a troca de cores precisa). O transparente
+    (None) conta como uma cor, então o contorno também fica suave."""
+    h, w = len(img), len(img[0])
+    out = [[None] * (2 * w) for _ in range(2 * h)]
+    for y in range(h):
+        up = img[y - 1] if y > 0 else img[y]
+        row = img[y]
+        down = img[y + 1] if y + 1 < h else img[y]
+        o0, o1 = out[2 * y], out[2 * y + 1]
+        for x in range(w):
+            p = row[x]
+            a = up[x]
+            d = down[x]
+            c = row[x - 1] if x > 0 else p
+            b = row[x + 1] if x + 1 < w else p
+            if c == a and c != d and a != b:
+                o0[2 * x] = a
+            else:
+                o0[2 * x] = p
+            o0[2 * x + 1] = b if (a == b and a != c and b != d) else p
+            o1[2 * x] = c if (d == c and d != b and c != a) else p
+            o1[2 * x + 1] = d if (b == d and b != a and d != c) else p
+    return out
+
+
 class Sheet:
     def __init__(self, base):
         self.w, self.h, self.px = pngio.read(os.path.join(SRC, base, 'sheet.png'))
         self.bg = Counter(c for row in self.px[:40] for c in row).most_common(1)[0][0]
         self.boxes = find_sprites(self.w, self.h, self.px, self.bg)
+        self._cache = {}
         stand = self.boxes[FRAMES_MK2[base]['dance'][0]]
         self.standH = stand[3] - stand[1]
 
     def sprite(self, i):
-        """(largura, altura, pixels) do sprite i, já ampliado."""
+        """(largura, altura, pixels) do sprite i, já ampliado (ver scale2x)."""
+        cached = self._cache.get(i)
+        if cached is not None:
+            return cached
         x0, y0, x1, y1 = self.boxes[i]
-        bw, bh = x1 - x0, y1 - y0
-        sw, sh = int(round(bw * SCALE)), int(round(bh * SCALE))
-        src = self.px
         bg = self.bg
-        out = []
-        for y in range(sh):
-            row = src[y0 + min(bh - 1, int(y / SCALE))]
-            line = []
-            for x in range(sw):
-                c = row[x0 + min(bw - 1, int(x / SCALE))]
-                line.append(None if c == bg else c)
-            out.append(line)
-        return sw, sh, out
+        raw = [[None if c == bg else c for c in row[x0:x1]] for row in self.px[y0:y1]]
+        big = scale2x(raw)                      # 2x suavizado
+        bh, bw = len(big), len(big[0])
+        sw, sh = int(round((x1 - x0) * SCALE_X)), int(round((y1 - y0) * SCALE))
+        # 2x -> tamanho final (fatores < 2): amostra o pixel mais próximo
+        out = [[big[min(bh - 1, int(y * 2 / SCALE))][min(bw - 1, int(x * 2 / SCALE_X))]
+                for x in range(sw)] for y in range(sh)]
+        self._cache[i] = (sw, sh, out)
+        return self._cache[i]
 
     def hip(self, sw, sh, spx):
         """x do quadril: mediana dos pixels na faixa da cintura (ou o centro da caixa)."""

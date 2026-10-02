@@ -48,7 +48,7 @@ COMMON_ANIMS = {
     'hit_mid': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
     'hit_heavy': A('Chit', range(6), [3, 3, 4, 4, 4, 4]),
     'hit_crouch': A('Ehit', [0, 1, 2, 1, 0], [2, 3, 5, 3, 2]),
-    'hit_low': A('Dhit', [0, 1, 1, 0], [2, 4, 5, 3]),   # chute baixo em quem está em pé
+    'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),   # chute baixo em quem está em pé
     'fall': A('Fhit', range(7), [3, 4, 4, 4, 4, 4, HOLD]),
     'getup': A('Fhit', range(7, 14), 4),
     'sweepfall': A('Ghit', range(6), [3, 4, 4, 4, 4, HOLD]),
@@ -84,7 +84,6 @@ BASE_ANIMS = {
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'dash': A('Fkick', [0, 1], [5, HOLD]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', [0, 1, 2, 3], [8, 8, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         # vira dragão (0-11), morde no 11 e volta a ser o Liu Kang
@@ -99,7 +98,6 @@ BASE_ANIMS = {
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'special2': A('Special2', range(6), [3, 4, 4, 10, 5, 4]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', [0, 1, 2, 3], [8, 8, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         # gira o leque e corta no índice 6
@@ -113,7 +111,6 @@ BASE_ANIMS = {
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'dash': A('Fkick', [0, 1], [5, HOLD]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', [0, 1, 2, 3, 4], [7, 7, 7, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         'fatal': A('fatality', [0, 1, 2], [8, 8, HOLD]),   # braços para o céu: o raio cai (fatalfx)
@@ -123,7 +120,6 @@ BASE_ANIMS = {
         'dizzy': A('dizzy', [0, 1, 2, 3, 4, 5, 4, 3, 2, 1], 7, True),
         'special': A('Special', range(6), [3, 4, 5, 8, 5, 4]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', range(6), [7, 7, 7, 7, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         # tira o chapéu e arremessa; segura o braço esticado enquanto o chapéu corta (fatalfx)
@@ -137,7 +133,6 @@ BASE_ANIMS = {
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'dash': A('Fkick', [0, 1], [5, HOLD]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', range(5), [8, 8, 8, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         # agacha e solta o uppercut: a cabeça voa no índice 4
@@ -149,7 +144,6 @@ BASE_ANIMS = {
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'dash': A('Fkick', [0, 1, 2, 3, 2, 1, 2, 3, 2, 1], 3, True),   # lâminas girando
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', range(4), [8, 8, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         'fatal': A('fatality', range(11), [10, 8, 5, 4, 30, 4, 4, 4, 5, 8, HOLD]),
@@ -162,7 +156,6 @@ BASE_ANIMS = {
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'dash': A('Fkick', [0] + [1, 2, 3, 4, 5, 6, 7] * 4, 2, True),   # rola pelo chão
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', range(6), [8, 8, 8, 8, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         'fatal': A('fatality', range(14), [8, 5, 5, 5, 5, 5, 5, 5, 6, 10, 8, 8, 20, HOLD]),
@@ -173,7 +166,6 @@ BASE_ANIMS = {
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'special2': A('Special2', range(6), [3, 5, 5, 14, 6, 4]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', range(4), [7, 7, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         # guarda, estende a mão (segura enquanto a alma sai), puxa, ergue os braços
@@ -185,7 +177,6 @@ BASE_ANIMS = {
         'special': A('Special', range(6), [3, 4, 4, 10, 5, 4]),
         'special2': A('Special2', range(6), [4, 4, 4, 8, 8, 5]),
         'pulled': A('Chit', [0, 1, 2, 1], 5, True),
-        'hit_low': A('Bhit', [0, 1, 2, 1, 0], [2, 3, 6, 3, 2]),
         'win': A('win', range(6), [7, 7, 7, 7, 8, HOLD]),
         'cast': A('Special', [0, 1, 2], [4, 4, HOLD]),
         # agarra (1), puxa os braços (2-5): o sangue espirra no índice 5

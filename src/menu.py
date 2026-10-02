@@ -389,11 +389,7 @@ class CharacterSelect(Screen):
             c = ROSTER[cursor[p]]
             alt = p == 1 and cursor[0] == cursor[1]
             facing = 1 if p == 0 else -1
-            if ready[p] and c.base == 'Scorpion':  # pose de vitória (braços cruzados)
-                sh = assets.sheet(c, 'fatality', alt)
-                img = sh.frame(16 + min(3, (tick // 8) % 40), facing)
-                ax = 100 if facing > 0 else sh.w - 100
-            elif ready[p]:
+            if ready[p]:
                 sh = assets.sheet(c, 'win', alt)
                 img = sh.frame(min(sh.n - 1, (tick // 8) % 40), facing)
                 ax = sh.anchor(facing)
