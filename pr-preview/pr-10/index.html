@@ -45,7 +45,7 @@ async def custom_site():
     else:
         import tarfile
         # "?v=" muda a cada build (build_web.sh): o navegador nunca reaproveita o pacote antigo do cache
-        async with platform.fopen("pykombat.tar.gz?v=8bef95a-1790928125", "rb") as archive:
+        async with platform.fopen("pykombat.tar.gz?v=7fa80d6-1790929488", "rb") as archive:
             tar = tarfile.open(fileobj=archive, mode="r:gz")
             tar.extractall(path=appdir.as_posix(), filter='tar')
             tar.close()
@@ -330,9 +330,9 @@ function show_infobox() {
 
     <!-- pyKombat: salas online (WebRTC/PeerJS) e controles (Gamepad API) -->
     <script src="peerjs.min.js"></script>
-    <script src="net.js?v=8bef95a-1790928125"></script>
+    <script src="net.js?v=7fa80d6-1790929488"></script>
     <!-- pyKombat: controles de toque no celular (direcional + botões, tela deitada) -->
-    <script src="touch.js?v=8bef95a-1790928125"></script>
+    <script src="touch.js?v=7fa80d6-1790929488"></script>
 
 </head>
 

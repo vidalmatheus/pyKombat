@@ -7,7 +7,8 @@
 // Gamepad API. Assim menus e luta funcionam sem nada específico de toque.
 //
 // Também: no primeiro toque pede tela cheia e trava a tela deitada (onde o
-// navegador deixa) e, com o celular em pé, mostra um aviso para girá-lo.
+// navegador deixa) e, com o celular em pé, mostra um aviso para girá-lo; e
+// retoma o áudio que o celular suspende (window.pkResumeAudio).
 //
 // ?touch=1 força os controles (para testar no PC); ?touch=0 desliga.
 (function () {
@@ -31,6 +32,35 @@
     if (!isTouch) return '';
     return 'touch:' + (bits | stickBits) + '::standard:Touch controls';
   };
+
+  // Áudio: o celular suspende o AudioContext quando a página perde o foco (ex.:
+  // a caixa de texto do código da sala) e ele não volta sozinho. Guarda os
+  // contextos que o jogo criar e os retoma no próximo toque/tecla ou ao voltar.
+  const audioCtxs = [];
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) {
+      const Wrapped = function (opts) {
+        const c = opts === undefined ? new AC() : new AC(opts);
+        audioCtxs.push(c);
+        return c;
+      };
+      Wrapped.prototype = AC.prototype;
+      window.AudioContext = Wrapped;
+      if (window.webkitAudioContext) window.webkitAudioContext = Wrapped;
+    }
+  } catch (e) { /* sem Web Audio */ }
+  window.pkResumeAudio = function () {
+    for (const c of audioCtxs) {
+      try { if (c.state !== 'running') c.resume().catch(function () {}); } catch (e) { /* fechado */ }
+    }
+  };
+  for (const ev of ['touchend', 'mousedown', 'keydown', 'focus']) {
+    window.addEventListener(ev, window.pkResumeAudio, true);
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) window.pkResumeAudio();
+  });
 
   if (!isTouch) return;
 
@@ -109,7 +139,7 @@
 
     const rot = document.createElement('div');
     rot.id = 'pk-rotate';
-    rot.innerHTML = '<div class="pk-phone"></div>Gire o celular<br><small style="font-size:60%;opacity:.8">rotate your phone</small>';
+    rot.innerHTML = '<div class="pk-phone"></div>Rotate your phone';
     document.body.appendChild(rot);
 
     const opts = { passive: false };
