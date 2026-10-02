@@ -170,24 +170,29 @@ def extras(char, opponent):
         me, opp = m.fighters
         while m.phase != 'fight':
             m.step([0, 0])
-        far = kind not in fighter.MELEE_SPECIALS and kind not in fighter.DASH_KINDS
+        far = kind not in fighter.MELEE_SPECIALS and kind not in fighter.DASH_KINDS and kind != 'slide'
         me.x, opp.x = 300, 300 + (260 if far else 70)
         me.facing, opp.facing = 1, -1
         r = Renderer(SCREEN)
         life0 = opp.life
         states = set()
+        cloaked = 0
         for t in range(150):
             held = [0, 0]
             if t < 3:
                 held[0] = SPECIAL | (DOWN if which == 3 else RIGHT)
             m.step(held)
             states.add(me.state)
-            if t == 14:
+            cloaked = max(cloaked, me.cloak)
+            if t == (60 if kind == 'invisible' else 14):
                 shot(r, m.snapshot(), '%s_special%d_%s' % (tag, which, kind))
             opp.life = max(opp.life, 1.0)
         ok = states & {'dash', 'slide', 'tele', 'special', 'attack'}
         check(bool(ok), '%s: especial %d (%s) saiu (%s)' % (tag, which, label, ','.join(sorted(states))))
-        check(opp.life < life0, '%s: especial %d (%s) acertou (%.0f de dano)' % (tag, which, label, life0 - opp.life))
+        if kind == 'invisible':
+            check(cloaked > 0 and me.cloak > 0, '%s: especial %d (%s) deixa invisível' % (tag, which, label))
+        else:
+            check(opp.life < life0, '%s: especial %d (%s) acertou (%.0f de dano)' % (tag, which, label, life0 - opp.life))
 
 
 def meter():

@@ -42,8 +42,11 @@ press the fatality button (or ↓ → + HP) for your fighter's fatality.
 | Mileena | Sai throw | Roll | Sai frenzy |
 | Jax | Energy wave | Ground smash | Arm rip |
 | Shang Tsung | Flaming skull | Ground fire | Soul steal |
+| Reptile | Acid spit | Force ball | Tongue lash |
 
-Every fighter uses the Mortal Kombat II (SNES) sprites, specials and fatalities. Freezing an
+Every fighter uses the Mortal Kombat II (SNES) sprites, specials and fatalities — all 12 playable
+MK2 fighters. Specials 3 and 4 (↓ / → + Special, or ← → + HP / → ← + HK) add more MK2 moves, e.g.
+Reptile's slide and invisibility. Freezing an
 already frozen opponent backfires, just like in MK.
 
 

@@ -75,6 +75,9 @@ ROSTER = [
     Character('SHANG TSUNG', 'ShangTsung', 'skull', 'firerise', 'soulsteal', (255, 110, 40),
               specialName='FLAMING SKULL', special2Name='GROUND FIRE', fatalityName='SOUL STEAL',
               extra=[('skull3', 'TRIPLE SKULL')]),
+    Character('REPTILE', 'Reptile', 'acid', 'forceball', 'anim', (90, 220, 70),
+              specialName='ACID SPIT', special2Name='FORCE BALL', fatalityName='TONGUE LASH',
+              extra=[('slide', 'SLIDE'), ('invisible', 'INVISIBILITY')]),
 ]
 
 

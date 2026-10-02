@@ -117,6 +117,44 @@ FRAMES_MK2 = {
         'fatality': [1, 167, 168, 169, 170, 170, 170, 171, 172, 172, 172, 172, 172, 172],
         'fatalityhit': [227, 228, 229, 230, 231, 232, 232, 232, 232, 232],
     },
+    # Reptile: mesma folha-base do Scorpion (sprites 7-148 nas mesmas posições);
+    # os golpes próprios vêm depois do 148
+    'Reptile': {
+        'dance': [1, 2, 3, 4, 5, 6],
+        'walk': list(range(16, 25)),
+        'jump': [11, 27, 26],
+        'spin': [27] + list(range(28, 35)),
+        'crouch': [11, 12, 12],
+        'Apunch': [1, 50, 51],
+        'Bpunch': [44, 44, 44, 40, 41, 42, 37, 38, 39, 38, 44],
+        'Cpunch': [92, 92, 93],
+        'Dpunch': [86, 86, 87, 88, 88],
+        'Akick': [67, 67, 68, 68, 69, 69, 70],
+        'Bkick': [63, 63, 64, 64, 64, 65, 65, 66, 63],
+        'Ckick': [12, 12, 98, 99, 100, 100, 100],
+        'Dkick': [81, 82, 83, 84, 85, 81],
+        'Ekick': [27, 108, 108],
+        'Epunch': [27, 104, 104],
+        'Ahit': [109, 109, 110],
+        'Bhit': [111, 112, 112],
+        'Groin': [111, 142],   # golpe no saco (split punch do Johnny Cage)
+        'Chit': [113, 114, 115, 115, 114, 113],
+        'Ehit': [118, 119, 119],
+        'Fhit': [127, 128, 129, 130, 130, 131, 131, 54, 55, 56, 58, 59, 61, 62],
+        'Ghit': [52, 53, 54, 54, 54, 54, 55, 57, 59, 61, 62],
+        'Ablock': [7, 8, 8],
+        'Bblock': [13, 14, 14],
+        'dizzy': [144, 145, 146, 147, 148],
+        'win': [9, 35, 36, 36],
+        'Special': [1, 149, 150, 151, 151, 1],         # cuspe de ácido (sai da boca no índice 3)
+        'Special2': [162, 163, 164, 167, 167, 1],      # bola de força: forma nas mãos e arremessa no 3
+        'Fkick': [183, 184],                           # rasteira (slide)
+        'fatalityhit': [248, 249, 250, 251, 252, 253, 253, 253, 253, 253],   # vítima do toasty (+21 do Scorpion)
+        # tira a máscara (1-4), vira de lado e abre a boca (5-9), língua até a vítima (10-14),
+        # recolhe com a cabeça (15-18) e mastiga de frente (19-24)
+        'fatality': [1, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227,
+                     226, 225, 224, 223, 228, 222, 229, 230, 231, 232],
+    },
     'LiuKang': {
         'dance': [1, 2, 3, 4, 5, 6],
         'walk': list(range(17, 26)),
@@ -432,6 +470,8 @@ FX_MK2 = {
     'ice': ('Sub-Zero', [157, 158, 159, [161, 162], [163, 164], [165, 166], 167, 168, 169]),  # 0-2 sai, 3-4 voa, 5-8 estoura
     'freezefx': ('Sub-Zero', [199, 200]),
     'icepuddle': ('Sub-Zero', [176, 179, 180, 181, 182, 183, 184, 185, 186]),   # poça do ground freeze                         # bola de gelo da fatality
+    'acid': ('Reptile', [171, 152, 153, 154, 155, 156, 157, 158]),     # 0 sai, 1-2 voa, 3-7 respinga
+    'forceball': ('Reptile', [169, 168, 172, 168, 173, 175, 180, 182]),  # 0 sai, 1-3 voa, 4-7 anéis do impacto
     'spearhead': ('Scorpion', [155]),                              # kunai do arpão (a corda é desenhada no código)
     'firebreath': ('Scorpion', [173, 174, 175, 176]),              # fogo saindo da boca (faísca -> labareda)
     'fireburn': ('Scorpion', [177, 178, 179, 180, 181, 183]),      # fogo na vítima (bola -> coluna -> caveira)
@@ -528,7 +568,7 @@ class Sheet:
         self.bg = Counter(c for row in self.px[:40] for c in row).most_common(1)[0][0]
         self.boxes = find_sprites(self.w, self.h, self.px, self.bg)
         self._cache = {}
-        stand = self.boxes[FRAMES_MK2[base]['dance'][0]]
+        stand = self.boxes[FRAMES_MK2[base]['dance'][0] if base in FRAMES_MK2 else 1]
         self.standH = stand[3] - stand[1]
 
     def sprite(self, i):
