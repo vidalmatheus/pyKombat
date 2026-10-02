@@ -96,7 +96,7 @@ class Renderer:
                 body = img.get_bounding_rect()
                 cut = pygame.Rect(body.x, body.y, body.w, min(body.h, 30))
                 left = x - sh.anchor(facing)
-                self.heads.append([img.subsurface(cut).copy(), left + cut.x, ground - sh.h + cut.y,
+                self.heads.append([img.subsurface(cut).copy(), left + cut.x, ground - sh.gh + cut.y,
                                    dirX * 3.2, -8.5, 0])
             elif kind == 'pfx':  # projétil explodiu (acertou, foi defendido ou trombou)
                 _, pk, x, y, facing = ev
@@ -213,7 +213,7 @@ class Renderer:
             sh = assets.sheet(char, vs, bool(lf[1]))
             surf = sh.frame(vf, vfacing)
             left = vx - sh.anchor(vfacing)
-            top = ground - sh.h
+            top = ground - sh.gh
             fatalfx.draw(world, kind, t, surf, left, top, ground, seed, fighters[wi][4])
         for p in snap['p']:
             self._drawProjectile(world, p, fighters, ground, snap['t'])
@@ -266,17 +266,17 @@ class Renderer:
             for k, a in ((3, 70), (2, 110), (1, 150)):
                 g = assets.tinted(ghost, ('sk', k), (0, 0, 0, 0), pygame.BLEND_RGBA_ADD)
                 g.set_alpha(a)
-                surf.blit(g, (x - anchor - facing * 26 * k, ground - y - sh.h))
+                surf.blit(g, (x - anchor - facing * 26 * k, ground - y - sh.gh))
         alpha = None
         if flags & 8:
             alpha = 90 if tick % 4 < 2 else 200
         if alpha is not None:
             img = assets.tinted(img, 'ghost', (0, 0, 0, 0), pygame.BLEND_RGBA_ADD)
             img.set_alpha(alpha)
-        surf.blit(img, (x - anchor, ground - y - sh.h))
+        surf.blit(img, (x - anchor, ground - y - sh.gh))
 
     def _drawProjectile(self, surf, p, fighters, ground, tick):
-        kind, x, y, facing, age, owner, length = p
+        kind, x, y, facing, age, owner, length, x0 = p
         sy = ground - y
         if kind == 'spear':
             o = fighters[owner]
@@ -304,7 +304,14 @@ class Renderer:
             _, n, launch, fly, _ = FX[kind]
             k = age // FX_TICKS
             frame = launch[k] if k < len(launch) else fly[(k - len(launch)) % len(fly)]
+            # o rastro não passa para trás da mão de quem jogou (sai "de dentro" da mão)
+            clip = surf.get_clip()
+            if facing > 0:
+                surf.set_clip(pygame.Rect(x0, 0, W - x0, H).clip(clip))
+            else:
+                surf.set_clip(pygame.Rect(0, 0, x0, H).clip(clip))
             self._drawFx(surf, kind, frame, x, sy, facing)
+            surf.set_clip(clip)
             return
         import match as M   # projétil sem sprite: bola de luz na cor dele
         cfg = M.PROJ[kind]

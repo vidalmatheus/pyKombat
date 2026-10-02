@@ -399,7 +399,7 @@ class CharacterSelect(Screen):
                 img = sh.frame(seq[(tick // 6) % len(seq)], facing)
                 ax = sh.anchor(facing)
             cx = 105 if p == 0 else 695
-            s.blit(img, (cx - ax, 470 - sh.h))
+            s.blit(img, (cx - ax, 470 - sh.gh))
             col = (230, 60, 60) if p == 0 else (90, 140, 255)
             ui.text(s, labels[p], 18, (cx, 268), col, outline=True)
             ui.text(s, c.name, 24, (cx, 290), c.color, outline=True)
@@ -440,7 +440,7 @@ class StageSelect(Screen):
                 return None
             for group, action in self.hub.menu:
                 if action in ('ok', 'start'):
-                    assets.playSound('Fight')
+                    assets.playSound('start')   # o "Fight!" é falado na abertura do round
                     ctx['stage'] = stage if stage != 9 else random.randint(1, 8)
                     ctx['seed'] = random.randrange(1 << 30)
                     return 'fight'

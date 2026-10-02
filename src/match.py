@@ -71,6 +71,7 @@ class Projectile:
         self.y = PROJ_HEIGHT
         self.t = 0
         self.alive = True
+        self.x0 = float(x)       # de onde saiu (a mão): nada do desenho aparece atrás daqui
         self.length = 0.0        # arpão: comprimento da corda
         self.retract = False
         self.hooked = False
@@ -155,7 +156,7 @@ class Match:
         elif f.facing < 0:
             ax = sh.w - ax
         left = int(f.x - ax)
-        top = int(self.ground - f.y - sh.h)
+        top = int(self.ground - f.y - sh.gh)
         return sh, frame, left, top
 
     # ------------------------------------------------------------ passo
@@ -413,6 +414,18 @@ class Match:
                 return left + x, self.ground - (top + ys[len(ys) // 2])
         return f.x + f.facing * 62, PROJ_HEIGHT
 
+    def _fxLead(self, kind):
+        """Largura visível (até a frente) do 1º frame do sprite do projétil."""
+        import render
+        spec = render.FX.get(kind)
+        if spec is None:
+            return PROJ[kind]['r']
+        name, n, launch, fly, _ = spec
+        sh = assets.fxSheet(name, n)
+        frame = (launch or fly)[0]
+        br = sh.frame(frame, 1).get_bounding_rect()
+        return max(0, sh.anchor(1) - br.x)
+
     def spawnProjectile(self, f, kind):
         if kind == 'spear':  # a corda sai do corpo (render.py)
             x, y = f.x + f.facing * 62, PROJ_HEIGHT
@@ -420,7 +433,13 @@ class Match:
             x, y = self.handPoint(f)
         if kind in AT_TARGET:
             x = self.other(f).x
+        hand = x
+        if kind not in AT_TARGET:
+            # o desenho do projétil fica atrás do ponto x (que é a frente dele):
+            # avança a largura do primeiro frame para ele nascer logo à frente da mão
+            x += f.facing * self._fxLead(kind)
         p = Projectile(kind, f, x)
+        p.x0 = hand
         p.y = PROJ_FIXED_HEIGHT.get(kind, y)
         f.projectile = p
         self.projectiles.append(p)
@@ -686,7 +705,8 @@ class Match:
                        int(round(f.y)), f.facing, flags, ax, round(max(0.0, f.life), 1)])
         ps = []
         for p in self.projectiles:
-            ps.append([p.kind, int(p.headX()), int(p.y), p.facing, p.t, p.owner.idx, int(p.length)])
+            ps.append([p.kind, int(p.headX()), int(p.y), p.facing, p.t, p.owner.idx, int(p.length),
+                       int(p.x0)])
         fz = 0
         if self.fatal is not None and self.phase in ('fatality', 'over') and self.fatal['kind'] != 'anim':
             z = self.fatal

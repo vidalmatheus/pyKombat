@@ -9,6 +9,7 @@ import pygame
 import characters
 
 SPRITE_DIR = 'res/sprites/'
+FOOT = 20   # linhas de cada frame de lutador abaixo do chão (tools/mk2_sprites.SINK)
 CELL_W = 200
 CELL_H = 164
 
@@ -92,11 +93,13 @@ def recolorPalette(palette, char, alt):
 class Sheet:
     """Uma tira de animação: frames lado a lado, virados p/ direita."""
 
-    def __init__(self, surf, frames, anchorX):
+    def __init__(self, surf, frames, anchorX, foot=0):
         self.n = frames
         self.surf = surf
         self.w = surf.get_width() // frames
         self.h = surf.get_height()
+        self.foot = foot                 # linhas abaixo da linha do chão
+        self.gh = self.h - foot          # do topo do frame até o chão
         self.anchorX = anchorX
         self._flipped = None
         self._frames = {}
@@ -169,7 +172,7 @@ def sheet(char, name, alt=False):
         if raw.get_colorkey() is None:
             raw.set_colorkey(0)  # índice 0 = transparente (tools/build_sprites.py)
     surf = raw.convert_alpha()
-    s = Sheet(surf, frames, surf.get_width() // frames // 2)   # âncora: centro do frame
+    s = Sheet(surf, frames, surf.get_width() // frames // 2, FOOT)   # âncora: centro do frame
     _sheets[key] = s
     return s
 

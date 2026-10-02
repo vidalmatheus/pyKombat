@@ -31,6 +31,12 @@ DST = os.path.join(ROOT, 'res', 'sprites')
 
 CELL_W = 200
 CELL_H = 164
+# Margem transparente abaixo da linha do chão em todos os frames dos lutadores.
+# Nas poses deitadas do SNES uma mão/pé fica mais baixa que o corpo (o chão é
+# visto um pouco de cima); alinhar pelo pixel mais baixo deixava o corpo
+# "flutuando". Essas poses descem até SINK pixels (ver ground_dip) e a mão
+# entra um pouco no chão, como no console. Mesmo valor de assets.FOOT.
+SINK = 20
 SCALE = 1.36   # altura: Liu Kang parado tem ~99 px no SNES -> ~135 px no jogo
 # O pixel do SNES não é quadrado: a TV o mostrava 8/7 mais largo que alto. Sem
 # essa correção os lutadores ficam espremidos (mais magros que no console).
@@ -533,6 +539,19 @@ class Sheet:
         return xs[len(xs) // 2] if len(xs) > 20 else sw // 2
 
 
+def ground_dip(sheet, sw, sh, spx):
+    """Quanto descer um frame abaixo do chão. Só para poses deitadas (bem mais
+    baixas que o lutador em pé): a base é onde o corpo apoia (a quarta parte das
+    colunas mais baixas), não a mão/pé que pende mais."""
+    if sh > 0.45 * sheet.standH * SCALE:
+        return 0
+    gaps = sorted(sh - 1 - max(y for y in range(sh) if spx[y][x] is not None)
+                  for x in range(sw) if any(spx[y][x] is not None for y in range(sh)))
+    if not gaps:
+        return 0
+    return min(SINK, gaps[len(gaps) // 4])
+
+
 def build_strip(sheet, frames, align):
     sprites = []
     for f in frames:
@@ -552,13 +571,14 @@ def build_strip(sheet, frames, align):
         shift = sheet.hip(sw0, sh0, spx0)
         refs = [r + shift for r in refs]
     cw = max(CELL_W, max(2 * max(r, sw - r) for ((sw, _, _), _), r in zip(sprites, refs)) + 4)
-    ch = max(CELL_H, max(sh for ((_, sh, _), _) in sprites))
+    gy = max(CELL_H, max(sh for ((_, sh, _), _) in sprites))   # linha do chão
+    ch = gy + SINK
     cw += cw % 2
     n = len(frames)
     img = [[None] * (cw * n) for _ in range(ch)]
     for k, (((sw, sh, spx), _), r) in enumerate(zip(sprites, refs)):
         ox = k * cw + cw // 2 - r
-        oy = ch - sh
+        oy = gy - sh + ground_dip(sheet, sw, sh, spx)
         for y in range(sh):
             line = img[oy + y]
             for x, c in enumerate(spx[y]):
