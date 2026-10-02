@@ -29,6 +29,7 @@ class Character:
         self.fatality = fatality
         self.color = color
         self.voice = voice or base.replace('-', '') + 'Wins'
+        self.nameSound = 'Name' + base.replace('-', '')   # locutor dizendo o nome (seleção)
         self.female = female
         self.specialName = specialName
         self.special2Name = special2Name

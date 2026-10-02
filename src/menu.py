@@ -231,14 +231,15 @@ class ControlsScreen(Screen):
                     x = (110, 300, 480, 660)[c]
                     color = (255, 200, 60) if r == 0 or c == 0 else ui.WHITE
                     ui.text(s, cell, 17, (x, y), color)
-            y = 380
+            y = 362
             for line in ('SPECIAL 1: DOWN, FORWARD + LOW PUNCH  -  SPECIAL 2: DOWN, BACK + LOW KICK',
                          'SPECIAL 3: BACK, FORWARD + HIGH PUNCH  -  SPECIAL 4: FORWARD, BACK + HIGH KICK',
                          '(OR SPECIAL BUTTON ALONE / WITH BACK / DOWN / FORWARD)',
                          'UPPERCUT: DOWN + HIGH PUNCH    SWEEP: DOWN + HIGH KICK',
+                         'SPECIALS SPEND 1 OF 3 CHARGES: THEY REFILL OVER TIME AND WHEN YOU GET HIT',
                          'FINISH HIM: PRESS FATALITY  (OR DOWN, FORWARD + HIGH PUNCH)'):
                 ui.text(s, line, 14, (400, y), (220, 220, 220))
-                y += 21
+                y += 18
             ui.backHint(s)
             await self.frame()
 
@@ -300,7 +301,7 @@ class CharacterSelect(Screen):
                     c = (c + COLS) % n
                 elif action in ('ok', 'start'):
                     ready[who] = True
-                    assets.playSound('start')
+                    assets.playSound(characters.ROSTER[cursor[who]].nameSound)   # locutor diz o nome
                     if mode == 'cpu' and who == 0 and cursor[1] == cursor[0]:
                         cursor[1] = (cursor[0] + 1) % n   # sugere outro lutador p/ a CPU
                 if c != cursor[who]:
@@ -327,6 +328,8 @@ class CharacterSelect(Screen):
                 for msg in link.recv():
                     if msg.get('t') == 'sel':
                         cursor[1 - me] = int(msg['c']) % n
+                        if msg['r'] and not ready[1 - me]:
+                            assets.playSound(characters.ROSTER[cursor[1 - me]].nameSound)
                         ready[1 - me] = bool(msg['r'])
                     elif msg.get('t') == 'bye':
                         closeNet(ctx)

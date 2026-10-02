@@ -51,6 +51,7 @@ class Renderer:
         self.bg = None
         self.shownLife = [100.0, 100.0]
         self.toasty = 0
+        self.noMeter = [0, 0]   # pisca as cargas de quem tentou especial sem carga
         self.rng = random.Random(1)
         self._glows = {}
         self.label = None  # texto extra no HUD (ex.: "ONLINE")
@@ -91,6 +92,8 @@ class Renderer:
                         26, 14 if kind == 'tele' else 10, (150, 150, 160) if kind == 'tele' else (150, 120, 90), 'puff'))
             elif kind == 'toasty':
                 self.toasty = 70
+            elif kind == 'nometer':
+                self.noMeter[ev[1]] = 24
             elif kind == 'head':  # recorta a cabeça do frame da vítima e a joga para longe do golpe
                 _, ci, alt, sheetName, frame, x, facing, dirX, seed = ev
                 sh = assets.sheet(characters.ROSTER[ci], sheetName, bool(alt))
@@ -246,7 +249,7 @@ class Renderer:
         surf.blit(s, (x - w // 2, ground - 7))
 
     def _drawFighter(self, surf, f, ground, tick):
-        ci, alt, sheetName, frame, x, y, facing, flags, ax, life = f
+        ci, alt, sheetName, frame, x, y, facing, flags, ax, life = f[:10]
         if flags & 2:
             return
         char = characters.ROSTER[ci]
@@ -340,6 +343,21 @@ class Renderer:
         ax = sh.w // 2 if center else sh.anchor(facing)
         surf.blit(img, (x - ax, y - sh.h // 2))
 
+    def _meter(self, s, x0, i, meter):
+        """Cargas de especial: 3 barrinhas sob o nome; a que está recarregando enche aos poucos."""
+        flash = self.noMeter[i] > 0 and (self.noMeter[i] // 4) % 2 == 0
+        for k in range(3):
+            x = x0 + 4 + k * 34 if i == 0 else x0 + 316 - 30 - k * 34
+            r = pygame.Rect(x, 66, 30, 8)
+            pygame.draw.rect(s, (0, 0, 0), r.inflate(4, 4))
+            pygame.draw.rect(s, (200, 30, 30) if flash else (30, 30, 60), r)
+            v = max(0.0, min(1.0, meter - k))
+            if v > 0:
+                w = int(30 * v)
+                fr = pygame.Rect(x if i == 0 else x + 30 - w, 66, w, 8)
+                pygame.draw.rect(s, (80, 170, 255) if v >= 1 else (50, 90, 150), fr)
+        self.noMeter[i] = max(0, self.noMeter[i] - self.steps)
+
     def _hud(self, snap):
         s = self.screen
         fs = snap['f']
@@ -365,6 +383,7 @@ class Renderer:
             name = char.name
             ui.text(s, name, 18, (x0 + 4 if i == 0 else x0 + 316 - ui.textWidth(name, 18), 44),
                     (255, 255, 255), center=False, outline=True)
+            self._meter(s, x0, i, fs[i][10] if len(fs[i]) > 10 else 3)
             for k in range(snap['w'][i]):  # medalhas de round
                 cx = x0 + 300 - k * 22 if i == 0 else x0 + 20 + k * 22
                 pygame.draw.circle(s, (0, 0, 0), (cx, 54), 9)

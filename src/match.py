@@ -198,10 +198,20 @@ class Match:
             self._projectiles()
             self._melee()
             self._pushboxes()
+        self._meters()
         for f in fs:
             if f.state in NEUTRAL and self.phase in ('intro', 'fight', 'finish'):
                 f.faceTowards(self.other(f))
         self._phasePost(presses)
+
+    def _meters(self):
+        """Recarga dos especiais: com o tempo e proporcional ao dano tomado."""
+        for f in self.fighters:
+            lost = f.lastLife - f.life
+            f.lastLife = f.life
+            if self.phase == 'fight':
+                f.meter = min(float(F.SPECIAL_MAX),
+                              f.meter + F.SPECIAL_REGEN + max(0.0, lost) * F.SPECIAL_PER_DMG)
 
     # ------------------------------------------------------------ fases
     def _phasePre(self, helds, presses):
@@ -356,9 +366,11 @@ class Match:
         self.pt = 0
         self.projectiles = []
         self.event('fatal', kind)
-        self.sound({'anim': FATAL_SOUND.get(w.base, 'HitLongo'), 'electro': 'IceSound2',
-                    'hatsplit': 'block', 'soulsteal': 'HitLongo', 'deepfreeze': 'IceSound',
-                    'firebreath': 'BeforeFinish'}[kind])
+        scream = 'HitFLongo' if self.loser.char.female else 'HitLongo'   # grito da vítima
+        snd = {'anim': FATAL_SOUND.get(w.base, 'HitLongo'), 'electro': 'IceSound2',
+               'hatsplit': 'block', 'soulsteal': 'HitLongo', 'deepfreeze': 'IceSound',
+               'firebreath': 'BeforeFinish'}[kind]
+        self.sound(scream if snd == 'HitLongo' else snd)
 
     def _fatalityStep(self):
         fz = self.fatal
@@ -651,8 +663,8 @@ class Match:
         d.invisible = False
         self.event('blood', point[0], point[1], dirX, int(6 + dmg * 2.2), self.tick)
         self.sound('Hit0')
-        if self.rng.random() < 0.45:
-            self.sound('Hit%d' % self.rng.randint(1, 12))
+        if self.rng.random() < 0.45:   # gemido de dor (voz feminina para Kitana/Mileena)
+            self.sound('HitF%d' % self.rng.randint(1, 4) if d.char.female else 'Hit%d' % self.rng.randint(1, 12))
         self.hitstop = 4 + int(dmg // 3)
         if dmg >= 9:
             self.shakeScreen(6)
@@ -725,7 +737,8 @@ class Match:
                 flags |= 8
             ax = f.animDef.get('ax') or 0
             fs.append([self.charIdx[f.idx], 1 if f.alt else 0, sheetName, frame, int(round(f.x)),
-                       int(round(f.y)), f.facing, flags, ax, round(max(0.0, f.life), 1)])
+                       int(round(f.y)), f.facing, flags, ax, round(max(0.0, f.life), 1),
+                       round(f.meter, 2)])
         ps = []
         for p in self.projectiles:
             if p.t <= 0:

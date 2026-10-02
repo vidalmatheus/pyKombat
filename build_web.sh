@@ -26,7 +26,9 @@ for s in selection back start options Fight block IceSound IceSound2 ComeHere Ge
          FinishHim FinishHer Fatality HitFatality FlawlessVictory Fire Whoosh Rumble \
          Toasty HitLongo BeforeFinish Hit0 Hit1 Hit2 Hit3 Hit4 Hit5 Hit6 Hit7 Hit8 Hit9 Hit10 Hit11 Hit12 \
          SubZeroWins ScorpionWins LiuKangWins KitanaWins RaidenWins KungLaoWins JohnnyCageWins \
-         BarakaWins MileenaWins JaxWins ShangTsungWins; do
+         BarakaWins MileenaWins JaxWins ShangTsungWins HitF1 HitF2 HitF3 HitF4 HitFLongo \
+         NameSubZero NameScorpion NameLiuKang NameKitana NameRaiden NameKungLao NameJohnnyCage \
+         NameBaraka NameMileena NameJax NameShangTsung; do
     cp "res/Sound/$s.ogg" "$STAGE/res/Sound/"
 done
 
