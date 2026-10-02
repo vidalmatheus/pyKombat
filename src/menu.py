@@ -233,7 +233,8 @@ class ControlsScreen(Screen):
                     ui.text(s, cell, 17, (x, y), color)
             y = 380
             for line in ('SPECIAL 1: DOWN, FORWARD + LOW PUNCH  -  SPECIAL 2: DOWN, BACK + LOW KICK',
-                         '(OR SPECIAL BUTTON  /  BACK + SPECIAL BUTTON)',
+                         'SPECIAL 3: BACK, FORWARD + HIGH PUNCH  -  SPECIAL 4: FORWARD, BACK + HIGH KICK',
+                         '(OR SPECIAL BUTTON ALONE / WITH BACK / DOWN / FORWARD)',
                          'UPPERCUT: DOWN + HIGH PUNCH    SWEEP: DOWN + HIGH KICK',
                          'FINISH HIM: PRESS FATALITY  (OR DOWN, FORWARD + HIGH PUNCH)'):
                 ui.text(s, line, 14, (400, y), (220, 220, 220))
@@ -414,11 +415,11 @@ class CharacterSelect(Screen):
         c = ROSTER[cursor[me if mode in ('host', 'guest') else (1 if pickingCpu else 0)]]
         ui.panel(s, pygame.Rect(232, 262, 336, 150), 150)
         ui.text(s, c.name, 24, (400, 270), c.color)
-        ui.text(s, 'SPECIAL: ' + c.specialName, 15, (400, 305))
-        ui.text(s, '(DOWN, FWD + LP)', 12, (400, 324), ui.GRAY)
-        ui.text(s, 'SPECIAL 2: ' + c.special2Name, 15, (400, 344))
-        ui.text(s, '(DOWN, BACK + LK)', 12, (400, 363), ui.GRAY)
-        ui.text(s, 'FATALITY: ' + c.fatalityName, 15, (400, 384), (255, 120, 120))
+        moves = [(c.specialName, 'D,F + LP'), (c.special2Name, 'D,B + LK')] + \
+            [(n, k) for (_, n), k in zip(c.extra, ('B,F + HP', 'F,B + HK'))]
+        for i, (name, keys) in enumerate(moves):   # especiais e o comando de cada um
+            ui.text(s, '%s  %s' % (name, keys), 13, (400, 300 + i * 19), ui.WHITE if i < 2 else (255, 220, 140))
+        ui.text(s, 'FATALITY: ' + c.fatalityName, 14, (400, 386), (255, 120, 120))
         if mode == 'versus':
             ui.text(s, 'P1: WASD + J      P2: ARROWS + ENTER', 13, (400, 425), ui.GRAY)
         elif mode == 'cpu':

@@ -36,13 +36,20 @@ PROJ = {
     'firerise':  dict(speed=0.0, dmg=10, effect='launch', r=24, life=44, active=(10, 30),
                       color=(255, 140, 30), core=(255, 230, 140)),
     'quake':     dict(speed=13.0, dmg=8, effect='trip', r=14, color=(190, 90, 255), core=(240, 210, 255)),
+    # especiais extras
+    'lowfireball': dict(speed=9.0, dmg=8, effect='heavy', r=12, color=(255, 140, 30), core=(255, 240, 160)),
+    'groundice': dict(speed=6.0, dmg=5, effect='trip', r=14, color=(150, 220, 255), core=(240, 252, 255)),
 }
+# especiais que lançam vários projéteis em sequência: tipo -> (projétil, quantos, intervalo em ticks)
+MULTI_SHOT = {'skull3': ('skull', 3, 14)}
 PROJ_SOUND = {'ice': 'IceSound', 'spear': 'GetOverHere', 'fireball': 'HitLongo', 'fan': 'block',
               'fanlift': 'HitLongo', 'lightning': 'IceSound2', 'hat': 'block', 'greenball': 'HitLongo',
               'spark': 'IceSound2', 'sai': 'block', 'skull': 'HitLongo', 'wave': 'IceSound2',
-              'firerise': 'HitLongo', 'quake': 'HitLongo'}
+              'firerise': 'HitLongo', 'quake': 'HitLongo', 'lowfireball': 'HitLongo',
+              'groundice': 'IceSound'}
 PROJ_HEIGHT = 98    # altura padrão (o projétil sai da altura das mãos; ver handPoint)
-PROJ_FIXED_HEIGHT = {'fanlift': 62, 'firerise': 60, 'quake': 14, 'wave': 64}   # altura fixa, não da mão
+PROJ_FIXED_HEIGHT = {'fanlift': 62, 'firerise': 60, 'quake': 14, 'wave': 64, 'lowfireball': 46,
+                     'groundice': 12}   # altura fixa, não da mão
 AT_TARGET = ('firerise',)      # nasce embaixo do oponente (fogo do chão do Shang Tsung)
 SPEAR_RANGE = 440
 
@@ -427,6 +434,12 @@ class Match:
         return max(0, sh.anchor(1) - br.x)
 
     def spawnProjectile(self, f, kind):
+        if kind in MULTI_SHOT:   # ex.: três caveiras seguidas; nascem com t negativo (esperando)
+            base, count, gap = MULTI_SHOT[kind]
+            for i in range(count):
+                self.spawnProjectile(f, base)
+                f.projectile.t = -gap * i
+            return
         if kind == 'spear':  # a corda sai do corpo (render.py)
             x, y = f.x + f.facing * 62, PROJ_HEIGHT
         else:
@@ -448,6 +461,8 @@ class Match:
     def _projectiles(self):
         for p in list(self.projectiles):
             p.t += 1
+            if p.t <= 0:
+                continue   # ainda na fila (vários projéteis em sequência)
             owner = p.owner
             target = self.other(owner)
             if p.kind == 'spear':
@@ -480,8 +495,8 @@ class Match:
                     self.projectiles.remove(p)
                 if owner.projectile is p:
                     owner.projectile = None
-        # projétil contra projétil
-        if len(self.projectiles) == 2:
+        # projétil contra projétil (um de cada lado)
+        if len(self.projectiles) == 2 and all(p.t > 0 for p in self.projectiles):
             a, b = self.projectiles
             if a.owner is not b.owner and abs(a.headX() - b.headX()) < a.cfg['r'] + b.cfg['r'] + 6:
                 for p in (a, b):
@@ -556,7 +571,8 @@ class Match:
         results = []
         for a in self.fighters:
             d = self.other(a)
-            if a.state not in ('attack', 'slide', 'dash') or a.hitDone or a.move is None:
+            airborne = a.state == 'jump' and a.airAttack   # chute/soco no pulo
+            if (a.state not in ('attack', 'slide', 'dash') and not airborne) or a.hitDone or a.move is None:
                 continue
             mv = MOVES[a.move]
             lo, hi = mv['active']
@@ -578,6 +594,11 @@ class Match:
             pt = hm.overlap(dsh.mask(dframe, d.facing), (dleft - left, dtop - top))
             if pt:
                 results.append((a, d, mv, (left + pt[0], top + pt[1])))
+            elif a.state == 'dash' and abs(a.x - d.x) <= 2 * F.BODY_HALF + 6 and \
+                    (a.y <= 20 or d.state not in ('crouch', 'cblock')):
+                # voadora/giro: o corpo inteiro é o golpe, acerta ao encostar (por cima de quem agacha não)
+                hx = dleft + dsh.anchor(d.facing) - a.facing * F.BODY_HALF
+                results.append((a, d, mv, (hx, dtop + 40)))
         for a, d, mv, point in results:
             a.hitDone = True
             if self.phase == 'finish':
@@ -705,6 +726,8 @@ class Match:
                        int(round(f.y)), f.facing, flags, ax, round(max(0.0, f.life), 1)])
         ps = []
         for p in self.projectiles:
+            if p.t <= 0:
+                continue
             ps.append([p.kind, int(p.headX()), int(p.y), p.facing, p.t, p.owner.idx, int(p.length),
                        int(p.x0)])
         fz = 0

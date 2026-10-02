@@ -302,19 +302,23 @@ def drawMoveList(screen, chars):
     for name, keys in MOVE_HELP:
         ui.text(screen, name, 16, (230, y), ui.WHITE)
         ui.text(screen, keys, 16, (570, y), ui.GRAY)
-        y += 24
-    y += 10
+        y += 20
+    y += 8
     seen = []
     for c in chars:
         if c in seen:
             continue
         seen.append(c)
         ui.text(screen, c.name, 22, (400, y), c.color, outline=True)
-        y += 30
+        y += 26
         ui.text(screen, '%s: DOWN, FWD + LP  (OR SPECIAL)' % c.specialName, 15, (400, y))
-        y += 22
+        y += 19
         ui.text(screen, '%s: DOWN, BACK + LK  (OR BACK + SPECIAL)' % c.special2Name, 15, (400, y))
-        y += 22
+        y += 19
+        for (_, name), keys in zip(c.extra, ('BACK, FWD + HP  (OR DOWN + SPECIAL)',
+                                             'FWD, BACK + HK  (OR FWD + SPECIAL)')):
+            ui.text(screen, '%s: %s' % (name, keys), 15, (400, y))
+            y += 19
         ui.text(screen, 'FATALITY - %s: FATALITY BUTTON (FINISH HIM)' % c.fatalityName, 15, (400, y), (255, 120, 120))
-        y += 30
+        y += 24
     ui.text(screen, 'ESC: BACK', 14, (400, 470), ui.GRAY)

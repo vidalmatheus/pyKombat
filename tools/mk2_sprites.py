@@ -79,6 +79,7 @@ FRAMES_MK2 = {
         'win': [39, 40, 40],
         'Special': [1, 154, 155, 156, 155, 1],      # rajada de gelo (as duas mãos)
         'Fkick': [187, 188],                       # slide
+        'Special3': [170, 171, 172, 174, 175, 178],   # ground freeze (spray no chão no índice 3)
         # deep freeze: forma a bola de gelo (0-7), arremessa (8-10, congela), uppercut (14-18, estilhaça no 16)
         'fatality': [189, 190, 191, 192, 193, 194, 195, 195, 196, 197, 198, 198, 198, 1, 90, 91, 92, 93, 93],
         'fatalityhit': [227, 227, 228, 229, 230, 230, 231, 232, 232, 232],
@@ -142,7 +143,9 @@ FRAMES_MK2 = {
         'Bblock': [13, 14, 14],
         'dizzy': list(range(136, 142)),
         'win': [36, 37, 38, 39],
-        'Special': [1, 142, 144, 144, 142, 1],      # bola de fogo
+        'Special': [1, 142, 143, 143, 142, 1],      # bola de fogo (em pé)
+        'Special3': [1, 144, 145, 145, 144, 1],     # bola de fogo baixa (ajoelhado)
+        'Fkick2': [170, 171, 172, 173, 174, 175],   # bicycle kick (pedalando no ar)
         'Fkick': [96, 97],                         # voadora (flying kick)
         'fatality': list(range(189, 201)),         # vira dragão e morde
         'fatalityhit': [218, 219, 220, 221, 222, 223, 223, 223, 223, 223],
@@ -175,6 +178,8 @@ FRAMES_MK2 = {
         'win': [34, 36, 37, 38],
         'Special': [1, 168, 168, 146, 147, 1],     # arremesso do leque
         'Special2': [1, 40, 41, 41, 40, 1],        # leque que levanta (fan lift)
+        'Swipe': [1, 171, 172, 172, 171, 1],        # fan swipe
+        'Fkick': [170, 92, 93],                    # square wave punch (substituto: soco no ar)
         'fatality': [1, 168, 169, 170, 171, 172, 173, 173],  # leque corta a cabeça
         'fatalityhit': [202, 203, 204, 205, 206, 207, 208, 209, 210, 210],
     },
@@ -237,6 +242,7 @@ FRAMES_MK2 = {
         'dizzy': list(range(142, 148)),
         'win': [35, 36, 37, 38, 39, 40],
         'Special': [1, 148, 149, 150, 151, 157],     # arremesso do chapéu
+        'Fkick': [161, 162, 163, 164, 165, 166],    # spin (girando)
         'fatality': [148, 149, 150, 151, 152, 153, 154, 155, 156, 157],  # o chapéu corta a vítima
         'fatalityhit': [208, 209, 210, 211, 212, 213, 214, 215, 215, 215],
     },
@@ -268,6 +274,8 @@ FRAMES_MK2 = {
         'win': [34, 37, 38, 39, 40],
         'Special': [1, 150, 151, 151, 152, 1],       # bola de fogo verde (baixa)
         'Fkick': [174, 179],                       # shadow kick
+        'Upper2': [85, 86, 87, 174],               # shadow uppercut
+        'Split': [1, 184, 185, 186, 185, 184],      # split punch
         'fatality': [1, 189, 190, 191, 192, 193, 193],   # uppercut que arranca a cabeça
         'fatalityhit': [240, 241, 242, 243, 244, 245, 246, 247, 248, 248],
     },
@@ -299,6 +307,7 @@ FRAMES_MK2 = {
         'win': [20, 111, 112, 112],
         'Special': [100, 104, 105, 106, 106, 100],   # cruza as lâminas no alto: sai a faísca
         'Fkick': [99, 102, 103, 104],              # blade fury (lâminas girando para a frente)
+        'Swipe': [100, 104, 103, 102, 99, 100],     # double blade swipe
         # gira com a lâmina esticada: corta a cabeça no índice 4
         'fatality': [100, 101, 87, 88, 89, 90, 87, 88, 89, 101, 100],
         'fatalityhit': [176, 176, 177, 178, 179, 180, 181, 181, 181, 181],
@@ -331,6 +340,7 @@ FRAMES_MK2 = {
         'win': [39, 40, 42, 44, 46, 48],
         'Special': [1, 150, 151, 152, 152, 1],     # arremesso do sai
         'Fkick': [15] + list(range(32, 39)),       # rolamento pelo chão (bola)
+        'Telekick': [29, 31, 32, 107, 108],        # teleport kick: some (0-2), cai chutando (3-4)
         # crava os sais várias vezes e ergue um deles
         'fatality': [174, 175, 176, 175, 174, 175, 176, 175, 174, 177, 178, 179, 179, 179],
         'fatalityhit': [212, 213, 214, 215, 216, 217, 217, 217, 217, 217],
@@ -395,6 +405,7 @@ FRAMES_MK2 = {
         'win': [34, 35, 36, 37, 38, 39],
         'Special': [155, 156, 157, 158, 159, 160],  # onda de energia (sai no índice 3)
         'Special2': [167, 168, 169, 170, 171, 172], # soco no chão (o punho bate no índice 3)
+        'Grab': [151, 152, 153, 154, 153, 154],     # gotcha grab
         # agarra os braços da vítima, puxa e ergue os braços
         'fatality': [174, 175, 176, 177, 178, 179, 180, 181, 182, 183],
         'fatalityhit': [204, 205, 206, 207, 208, 209, 209, 209, 209, 209],
@@ -404,11 +415,14 @@ ALIGN = {
     'spin': 'center', 'Fhit': 'center', 'Ghit': 'center', 'fatalityhit': 'center',
     ('LiuKang', 'fatality'): 'left',   # o dragão cresce para a frente; a cauda fica no lugar
     ('Mileena', 'Fkick'): 'center',    # a bola do rolamento gira em torno do centro
+    ('KungLao', 'Fkick'): 'center',    # o spin gira em torno do centro
+    ('Sub-Zero', 'Special3'): 'left',  # o spray de gelo cresce para a frente
 }
 # efeitos (sem troca de paleta): nome -> (base, frames); âncora = frente do efeito
 FX_MK2 = {
     'ice': ('Sub-Zero', [157, 158, 159, [161, 162], [163, 164], [165, 166], 167, 168, 169]),  # 0-2 sai, 3-4 voa, 5-8 estoura
-    'freezefx': ('Sub-Zero', [199, 200]),                         # bola de gelo da fatality
+    'freezefx': ('Sub-Zero', [199, 200]),
+    'icepuddle': ('Sub-Zero', [176, 179, 180, 181, 182, 183, 184, 185, 186]),   # poça do ground freeze                         # bola de gelo da fatality
     'spearhead': ('Scorpion', [155]),                              # kunai do arpão (a corda é desenhada no código)
     'firebreath': ('Scorpion', [173, 174, 175, 176]),              # fogo saindo da boca (faísca -> labareda)
     'fireburn': ('Scorpion', [177, 178, 179, 180, 181, 183]),      # fogo na vítima (bola -> coluna -> caveira)

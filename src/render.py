@@ -24,6 +24,8 @@ FX = {
     'sai': ('sai', 9, (0, 1), (2, 3), (4, 5, 6, 7, 8)),
     'skull': ('skull', 11, (0, 1, 2, 3), (4, 5, 6), (7, 8, 9, 10)),
     'wave': ('wave', 5, (0, 1), (2,), (3, 4)),
+    'lowfireball': ('fireball', 8, (0, 1), (2, 3), (4, 5, 6, 7)),
+    'groundice': ('icepuddle', 9, (0, 1), (2,), (3, 4, 5, 6, 7, 8)),   # poça de gelo deslizando no chão
 }
 GROUND_FX = {'firerise': ('firerise', 6, 7)}   # efeitos que saem do chão: (sheet, frames, ticks/frame)
 SHADOW_KICK = (90, 230, 60)   # rastro verde da shadow kick do Johnny Cage
