@@ -672,10 +672,25 @@ class HostScreen(Screen):
                             (255, 200, 60) if copied else ui.GRAY)
                 dots = '.' * (1 + int(time.perf_counter() * 2) % 3)
                 status = 'WAITING FOR YOUR FRIEND' + dots if link.state == 'waiting' else 'CREATING ROOM' + dots
-                ui.text(s, status, 22, (400, 370))
+                ui.text(s, status, 22, (400, 360))
+                if net.WEB:
+                    ui.text(s, 'KEEP THIS SCREEN OPEN UNTIL YOUR FRIEND JOINS', 14, (400, 395), ui.GRAY)
             copied = max(0, copied - 1)
             ui.backHint(s, 'ESC: CANCEL')
             await self.frame()
+
+
+def joinError(error):
+    """Mensagem (e dica) para a falha ao entrar numa sala."""
+    if error == 'peer-unavailable':
+        return 'ROOM NOT FOUND', 'CHECK THE CODE. YOUR FRIEND MUST KEEP THE ROOM SCREEN OPEN'
+    if error == 'negotiation-failed':
+        return 'COULD NOT REACH THE HOST', 'YOUR NETWORKS BLOCK DIRECT LINKS. TRY ANOTHER WI-FI'
+    if error in ('server-unreachable', 'network', 'socket-error', 'socket-closed', 'server-error'):
+        return 'ROOM SERVER UNREACHABLE', 'CHECK YOUR INTERNET AND TRY AGAIN'
+    if error == 'browser-incompatible':
+        return 'BROWSER NOT SUPPORTED', 'OPEN THE LINK IN CHROME OR SAFARI'
+    return 'CONNECTION ERROR', error.upper()[:50]
 
 
 class JoinScreen(Screen):
@@ -742,9 +757,11 @@ class JoinScreen(Screen):
                 s.blit(img, (400 - img.get_width() // 2, 192))
             if connecting:
                 if link.state == 'error':
-                    msg = 'ROOM NOT FOUND' if 'unavailable' in link.error else 'CONNECTION ERROR'
+                    msg, hint = joinError(link.error)
                     ui.text(s, msg, 24, (400, 290), ui.RED)
-                    ui.text(s, 'BACKSPACE: EDIT CODE', 16, (400, 330), ui.GRAY)
+                    if hint:
+                        ui.text(s, hint, 14, (400, 325), ui.GRAY)
+                    ui.text(s, 'BACKSPACE: EDIT CODE', 16, (400, 355), ui.GRAY)
                 else:
                     dots = '.' * (1 + int(time.perf_counter() * 2) % 3)
                     ui.text(s, 'CONNECTING' + dots, 24, (400, 290))
